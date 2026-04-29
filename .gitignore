@@ -1,0 +1,20 @@
+.venv/
+runs/
+__pycache__/
+*.pyc
+.DS_Store
+
+# Local agent/editor state
+.claude/
+
+# Local configuration and secrets
+.env
+.env.*
+*.pem
+*.key
+
+# Generated caches and logs
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+*.log

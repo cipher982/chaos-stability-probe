@@ -1,0 +1,21 @@
+[project]
+name = "chaos-stability-probe"
+version = "0.1.0"
+description = "Exploratory LLM stability and divergence probes for a learning-club talk."
+requires-python = ">=3.11"
+dependencies = [
+    "accelerate>=1.0",
+    "bitsandbytes>=0.48",
+    "boto3>=1.34",
+    "matplotlib>=3.8",
+    "numpy>=1.26",
+    "pandas>=2.2",
+    "protobuf>=4",
+    "safetensors>=0.4",
+    "sentencepiece>=0.2",
+    "torch>=2.4",
+    "transformers>=4.57.3",
+]
+
+[tool.uv]
+package = false
