@@ -1,0 +1,571 @@
+# Results Digest
+
+Last updated: 2026-04-29 after the robust-wave and logit-probe pivot.
+
+This is the compact, talk-oriented current-state readout. The talk is a
+chaos/dynamical-systems teaching talk first; the stability probe is supporting
+evidence, not the subject. If older planning docs disagree with this file,
+prefer this file. The raw lab chronology lives in
+[experiment_journal.md](experiment_journal.md).
+
+## Talk Pitch (Three Paragraphs) — teaching-lens reframe, 2026-04-29
+
+**The subject.** This is a Learning Club talk. I'm teaching a lens — chaos
+and dynamical systems — and walking through how it *might* apply to the LLMs
+we work with. Not defending a thesis. Not publishing a paper. The pedagogical
+goal is to take people who've heard of the butterfly effect past the pop-
+culture framing: chaos isn't randomness, it's deterministic amplification of
+small differences, and it's a real language from physics for talking about
+systems where nearby states don't stay nearby. The LLM question the lens
+helps pose: when we perturb the input a little, does the output stay nearby,
+branch, or reconverge? The honest claim isn't "LLMs are chaotic." The honest
+claim is that at inference time they're **hybrid sequential systems** —
+continuous activations and logits feed a discrete branching process — and
+that small prompt changes can move distributions or flip argmax branches.
+Sensitivity is real, varies by model/prompt/metric, and is worth measuring.
+
+**What I tried.** I ran a perturbation probe across ~18 open-weight models
+(Qwen3 0.8B–9B, Gemma 4, Phi-4, DeepSeek-R1-Distill, Mistral, OLMo 2/3,
+Granite, Falcon, SmolLM, plus a legacy lane of GPT-2 XL, GPT-J, Pythia, OPT,
+LLaMA-1) on a 21–24 prompt-pair ladder spanning identical / no-op formatting
+/ punctuation / synonym / paraphrase / small semantic / positive control.
+Decoding is deterministic (argmax, `do_sample=False`) to isolate input
+sensitivity from sampling variance. Primary metric is sentence-embedding
+cosine distance, reported as bootstrap-CI'd clusters rather than a precision-
+implying leaderboard, with supporting logit-level (JS divergence, top-1
+flip rate, top-1 probability) and hidden-state signals. The experiment isn't
+the contribution — it's the concrete thing I show to make the lens tangible.
+
+**The two useful measurement findings, and the honest closing.** The probe
+surfaced two confounds that would fool anyone running this kind of
+measurement naively. First, the **scaffold confound**: models that emit
+`<think>` or "Thinking Process:" preambles score much lower divergence on
+short-output sentence-embedding distance simply because the identical
+preamble dominates the similarity score. That's a warning about *evaluation*,
+not a claim about *model dynamics* — and at 512 tokens the story stops being
+clean (Phi-4 is certain at prompt-end and chaotic at 512 tokens). Second,
+the **collapse confound**: Qwen3-0.8B at 4-bit looks more stable under
+perturbation but drifts far from its BF16 outputs, consistent with
+collapse onto a narrower output manifold — a naive single-axis stability
+metric can't tell a robust model from a collapsed one. The practitioner
+upshot is operational: don't evaluate LLM behavior on a single prompt,
+single decode, or single output-distance metric; treat prompting as
+operating a high-gain branching system; test neighborhoods, not single
+prompts. The chaos lens doesn't prove anything about LLMs. It suggests
+questions benchmarks don't ask, and those questions are worth asking.
+
+## Current Best Story
+
+The core talk is not "we proved LLMs are chaotic." It is:
+
+> Chaos gives us a useful language for systems where tiny perturbations can
+> either vanish, persist, or amplify. LLMs have exactly the kinds of moving
+> states where that question becomes interesting: activations, logits, tokens,
+> prefixes, KV caches, and quantized weights.
+
+The experiment is there to make that lens concrete. It shows that nearby
+prompts can produce different generation trajectories, and that the amount of
+sensitivity varies by model and size even under deterministic decode.
+
+The next measurement layer is logit-level rather than text-only. Text distance
+is a lossy downstream symptom: argmax can flip because two next-token logits
+were already nearly tied, or text can look stable while the probability
+distribution underneath has moved. The active logit-probe wave therefore
+records full-vocab KL/JS divergence, top-token margins, winner-rank shifts,
+and teacher-forced logit divergence along the same continuation. This lets the
+talk say: "the branch is visible before sampling or text decoding collapses
+the distribution."
+
+The expanded scaffold-long logit pass adds the most promising mechanistic
+thread so far. Across the 17 currently ready 512-token models, prompt-end
+top-1 flip rate correlates with 512-token semantic divergence (`r ~= 0.75`),
+and prompt-end top-1 margin/probability is strongly anti-correlated
+(`margin r ~= -0.77`, top-1 probability `r ~= -0.93`). Plain JS divergence is
+not the useful scalar here; the better story is decision-boundary fragility:
+small prompt changes matter when they move the model across a low-margin
+argmax boundary into a different response attractor. This still carries the
+scaffold caveat: for reasoning/scaffold models, the high-confidence boundary
+may be "enter the scaffold" rather than "answer content is robust."
+
+Quantization and compression are now supporting material, not the thesis. The
+main thesis is dynamical sensitivity: when the input changes a little, does the
+model's response trajectory stay nearby, branch, or reconverge? Output quality
+is a separate axis. A degenerate model can be stable, and a strong model can be
+sensitive; this probe measures sensitivity, not goodness.
+
+The strongest slide pair is the Qwen3.5 size comparison:
+
+- `Qwen3.5-4B` and `Qwen3.5-9B` are effectively tied on the 24-pair robust
+  ladder.
+- `Qwen3.5-4B` separates cleanly from `Qwen3.5-0.8B` and `Qwen3.5-2B`.
+- `Qwen3.5-0.8B` remains the most sensitive Qwen point in the robust ladder,
+  but the `2B` vs `0.8B` contrast is not clean enough to overclaim.
+
+That gives a sober claim: stability appears to be a measurable model property,
+but it is not a simple monotonic function of parameter count from this tiny
+probe.
+
+The next important contrast is training era/post-training recipe, but it should
+not be reduced to either "modern equals stable" or "older equals stable." A
+follow-up check found a metric split: at token edit distance around `t=60`,
+modern/instruct models look slightly more surface-divergent than legacy/base
+models, but at 512-token semantic distance the sign flips and modern/instruct
+models are more semantically contractive. The first legacy lane says something
+more nuanced: `GPT-2 XL`, `GPT-J`, `Pythia`, and `OPT` often look brittle or
+template-echo-y on this probe, while the best-effort `LLaMA-1 7B` conversion is
+relatively stable. Within Gemma, base models are more sensitive than
+instruction-tuned variants. The cleaner talk claim is that training and
+post-training recipes change response attractors; era alone does not predict
+the signature.
+
+## Reasoning/Scaffold Confound
+
+A later visual inspection found a major confound: some "stable" models are not
+necessarily preserving answer content at first; they are preserving a response
+scaffold. `Qwen3.5 4B` and `Qwen3.5 9B` emit a deterministic
+`Thinking Process:` preamble, `Phi-4 reasoning plus` and `SmolLM3` emit
+`<think>`, and `DeepSeek R1 Qwen 7B` emits visible chain-of-thought style
+deliberation. These scaffolds can inflate common-prefix length and reduce text
+distance even when the content eventually branches.
+
+This variable is now encoded in
+`configs/models.json` under each model's `observed_behavior` block. The
+derived analysis artifacts remain in
+`runs/rankings/scaffold_analysis/model_scaffold_annotations.csv`. On the final
+21-model readout, observed reasoning/scaffold models are strongly associated
+with lower small-perturbation semantic distance:
+
+| Group | Models | Mean semantic distance | Mean common prefix |
+| --- | ---: | ---: | ---: |
+| Observed reasoning scaffold | 5 | 0.033 | 38.3 tokens |
+| No observed reasoning scaffold | 16 | 0.141 | 20.5 tokens |
+
+The bootstrap difference for scaffold minus non-scaffold semantic distance is
+`-0.107` with a 95% interval of `[-0.140, -0.076]`. This is not proof that
+reasoning improves content robustness; it may be measuring scaffold adherence.
+Raw prefix inspection now backs this caveat directly:
+
+- `runs/inspection/generation_prefixes_final21.csv`
+- `runs/inspection/generation_prefix_summary_final21.csv`
+
+The scan shows `Qwen3.5 4B` and `Qwen3.5 9B` start every checked output with
+`Thinking Process:`, while `Phi-4 reasoning plus` and `SmolLM3` start every
+checked output with `<think>`. The current short outputs are often still inside
+the scaffold when generation stops, so content-only claims need longer
+continuations.
+
+For the talk, the honest claim is:
+
+> Some apparent stability is format stability. Post-training can create a
+> strong attractor into a reasoning scaffold, delaying visible divergence. The
+> open question is whether content after the scaffold is also more stable.
+
+Important correction after inspecting raw 512-token generations: for Qwen3.5
+4B/9B with default thinking enabled, the model usually does not produce a clean
+answer stream within the 512-token budget. It emits a long draft/critique/polish
+process and every checked Qwen 4B/9B reasoning-on row hits the token cap. Phi-4,
+DeepSeek R1, and SmolLM3 show the same broad problem to varying degrees:
+the artifact is a deliberation stream, not an answer-first response. Therefore
+the reasoning-on full-output metrics should not be compared directly to
+non-reasoning answer-first models as "answer stability." They are still useful,
+but the label is different: they measure stability of the visible
+deliberation/scaffold process.
+
+The clean answer-first comparison should use:
+
+- Qwen thinking-off / empty-think-prefix runs for Qwen3.5 0.8B, 2B, 4B, and
+  9B.
+- Non-reasoning or direct-answer models whose generations begin with answer
+  content.
+- Reasoning-on runs shown separately as a "deliberation attractor" example,
+  not merged into answer trajectory charts.
+
+Qwen thinking-mode control is now in flight. The harness supports
+`--thinking-mode disabled`, which passes `enable_thinking=False` into the chat
+template. In the currently installed Qwen3.5 tokenizer this still renders an
+empty `<think>...</think>` block in the assistant prefix, so label it as
+"thinking-off / empty-think prefix" rather than "no scaffold." It should still
+remove the long generated reasoning scaffold and gives a direct same-weights,
+same-prompts comparison against the default Qwen runs.
+
+## Talk Spine
+
+Audience goal: teach chaos and dynamical systems clearly enough that LLM
+behavior becomes a vivid example, not a prerequisite.
+
+1. **What chaos means:** not randomness, but sensitive dependence on initial
+   conditions.
+2. **Exponential divergence:** two nearby trajectories can separate roughly
+   like `e^(lambda t)` before saturating.
+3. **State space matters:** for weather the state is physical variables; for
+   LLMs the "state" might be hidden activations, logits, full token prefix, KV
+   cache, or quantized weights.
+4. **LLM translation:** generation is not a smooth physical trajectory; it is a
+   continuous hidden-state system repeatedly crossing discrete token decision
+   boundaries.
+5. **Original probe:** a small measurement showing that this lens produces
+   visible, model-dependent behavior.
+6. **Training-recipe contrast:** base, instruction-tuned, and older models can
+   have different response attractors.
+7. **Quantization as another system:** treat BF16, 8-bit, and 4-bit variants
+   as separate dynamical systems. The main comparison is within-system prompt
+   sensitivity; distance-from-BF16 is a caveat about quality/fidelity, not the
+   central experiment.
+
+The experiments should take up the middle of the talk, not replace the
+conceptual spine.
+
+## Prior Art Anchors
+
+Use [prior_art.md](prior_art.md) as the source list. In the live talk, keep this
+to a few anchors:
+
+- Lorenz / logistic map for classical chaos and Lyapunov intuition.
+- Li et al.'s quasi-Lyapunov analysis for LLM-specific chaos framing.
+- Successive paraphrasing attractor cycles for an intuitive LLM dynamical
+  example.
+- RNN Lyapunov-spectrum work for pre-LLM precedent in neural sequence models.
+- Edge-of-stability training work for the broader neural-network stability
+  story.
+- TurboQuant / KIVI for the static compression and quantization contrast.
+
+## Statistical Readout
+
+Robust-wave readout on 24 small-perturbation prompt pairs:
+
+| Model | Mean | 95% bootstrap interval |
+| --- | ---: | ---: |
+| Qwen3.5 4B | 0.0345 | 0.0182-0.0528 |
+| Qwen3.5 9B | 0.0368 | 0.0165-0.0606 |
+| Qwen3.5 2B | 0.0728 | 0.0389-0.1150 |
+| Gemma4 E4B it | 0.0778 | 0.0406-0.1221 |
+| Qwen3.5 0.8B | 0.0887 | 0.0484-0.1368 |
+
+Paired permutation tests:
+
+| Contrast | p-value | Readout |
+| --- | ---: | --- |
+| Qwen3.5 4B vs Qwen3.5 0.8B | 0.0004 | clean separation |
+| Qwen3.5 4B vs Qwen3.5 2B | 0.0123 | clean separation |
+| Qwen3.5 4B vs Qwen3.5 9B | 0.7781 | indistinguishable |
+| Gemma4 E4B it vs Qwen3.5 4B | 0.0143 | Gemma more sensitive here |
+
+Use this robust five-model result for the Qwen ladder slide. Use the broader
+21-model panel as a lower-budget cluster demo, not as a precise leaderboard.
+
+The model ranking is useful as a first pass, but exact positions should not be
+treated as paper-grade. The small-perturbation score uses only 9 rows per
+model: 3 no-op, 3 punctuation, and 3 synonym prompt pairs.
+
+Final expanded readout including legacy/base controls:
+
+| Model | Mean | 95% bootstrap interval |
+| --- | ---: | ---: |
+| Qwen3.5 4B | 0.013 | 0.001-0.030 |
+| Phi-4 reasoning plus | 0.024 | 0.010-0.038 |
+| Qwen3.5 9B | 0.026 | 0.003-0.052 |
+| DeepSeek R1 Qwen 7B | 0.030 | 0.007-0.055 |
+| Mistral 7B v0.3 | 0.055 | 0.020-0.093 |
+| LLaMA1 7B | 0.058 | 0.004-0.131 |
+| Gemma4 E4B it | 0.069 | 0.017-0.153 |
+| Qwen3.5 2B | 0.097 | 0.022-0.204 |
+| OLMo/Gemma base/Qwen 0.8B band | about 0.13-0.14 | overlapping |
+| GPT-J / Gemma E4B base / Pythia / OPT / GPT-2 XL | about 0.19-0.28 | high but overlapping |
+
+Artifact:
+
+- `runs/rankings/final_21model_readout/small_perturbation_bootstrap.csv`
+
+Robust from bootstrap over prompt pairs:
+
+- `Qwen3.5-4B` is much more stable than `Qwen3.5-0.8B`.
+- `Qwen3.5-4B`, `Phi-4-reasoning-plus`, `Qwen3.5-9B`, and
+  `DeepSeek-R1-Distill-Qwen-7B` form the stable top cluster.
+- Older/base models often land toward the brittle semantic end, especially
+  `GPT-2 XL`, `OPT 6.7B`, `Pythia 6.9B`, and `GPT-J 6B`, but `LLaMA1 7B` is an
+  important counterexample. Token edit distance tells a different surface-form
+  story, so era alone is not the causal story.
+
+Not robust enough to claim:
+
+- Exact ordering inside the top cluster.
+- Exact ordering across the middle pack.
+- A monotonic "bigger is always more stable" size law.
+- `Qwen3.5-4B` beating `Qwen3.5-9B` as a general claim; it leads in the point
+  estimate, but the uncertainty overlaps.
+
+Preferred presentation: show buckets and confidence intervals, then emphasize
+large-effect contrasts rather than a precise leaderboard.
+
+Artifact:
+
+- `runs/rankings/wave2_13model_bootstrap/small_perturbation_bootstrap_buckets.png`
+
+## Deterministic Expanded Ladder
+
+Mean normalized token edit distance:
+
+| Category | Qwen3.5 0.8B | Qwen3.5 4B | Qwen3.5 9B | Gemma 4 E2B | Gemma 4 E4B | OLMo 3 7B |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| `control_identical` | 0.000 | 0.000 | 0.000 | 0.000 | 0.000 | 0.000 |
+| `noop_format` | 0.000 | 0.000 | 0.000 | 0.000 | 0.000 | 0.516 |
+| `punctuation` | 0.620 | 0.036 | 0.240 | 0.552 | 0.406 | 0.625 |
+| `synonym` | 0.641 | 0.057 | 0.062 | 0.474 | 0.531 | 0.625 |
+| `paraphrase` | 0.891 | 0.495 | 0.490 | 0.807 | 0.859 | 0.901 |
+| `semantic_small` | 0.805 | 0.260 | 0.292 | 0.809 | 0.808 | 0.953 |
+| `positive_control` | 0.984 | 0.526 | 0.505 | 0.969 | 0.974 | 0.995 |
+
+Mean sentence-embedding cosine distance:
+
+| Category | Qwen3.5 0.8B | Qwen3.5 4B | Qwen3.5 9B | Gemma 4 E2B | Gemma 4 E4B | OLMo 3 7B |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| `control_identical` | 0.000 | 0.000 | 0.000 | 0.000 | 0.000 | 0.000 |
+| `noop_format` | 0.000 | 0.000 | 0.000 | 0.000 | 0.000 | 0.089 |
+| `punctuation` | 0.154 | 0.005 | 0.047 | 0.146 | 0.035 | 0.112 |
+| `synonym` | 0.261 | 0.035 | 0.030 | 0.111 | 0.173 | 0.203 |
+| `paraphrase` | 0.196 | 0.100 | 0.091 | 0.128 | 0.162 | 0.131 |
+| `semantic_small` | 0.596 | 0.414 | 0.374 | 0.606 | 0.614 | 0.619 |
+| `positive_control` | 1.022 | 0.722 | 0.708 | 1.000 | 1.004 | 1.032 |
+
+Artifacts:
+
+- `runs/talk_figures/qwen_semantic_divergence.png`
+- `runs/talk_figures/qwen_hidden_state_divergence.png`
+- `runs/talk_figures/cross_lab_semantic_divergence.png`
+- `runs/comparisons/qwen35_panel_expanded_size_ladder/compare_semantic_divergence.png`
+- `runs/comparisons/panel_cross_lab_expanded/compare_semantic_divergence.png`
+- `runs/comparisons/qwen35_expanded_size_ladder/compare_output_divergence.png`
+- `runs/comparisons/qwen35_expanded_size_ladder/compare_semantic_divergence.png`
+- `runs/comparisons/qwen35_expanded_size_ladder/compare_final_layer_hidden_divergence.png`
+- `runs/comparisons/cross_lab_expanded/compare_output_divergence.png`
+- `runs/comparisons/cross_lab_expanded/compare_semantic_divergence.png`
+
+## Controls
+
+The sampling controls are important because they prevent an easy objection.
+
+- Same prompt, same seed, sampled decode: zero divergence in the control run.
+- Same prompt, different seeds, sampled decode: high divergence.
+
+Talk track:
+
+> If we do not control sampling, we mostly measure randomness. The main
+> perturbation ladder uses deterministic decode so the comparison is about
+> prompt sensitivity, not stochastic sampling variance.
+
+## Notable Model-Specific Behavior
+
+Several models showed no-op formatting fragility. The most slide-worthy example
+is OLMo 3 7B on a trailing-space-only code prompt:
+
+- Prompt A generated code directly with a docstring and normalization logic.
+- Prompt B generated an explanatory answer with a fenced code block and a much
+  simpler `s == s[::-1]` implementation.
+
+Other high-divergence no-op examples:
+
+- `SmolLM3-3B`: a leading newline changed the stability prompt from a long
+  `<think>` planning answer to a direct numbered list.
+- `OLMo 2 7B`: a trailing newline on the weather prompt changed the phrasing
+  enough to produce a semantic distance of about `0.18`.
+- `Falcon3-10B`: a leading newline on the stability prompt diverged after a
+  shared first reason and changed the second reason.
+
+This is a good example, but should be labeled carefully:
+
+> This is not proof that OLMo is unstable in general. It is evidence that the
+> probe can surface prompt-template or formatting sensitivity that average
+> benchmark scores would hide.
+
+## Failures Worth Mentioning Only If Asked
+
+- `NVIDIA-Nemotron-Nano-9B-v2` did not load because the container lacked
+  `mamba-ssm`.
+- `gpt-oss-20b` remained a tooling miss after several retries. MXFP4 wants
+  Triton `>=3.4.0`; installing that normally upgrades Torch past the SageMaker
+  driver, while dequantized bf16 falls back into CPU/CUDA tensor splits.
+- Local Gemma 4 E2B stalled on Mac MPS, but the SageMaker CUDA path succeeded.
+
+These are useful engineering notes, not central talk material.
+
+## Current Caveats
+
+- The expanded ladder is 21 prompt pairs, not a benchmark.
+- The semantic metric uses `sentence-transformers/all-MiniLM-L6-v2`; it is a
+  pragmatic distance proxy, not ground truth.
+- Hidden-state distances are prompt-state probes, not formal Lyapunov
+  exponents.
+- Model-specific chat templates and instruction tuning may dominate some
+  effects.
+- Trajectory metrics require the observable generated token stream. They do not
+  apply cleanly to API models with hidden reasoning tokens unless the analysis
+  is explicitly changed to final-answer-only behavior.
+- Quantization results should be framed as sensitivity profiles of separate
+  systems. Distance-from-BF16 is useful only to prevent confusing stability with
+  fidelity or quality.
+
+## Quantization Readout
+
+Within-system perturbation sensitivity:
+
+| Model | BF16 | 8-bit | 4-bit |
+| --- | ---: | ---: | ---: |
+| Qwen3.5 0.8B | 0.138 | 0.110 | 0.091 |
+| Qwen3.5 4B | 0.013 | 0.025 | 0.026 |
+
+Read this as: for each fixed precision, how much do nearby prompts diverge
+inside that system? Do not read it as a quality score.
+
+Distance-from-BF16 is a caveat, not the main axis:
+
+| Model | 8-bit | 4-bit |
+| --- | ---: | ---: |
+| Qwen3.5 0.8B | 0.098 | 0.132 |
+| Qwen3.5 4B | 0.019 | 0.056 |
+
+Talk framing:
+
+> Each quantization is its own dynamical system. The question is whether nearby
+> prompts stay nearby within that system. Fidelity to BF16 is a separate caveat,
+> not the thing this talk is trying to measure.
+
+Artifact:
+
+- `runs/quantization_fidelity/qwen_quantized_vs_bf16_small_semantic.png`
+
+## Wave 2: 13-Model Ranking
+
+Wave 2 more than doubled the successful model set from 6 to 13 completed stability
+profiles.
+
+Added successful profiles:
+
+- `deepseek-ai/DeepSeek-R1-Distill-Qwen-7B`
+- `mistralai/Mistral-7B-Instruct-v0.3`
+- `HuggingFaceTB/SmolLM3-3B`
+- `ibm-granite/granite-3.3-8b-instruct`
+- `allenai/OLMo-2-1124-7B-Instruct`
+- `microsoft/Phi-4-reasoning-plus`
+- `tiiuae/Falcon3-10B-Instruct`
+
+Small-perturbation ranking uses mean semantic distance over:
+
+- `noop_format`
+- `punctuation`
+- `synonym`
+
+Lower is more stable.
+
+Bucketed view:
+
+- **Stable cluster:** `qwen35_4b`, `phi4_reasoning_plus`, `qwen35_9b`,
+  `deepseek_r1_qwen7b`.
+- **Middle cluster:** `mistral7b_v03`, `gemma4_e4b`, `smollm3_3b`,
+  `granite33_8b`, `falcon3_10b`, `gemma4_e2b`.
+- **Brittle cluster:** `olmo3_7b`, `qwen35_08b`, `olmo2_7b`.
+
+Point-estimate ranking:
+
+| Rank | Model | Mean small-perturbation semantic distance |
+| ---: | --- | ---: |
+| 1 | `qwen35_4b` | 0.013 |
+| 2 | `phi4_reasoning_plus` | 0.024 |
+| 3 | `qwen35_9b` | 0.026 |
+| 4 | `deepseek_r1_qwen7b` | 0.030 |
+| 5 | `mistral7b_v03` | 0.055 |
+| 6 | `gemma4_e4b` | 0.069 |
+| 7 | `smollm3_3b` | 0.074 |
+| 8 | `granite33_8b` | 0.079 |
+| 9 | `falcon3_10b` | 0.082 |
+| 10 | `gemma4_e2b` | 0.086 |
+| 11 | `olmo3_7b` | 0.135 |
+| 12 | `qwen35_08b` | 0.138 |
+| 13 | `olmo2_7b` | 0.144 |
+
+New artifacts:
+
+- `runs/comparisons/wave2_13model_expanded`
+- `runs/rankings/wave2_13model/stability_rankings.csv`
+- `runs/rankings/wave2_13model/small_perturbation_ranking.png`
+
+Interpretation:
+
+- The top four are all quite stable on tiny prompt perturbations.
+- `Phi-4-reasoning-plus` is a strong new result: it is near the top on small
+  perturbations but less stable than Qwen 9B / DeepSeek on broader meaningful
+  perturbations.
+- `DeepSeek-R1-Distill-Qwen-7B` is the strongest model on the broader
+  meaningful-perturbation mean, even though it ranks fourth on the small
+  perturbation mean.
+- The OLMo family remains fragile on no-op formatting in this prompt ladder.
+- `Qwen3.5-0.8B` remains a useful fragile baseline.
+
+## Current Next Work
+
+The highest-leverage next work is scaffold/content separation, not simply
+adding more models.
+
+1. Finish the 512-token `chaos-scaffold-long-*` wave so reasoning models have
+   enough budget to reach answer content.
+2. Recompute raw vs boilerplate-stripped vs scaffold/content-only divergence.
+3. Keep the bootstrap ranking as a bucketed overview, not a leaderboard.
+4. Use raw text examples for no-op formatting failures and scaffold adherence.
+5. Treat sampling controls as the audience-facing baseline: sampling variance
+   and input sensitivity are different axes, but can be comparable in magnitude.
+
+Quantization remains worth testing, but as a separate controlled axis:
+`qwen35_4b` vs `qwen35_4b_bnb8` vs `qwen35_4b_bnb4`.
+
+## Pre-Result Hypotheses for Today's Runs
+
+These are intentionally written before reading the Wave 4 results.
+
+Long-generation trajectory probes:
+
+- `Qwen3.5-4B` should show slower divergence and/or earlier reconvergence than
+  `Qwen3.5-0.8B` on the same long prompts.
+- `Qwen3.5-0.8B` should show earlier token-level separation and higher
+  sustained divergence.
+- `DeepSeek-R1-Distill-Qwen-7B` may show a different curve shape: more lexical
+  divergence early, but stronger semantic convergence on answer-like prompts.
+- The likely curve shape is not pure exponential forever; expect early growth
+  followed by saturation once generations have entered different textual
+  basins. If exponential-looking growth exists, it should be a rising-window
+  phenomenon, not the whole trajectory.
+
+Qwen3.5 size ladder:
+
+- Adding `Qwen3.5-2B` should land between `0.8B` and the `4B/9B` stable cluster,
+  but not necessarily linearly.
+- If `2B` is close to `0.8B`, the apparent stability transition may happen
+  between 2B and 4B.
+- If `2B` is close to `4B`, then `0.8B` is the special fragile endpoint.
+- We do not expect a clean monotonic size law from 0.8B -> 2B -> 4B -> 9B.
+
+Quantization controls:
+
+- 8-bit bitsandbytes on `Qwen3.5-4B` should be close to BF16 on both stability
+  and generated content.
+- 4-bit on `Qwen3.5-4B` may show a measurable change, but it may still be small
+  because Qwen 4B appears to have stability margin.
+- `Qwen3.5-0.8B` should be more sensitive to 4-bit quantization than `4B`.
+- If quantization makes outputs more similar to each other while moving both
+  away from BF16 outputs, that is not a win; that is stable degradation.
+- The key result is the interaction: whether smaller/brittle models lose more
+  stability per bit removed than larger/stable models.
+
+Gemma base vs instruction-tuned controls:
+
+- Instruction-tuned Gemma should probably be more semantically contractive than
+  base Gemma on assistant-like prompts.
+- Base Gemma may produce more style and content variance because it is less
+  pulled toward a fixed assistant response format.
+- Any Gemma result should be treated as secondary to the Qwen family story
+  unless it sharply contradicts the instruction-tuning hypothesis.
+
+No-op formatting and chat-template sensitivity:
+
+- The highest no-op failures should concentrate in models whose chat templates
+  or instruction tuning treat tiny formatting changes as response-style cues.
+- Running raw prompt formatting vs chat-template formatting may reduce some
+  no-op sensitivity, but may also make instruction-tuned models worse overall.
