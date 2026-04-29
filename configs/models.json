@@ -1,0 +1,723 @@
+[
+  {
+    "name": "qwen35_08b",
+    "model_id": "Qwen/Qwen3.5-0.8B",
+    "family": "qwen",
+    "size": "0.8B",
+    "origin": "Alibaba/Qwen",
+    "enabled_for_smoke": true,
+    "trust_remote_code": true,
+    "notes": "Smallest Qwen3.5 candidate for local harness debugging.",
+    "observed_behavior": {
+      "annotation_status": "observed_in_current_harness",
+      "last_observed_date": "2026-04-29",
+      "source": "runs/rankings/scaffold_analysis/model_scaffold_annotations.csv; runs/inspection/generation_prefix_summary_final21.csv",
+      "dominant_prefix_kind": "none",
+      "visible_reasoning_scaffold": false,
+      "template_echo": false,
+      "manual_reasoning_model_label": false,
+      "boundary_detection": "not_applicable",
+      "notes": "Observed under this repo prompt wrapper/generation harness; not a universal model property."
+    }
+  },
+  {
+    "name": "qwen35_08b_bnb8",
+    "model_id": "Qwen/Qwen3.5-0.8B",
+    "family": "qwen",
+    "size": "0.8B",
+    "origin": "Alibaba/Qwen",
+    "trust_remote_code": true,
+    "quantization": "bnb_8bit",
+    "notes": "Quantization-control pair for qwen35_08b; compare against exact same checkpoint in bf16.",
+    "observed_behavior": {
+      "annotation_status": "not_observed_in_current_readout",
+      "last_observed_date": null,
+      "source": null,
+      "dominant_prefix_kind": "unknown",
+      "visible_reasoning_scaffold": null,
+      "template_echo": null,
+      "manual_reasoning_model_label": null,
+      "boundary_detection": "unknown",
+      "notes": "No raw-prefix annotation yet; do not use for scaffold/reasoning claims without inspection."
+    }
+  },
+  {
+    "name": "qwen35_08b_bnb4",
+    "model_id": "Qwen/Qwen3.5-0.8B",
+    "family": "qwen",
+    "size": "0.8B",
+    "origin": "Alibaba/Qwen",
+    "trust_remote_code": true,
+    "quantization": "bnb_4bit",
+    "notes": "Quantization-control pair for qwen35_08b; compare against exact same checkpoint in bf16.",
+    "observed_behavior": {
+      "annotation_status": "not_observed_in_current_readout",
+      "last_observed_date": null,
+      "source": null,
+      "dominant_prefix_kind": "unknown",
+      "visible_reasoning_scaffold": null,
+      "template_echo": null,
+      "manual_reasoning_model_label": null,
+      "boundary_detection": "unknown",
+      "notes": "No raw-prefix annotation yet; do not use for scaffold/reasoning claims without inspection."
+    }
+  },
+  {
+    "name": "qwen35_4b",
+    "model_id": "Qwen/Qwen3.5-4B",
+    "family": "qwen",
+    "size": "4B",
+    "origin": "Alibaba/Qwen",
+    "trust_remote_code": true,
+    "observed_behavior": {
+      "annotation_status": "observed_in_current_harness",
+      "last_observed_date": "2026-04-29",
+      "source": "runs/rankings/scaffold_analysis/model_scaffold_annotations.csv; runs/inspection/generation_prefix_summary_final21.csv",
+      "dominant_prefix_kind": "thinking_process",
+      "visible_reasoning_scaffold": true,
+      "template_echo": false,
+      "manual_reasoning_model_label": false,
+      "boundary_detection": "heuristic_no_close_delimiter",
+      "notes": "Observed under this repo prompt wrapper/generation harness; not a universal model property."
+    }
+  },
+  {
+    "name": "qwen35_4b_bnb8",
+    "model_id": "Qwen/Qwen3.5-4B",
+    "family": "qwen",
+    "size": "4B",
+    "origin": "Alibaba/Qwen",
+    "trust_remote_code": true,
+    "quantization": "bnb_8bit",
+    "notes": "Quantization-control pair for qwen35_4b; compare only against exact same checkpoint in bf16.",
+    "observed_behavior": {
+      "annotation_status": "not_observed_in_current_readout",
+      "last_observed_date": null,
+      "source": null,
+      "dominant_prefix_kind": "unknown",
+      "visible_reasoning_scaffold": null,
+      "template_echo": null,
+      "manual_reasoning_model_label": null,
+      "boundary_detection": "unknown",
+      "notes": "No raw-prefix annotation yet; do not use for scaffold/reasoning claims without inspection."
+    }
+  },
+  {
+    "name": "qwen35_4b_bnb4",
+    "model_id": "Qwen/Qwen3.5-4B",
+    "family": "qwen",
+    "size": "4B",
+    "origin": "Alibaba/Qwen",
+    "trust_remote_code": true,
+    "quantization": "bnb_4bit",
+    "notes": "Quantization-control pair for qwen35_4b; compare only against exact same checkpoint in bf16.",
+    "observed_behavior": {
+      "annotation_status": "not_observed_in_current_readout",
+      "last_observed_date": null,
+      "source": null,
+      "dominant_prefix_kind": "unknown",
+      "visible_reasoning_scaffold": null,
+      "template_echo": null,
+      "manual_reasoning_model_label": null,
+      "boundary_detection": "unknown",
+      "notes": "No raw-prefix annotation yet; do not use for scaffold/reasoning claims without inspection."
+    }
+  },
+  {
+    "name": "qwen35_2b",
+    "model_id": "Qwen/Qwen3.5-2B",
+    "family": "qwen",
+    "size": "2B",
+    "origin": "Alibaba/Qwen",
+    "trust_remote_code": true,
+    "notes": "Fills the Qwen3.5 family ladder between 0.8B and 4B.",
+    "observed_behavior": {
+      "annotation_status": "observed_in_current_harness",
+      "last_observed_date": "2026-04-29",
+      "source": "runs/rankings/scaffold_analysis/model_scaffold_annotations.csv; runs/inspection/generation_prefix_summary_final21.csv",
+      "dominant_prefix_kind": "none",
+      "visible_reasoning_scaffold": false,
+      "template_echo": false,
+      "manual_reasoning_model_label": false,
+      "boundary_detection": "not_applicable",
+      "notes": "Observed under this repo prompt wrapper/generation harness; not a universal model property."
+    }
+  },
+  {
+    "name": "qwen35_9b",
+    "model_id": "Qwen/Qwen3.5-9B",
+    "family": "qwen",
+    "size": "9B",
+    "origin": "Alibaba/Qwen",
+    "trust_remote_code": true,
+    "observed_behavior": {
+      "annotation_status": "observed_in_current_harness",
+      "last_observed_date": "2026-04-29",
+      "source": "runs/rankings/scaffold_analysis/model_scaffold_annotations.csv; runs/inspection/generation_prefix_summary_final21.csv",
+      "dominant_prefix_kind": "thinking_process",
+      "visible_reasoning_scaffold": true,
+      "template_echo": false,
+      "manual_reasoning_model_label": false,
+      "boundary_detection": "heuristic_no_close_delimiter",
+      "notes": "Observed under this repo prompt wrapper/generation harness; not a universal model property."
+    }
+  },
+  {
+    "name": "gpt2_xl",
+    "model_id": "openai-community/gpt2-xl",
+    "family": "gpt2",
+    "size": "1.5B",
+    "origin": "OpenAI / community mirror",
+    "trust_remote_code": false,
+    "notes": "Legacy pre-chat baseline; small and fast, useful for checking whether older base LMs have a different sensitivity signature.",
+    "observed_behavior": {
+      "annotation_status": "observed_in_current_harness",
+      "last_observed_date": "2026-04-29",
+      "source": "runs/rankings/scaffold_analysis/model_scaffold_annotations.csv; runs/inspection/generation_prefix_summary_final21.csv",
+      "dominant_prefix_kind": "template_echo",
+      "visible_reasoning_scaffold": false,
+      "template_echo": true,
+      "manual_reasoning_model_label": false,
+      "boundary_detection": "not_reasoning_template_echo",
+      "notes": "Observed under this repo prompt wrapper/generation harness; not a universal model property."
+    }
+  },
+  {
+    "name": "gptj_6b",
+    "model_id": "EleutherAI/gpt-j-6B",
+    "family": "gpt-j",
+    "size": "6B",
+    "origin": "EleutherAI",
+    "trust_remote_code": false,
+    "notes": "2021-era open base LM; good pre-RLHF contrast against modern instruction/chat models.",
+    "observed_behavior": {
+      "annotation_status": "observed_in_current_harness",
+      "last_observed_date": "2026-04-29",
+      "source": "runs/rankings/scaffold_analysis/model_scaffold_annotations.csv; runs/inspection/generation_prefix_summary_final21.csv",
+      "dominant_prefix_kind": "template_echo",
+      "visible_reasoning_scaffold": false,
+      "template_echo": true,
+      "manual_reasoning_model_label": false,
+      "boundary_detection": "not_reasoning_template_echo",
+      "notes": "Observed under this repo prompt wrapper/generation harness; not a universal model property."
+    }
+  },
+  {
+    "name": "opt_6p7b",
+    "model_id": "facebook/opt-6.7b",
+    "family": "opt",
+    "size": "6.7B",
+    "origin": "Meta/Facebook",
+    "trust_remote_code": false,
+    "notes": "2022 OPT base model; high-priority older-model contrast.",
+    "observed_behavior": {
+      "annotation_status": "observed_in_current_harness",
+      "last_observed_date": "2026-04-29",
+      "source": "runs/rankings/scaffold_analysis/model_scaffold_annotations.csv; runs/inspection/generation_prefix_summary_final21.csv",
+      "dominant_prefix_kind": "template_echo",
+      "visible_reasoning_scaffold": false,
+      "template_echo": true,
+      "manual_reasoning_model_label": false,
+      "boundary_detection": "not_reasoning_template_echo",
+      "notes": "Observed under this repo prompt wrapper/generation harness; not a universal model property."
+    }
+  },
+  {
+    "name": "pythia_6p9b_deduped",
+    "model_id": "EleutherAI/pythia-6.9b-deduped",
+    "family": "pythia",
+    "size": "6.9B",
+    "origin": "EleutherAI",
+    "trust_remote_code": false,
+    "notes": "Base model with transparent training/checkpoint lineage; useful older-recipe control.",
+    "observed_behavior": {
+      "annotation_status": "observed_in_current_harness",
+      "last_observed_date": "2026-04-29",
+      "source": "runs/rankings/scaffold_analysis/model_scaffold_annotations.csv; runs/inspection/generation_prefix_summary_final21.csv",
+      "dominant_prefix_kind": "template_echo",
+      "visible_reasoning_scaffold": false,
+      "template_echo": true,
+      "manual_reasoning_model_label": false,
+      "boundary_detection": "not_reasoning_template_echo",
+      "notes": "Observed under this repo prompt wrapper/generation harness; not a universal model property."
+    }
+  },
+  {
+    "name": "llama1_7b_huggyllama",
+    "model_id": "huggyllama/llama-7b",
+    "family": "llama",
+    "size": "7B",
+    "origin": "Meta LLaMA 1 / community conversion",
+    "trust_remote_code": false,
+    "notes": "Unofficial LLaMA-1 conversion; run as a best-effort legacy baseline and label clearly if used.",
+    "observed_behavior": {
+      "annotation_status": "observed_in_current_harness",
+      "last_observed_date": "2026-04-29",
+      "source": "runs/rankings/scaffold_analysis/model_scaffold_annotations.csv; runs/inspection/generation_prefix_summary_final21.csv",
+      "dominant_prefix_kind": "template_echo",
+      "visible_reasoning_scaffold": false,
+      "template_echo": true,
+      "manual_reasoning_model_label": false,
+      "boundary_detection": "not_reasoning_template_echo",
+      "notes": "Observed under this repo prompt wrapper/generation harness; not a universal model property."
+    }
+  },
+  {
+    "name": "qwen35_27b",
+    "model_id": "Qwen/Qwen3.5-27B",
+    "family": "qwen",
+    "size": "27B",
+    "origin": "Alibaba/Qwen",
+    "trust_remote_code": true,
+    "observed_behavior": {
+      "annotation_status": "not_observed_in_current_readout",
+      "last_observed_date": null,
+      "source": null,
+      "dominant_prefix_kind": "unknown",
+      "visible_reasoning_scaffold": null,
+      "template_echo": null,
+      "manual_reasoning_model_label": null,
+      "boundary_detection": "unknown",
+      "notes": "No raw-prefix annotation yet; do not use for scaffold/reasoning claims without inspection."
+    }
+  },
+  {
+    "name": "qwen35_27b_fp8",
+    "model_id": "Qwen/Qwen3.5-27B-FP8",
+    "family": "qwen",
+    "size": "27B FP8",
+    "origin": "Alibaba/Qwen",
+    "trust_remote_code": true,
+    "notes": "Quantized large-size Qwen3.5 point; do not compare as pure size effect against bf16 smaller models.",
+    "observed_behavior": {
+      "annotation_status": "not_observed_in_current_readout",
+      "last_observed_date": null,
+      "source": null,
+      "dominant_prefix_kind": "unknown",
+      "visible_reasoning_scaffold": null,
+      "template_echo": null,
+      "manual_reasoning_model_label": null,
+      "boundary_detection": "unknown",
+      "notes": "No raw-prefix annotation yet; do not use for scaffold/reasoning claims without inspection."
+    }
+  },
+  {
+    "name": "qwen35_35b_a3b_fp8",
+    "model_id": "Qwen/Qwen3.5-35B-A3B-FP8",
+    "family": "qwen",
+    "size": "35B-A3B FP8",
+    "origin": "Alibaba/Qwen",
+    "trust_remote_code": true,
+    "notes": "FP8 MoE stretch candidate; tests large trending-family behavior but confounds size, MoE, and quantization.",
+    "observed_behavior": {
+      "annotation_status": "not_observed_in_current_readout",
+      "last_observed_date": null,
+      "source": null,
+      "dominant_prefix_kind": "unknown",
+      "visible_reasoning_scaffold": null,
+      "template_echo": null,
+      "manual_reasoning_model_label": null,
+      "boundary_detection": "unknown",
+      "notes": "No raw-prefix annotation yet; do not use for scaffold/reasoning claims without inspection."
+    }
+  },
+  {
+    "name": "qwen36_27b_fp8",
+    "model_id": "Qwen/Qwen3.6-27B-FP8",
+    "family": "qwen",
+    "size": "27B FP8",
+    "origin": "Alibaba/Qwen",
+    "trust_remote_code": true,
+    "notes": "Current Hugging Face trending Qwen line; quantized, so keep separate from Qwen3.5 bf16 family ladder.",
+    "observed_behavior": {
+      "annotation_status": "not_observed_in_current_readout",
+      "last_observed_date": null,
+      "source": null,
+      "dominant_prefix_kind": "unknown",
+      "visible_reasoning_scaffold": null,
+      "template_echo": null,
+      "manual_reasoning_model_label": null,
+      "boundary_detection": "unknown",
+      "notes": "No raw-prefix annotation yet; do not use for scaffold/reasoning claims without inspection."
+    }
+  },
+  {
+    "name": "qwen36_35b_a3b_fp8",
+    "model_id": "Qwen/Qwen3.6-35B-A3B-FP8",
+    "family": "qwen",
+    "size": "35B-A3B FP8",
+    "origin": "Alibaba/Qwen",
+    "trust_remote_code": true,
+    "notes": "Current Hugging Face trending Qwen MoE stretch candidate; quantized and MoE.",
+    "observed_behavior": {
+      "annotation_status": "not_observed_in_current_readout",
+      "last_observed_date": null,
+      "source": null,
+      "dominant_prefix_kind": "unknown",
+      "visible_reasoning_scaffold": null,
+      "template_echo": null,
+      "manual_reasoning_model_label": null,
+      "boundary_detection": "unknown",
+      "notes": "No raw-prefix annotation yet; do not use for scaffold/reasoning claims without inspection."
+    }
+  },
+  {
+    "name": "gemma4_e2b_it",
+    "model_id": "google/gemma-4-E2B-it",
+    "family": "gemma",
+    "size": "E2B",
+    "origin": "Google",
+    "trust_remote_code": true,
+    "notes": "May require latest Transformers and HF access. Local MPS smoke stalled after ~3.4GB cache download; retry on CUDA before dropping.",
+    "observed_behavior": {
+      "annotation_status": "observed_in_current_harness",
+      "last_observed_date": "2026-04-29",
+      "source": "runs/rankings/scaffold_analysis/model_scaffold_annotations.csv; runs/inspection/generation_prefix_summary_final21.csv",
+      "dominant_prefix_kind": "none",
+      "visible_reasoning_scaffold": false,
+      "template_echo": false,
+      "manual_reasoning_model_label": false,
+      "boundary_detection": "not_applicable",
+      "notes": "Observed under this repo prompt wrapper/generation harness; not a universal model property."
+    }
+  },
+  {
+    "name": "gemma4_e2b_base",
+    "model_id": "google/gemma-4-E2B",
+    "family": "gemma",
+    "size": "E2B",
+    "origin": "Google",
+    "trust_remote_code": true,
+    "notes": "Base-model pair for Gemma 4 E2B instruction-tuned stability comparison.",
+    "observed_behavior": {
+      "annotation_status": "observed_in_current_harness",
+      "last_observed_date": "2026-04-29",
+      "source": "runs/rankings/scaffold_analysis/model_scaffold_annotations.csv; runs/inspection/generation_prefix_summary_final21.csv",
+      "dominant_prefix_kind": "none",
+      "visible_reasoning_scaffold": false,
+      "template_echo": false,
+      "manual_reasoning_model_label": false,
+      "boundary_detection": "not_applicable",
+      "notes": "Observed under this repo prompt wrapper/generation harness; not a universal model property."
+    }
+  },
+  {
+    "name": "gemma4_e4b_it",
+    "model_id": "google/gemma-4-E4B-it",
+    "family": "gemma",
+    "size": "E4B",
+    "origin": "Google",
+    "trust_remote_code": true,
+    "notes": "May require latest Transformers and HF access.",
+    "observed_behavior": {
+      "annotation_status": "observed_in_current_harness",
+      "last_observed_date": "2026-04-29",
+      "source": "runs/rankings/scaffold_analysis/model_scaffold_annotations.csv; runs/inspection/generation_prefix_summary_final21.csv",
+      "dominant_prefix_kind": "none",
+      "visible_reasoning_scaffold": false,
+      "template_echo": false,
+      "manual_reasoning_model_label": false,
+      "boundary_detection": "not_applicable",
+      "notes": "Observed under this repo prompt wrapper/generation harness; not a universal model property."
+    }
+  },
+  {
+    "name": "gemma4_e4b_base",
+    "model_id": "google/gemma-4-E4B",
+    "family": "gemma",
+    "size": "E4B",
+    "origin": "Google",
+    "trust_remote_code": true,
+    "notes": "Base-model pair for Gemma 4 E4B instruction-tuned stability comparison.",
+    "observed_behavior": {
+      "annotation_status": "observed_in_current_harness",
+      "last_observed_date": "2026-04-29",
+      "source": "runs/rankings/scaffold_analysis/model_scaffold_annotations.csv; runs/inspection/generation_prefix_summary_final21.csv",
+      "dominant_prefix_kind": "none",
+      "visible_reasoning_scaffold": false,
+      "template_echo": false,
+      "manual_reasoning_model_label": false,
+      "boundary_detection": "not_applicable",
+      "notes": "Observed under this repo prompt wrapper/generation harness; not a universal model property."
+    }
+  },
+  {
+    "name": "gemma4_31b_it_nvfp4",
+    "model_id": "nvidia/Gemma-4-31B-IT-NVFP4",
+    "family": "gemma",
+    "size": "31B NVFP4",
+    "origin": "NVIDIA",
+    "trust_remote_code": true,
+    "notes": "Quantized large Gemma 4 stretch candidate; likely useful only if the NVIDIA quantized checkpoint loads cleanly in the SageMaker container.",
+    "observed_behavior": {
+      "annotation_status": "not_observed_in_current_readout",
+      "last_observed_date": null,
+      "source": null,
+      "dominant_prefix_kind": "unknown",
+      "visible_reasoning_scaffold": null,
+      "template_echo": null,
+      "manual_reasoning_model_label": null,
+      "boundary_detection": "unknown",
+      "notes": "No raw-prefix annotation yet; do not use for scaffold/reasoning claims without inspection."
+    }
+  },
+  {
+    "name": "gpt_oss_20b",
+    "model_id": "openai/gpt-oss-20b",
+    "family": "gpt-oss",
+    "size": "20B",
+    "origin": "OpenAI",
+    "trust_remote_code": true,
+    "device_map": "single",
+    "notes": "Reasoning/open-weight model; needs Triton for MXFP4. Use Triton 3.3.1 with the PyTorch 2.7 SageMaker image; Triton >=3.4 triggers a Torch/CUDA 13 upgrade that breaks the g6e driver.",
+    "observed_behavior": {
+      "annotation_status": "not_observed_in_current_readout",
+      "last_observed_date": null,
+      "source": null,
+      "dominant_prefix_kind": "unknown",
+      "visible_reasoning_scaffold": null,
+      "template_echo": null,
+      "manual_reasoning_model_label": null,
+      "boundary_detection": "unknown",
+      "notes": "No raw-prefix annotation yet; do not use for scaffold/reasoning claims without inspection."
+    }
+  },
+  {
+    "name": "mistral_small_32_24b",
+    "model_id": "mistralai/Mistral-Small-3.2-24B-Instruct-2506",
+    "family": "mistral",
+    "size": "24B",
+    "origin": "Mistral",
+    "trust_remote_code": true,
+    "observed_behavior": {
+      "annotation_status": "not_observed_in_current_readout",
+      "last_observed_date": null,
+      "source": null,
+      "dominant_prefix_kind": "unknown",
+      "visible_reasoning_scaffold": null,
+      "template_echo": null,
+      "manual_reasoning_model_label": null,
+      "boundary_detection": "unknown",
+      "notes": "No raw-prefix annotation yet; do not use for scaffold/reasoning claims without inspection."
+    }
+  },
+  {
+    "name": "olmo3_7b_instruct",
+    "model_id": "allenai/Olmo-3-7B-Instruct",
+    "family": "olmo",
+    "size": "7B",
+    "origin": "Ai2",
+    "trust_remote_code": true,
+    "observed_behavior": {
+      "annotation_status": "observed_in_current_harness",
+      "last_observed_date": "2026-04-29",
+      "source": "runs/rankings/scaffold_analysis/model_scaffold_annotations.csv; runs/inspection/generation_prefix_summary_final21.csv",
+      "dominant_prefix_kind": "none",
+      "visible_reasoning_scaffold": false,
+      "template_echo": false,
+      "manual_reasoning_model_label": false,
+      "boundary_detection": "not_applicable",
+      "notes": "Observed under this repo prompt wrapper/generation harness; not a universal model property."
+    }
+  },
+  {
+    "name": "nemotron_nano_9b_v2",
+    "model_id": "nvidia/NVIDIA-Nemotron-Nano-9B-v2",
+    "family": "nemotron",
+    "size": "9B",
+    "origin": "NVIDIA",
+    "trust_remote_code": true,
+    "notes": "Requires mamba-ssm for Transformers load; SageMaker smoke recorded ImportError without it.",
+    "observed_behavior": {
+      "annotation_status": "not_observed_in_current_readout",
+      "last_observed_date": null,
+      "source": null,
+      "dominant_prefix_kind": "unknown",
+      "visible_reasoning_scaffold": null,
+      "template_echo": null,
+      "manual_reasoning_model_label": null,
+      "boundary_detection": "unknown",
+      "notes": "No raw-prefix annotation yet; do not use for scaffold/reasoning claims without inspection."
+    }
+  },
+  {
+    "name": "llama4_scout_17b_16e",
+    "model_id": "meta-llama/Llama-4-Scout-17B-16E-Instruct",
+    "family": "llama",
+    "size": "17B active / 16E",
+    "origin": "Meta",
+    "trust_remote_code": true,
+    "notes": "Nice-if-it-works; likely gated and multimodal-specific.",
+    "observed_behavior": {
+      "annotation_status": "not_observed_in_current_readout",
+      "last_observed_date": null,
+      "source": null,
+      "dominant_prefix_kind": "unknown",
+      "visible_reasoning_scaffold": null,
+      "template_echo": null,
+      "manual_reasoning_model_label": null,
+      "boundary_detection": "unknown",
+      "notes": "No raw-prefix annotation yet; do not use for scaffold/reasoning claims without inspection."
+    }
+  },
+  {
+    "name": "phi4_mini_instruct",
+    "model_id": "microsoft/Phi-4-mini-instruct",
+    "family": "phi",
+    "size": "3.8B",
+    "origin": "Microsoft",
+    "trust_remote_code": true,
+    "notes": "Accessible HF API check; custom code tag.",
+    "observed_behavior": {
+      "annotation_status": "not_observed_in_current_readout",
+      "last_observed_date": null,
+      "source": null,
+      "dominant_prefix_kind": "unknown",
+      "visible_reasoning_scaffold": null,
+      "template_echo": null,
+      "manual_reasoning_model_label": null,
+      "boundary_detection": "unknown",
+      "notes": "No raw-prefix annotation yet; do not use for scaffold/reasoning claims without inspection."
+    }
+  },
+  {
+    "name": "granite33_8b_instruct",
+    "model_id": "ibm-granite/granite-3.3-8b-instruct",
+    "family": "granite",
+    "size": "8B",
+    "origin": "IBM",
+    "trust_remote_code": false,
+    "notes": "Accessible HF API check.",
+    "observed_behavior": {
+      "annotation_status": "observed_in_current_harness",
+      "last_observed_date": "2026-04-29",
+      "source": "runs/rankings/scaffold_analysis/model_scaffold_annotations.csv; runs/inspection/generation_prefix_summary_final21.csv",
+      "dominant_prefix_kind": "none",
+      "visible_reasoning_scaffold": false,
+      "template_echo": false,
+      "manual_reasoning_model_label": false,
+      "boundary_detection": "not_applicable",
+      "notes": "Observed under this repo prompt wrapper/generation harness; not a universal model property."
+    }
+  },
+  {
+    "name": "deepseek_r1_distill_qwen_7b",
+    "model_id": "deepseek-ai/DeepSeek-R1-Distill-Qwen-7B",
+    "family": "deepseek",
+    "size": "7B",
+    "origin": "DeepSeek",
+    "trust_remote_code": false,
+    "notes": "Accessible HF API check; Qwen2-derived reasoning distill.",
+    "observed_behavior": {
+      "annotation_status": "observed_in_current_harness",
+      "last_observed_date": "2026-04-29",
+      "source": "runs/rankings/scaffold_analysis/model_scaffold_annotations.csv; runs/inspection/generation_prefix_summary_final21.csv",
+      "dominant_prefix_kind": "visible_cot",
+      "visible_reasoning_scaffold": true,
+      "template_echo": false,
+      "manual_reasoning_model_label": true,
+      "boundary_detection": "heuristic_or_failed",
+      "notes": "Observed under this repo prompt wrapper/generation harness; not a universal model property."
+    }
+  },
+  {
+    "name": "smollm3_3b",
+    "model_id": "HuggingFaceTB/SmolLM3-3B",
+    "family": "smollm",
+    "size": "3B",
+    "origin": "Hugging Face",
+    "trust_remote_code": false,
+    "notes": "Accessible HF API check.",
+    "observed_behavior": {
+      "annotation_status": "observed_in_current_harness",
+      "last_observed_date": "2026-04-29",
+      "source": "runs/rankings/scaffold_analysis/model_scaffold_annotations.csv; runs/inspection/generation_prefix_summary_final21.csv",
+      "dominant_prefix_kind": "think_tag",
+      "visible_reasoning_scaffold": true,
+      "template_echo": false,
+      "manual_reasoning_model_label": false,
+      "boundary_detection": "clean_only_if_closing_tag_present_else_failed",
+      "notes": "Observed under this repo prompt wrapper/generation harness; not a universal model property."
+    }
+  },
+  {
+    "name": "mistral7b_instruct_v03",
+    "model_id": "mistralai/Mistral-7B-Instruct-v0.3",
+    "family": "mistral",
+    "size": "7B",
+    "origin": "Mistral",
+    "trust_remote_code": false,
+    "notes": "Accessible HF API check; library tag is vLLM but Transformers should still load MistralForCausalLM.",
+    "observed_behavior": {
+      "annotation_status": "observed_in_current_harness",
+      "last_observed_date": "2026-04-29",
+      "source": "runs/rankings/scaffold_analysis/model_scaffold_annotations.csv; runs/inspection/generation_prefix_summary_final21.csv",
+      "dominant_prefix_kind": "none",
+      "visible_reasoning_scaffold": false,
+      "template_echo": false,
+      "manual_reasoning_model_label": false,
+      "boundary_detection": "not_applicable",
+      "notes": "Observed under this repo prompt wrapper/generation harness; not a universal model property."
+    }
+  },
+  {
+    "name": "olmo2_7b_instruct",
+    "model_id": "allenai/OLMo-2-1124-7B-Instruct",
+    "family": "olmo",
+    "size": "7B",
+    "origin": "Ai2",
+    "trust_remote_code": false,
+    "notes": "Accessible HF API check; useful comparison against OLMo 3.",
+    "observed_behavior": {
+      "annotation_status": "observed_in_current_harness",
+      "last_observed_date": "2026-04-29",
+      "source": "runs/rankings/scaffold_analysis/model_scaffold_annotations.csv; runs/inspection/generation_prefix_summary_final21.csv",
+      "dominant_prefix_kind": "none",
+      "visible_reasoning_scaffold": false,
+      "template_echo": false,
+      "manual_reasoning_model_label": false,
+      "boundary_detection": "not_applicable",
+      "notes": "Observed under this repo prompt wrapper/generation harness; not a universal model property."
+    }
+  },
+  {
+    "name": "phi4_reasoning_plus",
+    "model_id": "microsoft/Phi-4-reasoning-plus",
+    "family": "phi",
+    "size": "14B",
+    "origin": "Microsoft",
+    "trust_remote_code": true,
+    "notes": "Accessible HF API check; hedge/bonus reasoning model for wave 2.",
+    "observed_behavior": {
+      "annotation_status": "observed_in_current_harness",
+      "last_observed_date": "2026-04-29",
+      "source": "runs/rankings/scaffold_analysis/model_scaffold_annotations.csv; runs/inspection/generation_prefix_summary_final21.csv",
+      "dominant_prefix_kind": "think_tag",
+      "visible_reasoning_scaffold": true,
+      "template_echo": false,
+      "manual_reasoning_model_label": true,
+      "boundary_detection": "clean_only_if_closing_tag_present_else_failed",
+      "notes": "Observed under this repo prompt wrapper/generation harness; not a universal model property."
+    }
+  },
+  {
+    "name": "falcon3_10b_instruct",
+    "model_id": "tiiuae/Falcon3-10B-Instruct",
+    "family": "falcon",
+    "size": "10B",
+    "origin": "TII",
+    "trust_remote_code": false,
+    "notes": "Accessible HF API check; Llama-architecture Falcon 3 backup for wave 2.",
+    "observed_behavior": {
+      "annotation_status": "observed_in_current_harness",
+      "last_observed_date": "2026-04-29",
+      "source": "runs/rankings/scaffold_analysis/model_scaffold_annotations.csv; runs/inspection/generation_prefix_summary_final21.csv",
+      "dominant_prefix_kind": "none",
+      "visible_reasoning_scaffold": false,
+      "template_echo": false,
+      "manual_reasoning_model_label": false,
+      "boundary_detection": "not_applicable",
+      "notes": "Observed under this repo prompt wrapper/generation harness; not a universal model property."
+    }
+  }
+]

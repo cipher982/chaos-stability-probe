@@ -1,0 +1,52 @@
+[
+  {
+    "id": "control_identical_weather",
+    "category": "control_identical",
+    "prompt_a": "Explain why weather forecasts become unreliable after enough time, in one concise paragraph.",
+    "prompt_b": "Explain why weather forecasts become unreliable after enough time, in one concise paragraph.",
+    "notes": "Deterministic same-prompt baseline."
+  },
+  {
+    "id": "noop_trailing_newline",
+    "category": "noop_format",
+    "prompt_a": "Explain why weather forecasts become unreliable after enough time, in one concise paragraph.",
+    "prompt_b": "Explain why weather forecasts become unreliable after enough time, in one concise paragraph.\n",
+    "notes": "Near-zero semantic perturbation."
+  },
+  {
+    "id": "punctuation_comma",
+    "category": "punctuation",
+    "prompt_a": "Explain how small changes can affect a complex system over time.",
+    "prompt_b": "Explain how small changes can affect a complex system, over time.",
+    "notes": "Tiny punctuation perturbation."
+  },
+  {
+    "id": "synonym_happy_joyful",
+    "category": "synonym",
+    "prompt_a": "Write a short story about a happy scientist discovering an unexpected pattern.",
+    "prompt_b": "Write a short story about a joyful scientist discovering an unexpected pattern.",
+    "notes": "Small lexical perturbation in a creative task."
+  },
+  {
+    "id": "paraphrase_stability",
+    "category": "paraphrase",
+    "prompt_a": "Give three practical reasons a software team might care about model output stability.",
+    "prompt_b": "List three practical reasons why output stability could matter to a software team using language models.",
+    "notes": "Semantic-preserving paraphrase."
+  },
+  {
+    "id": "semantic_small_change",
+    "category": "semantic_small",
+    "prompt_a": "Write a concise Python function that checks whether a string is a palindrome.",
+    "prompt_b": "Write a concise Python function that checks whether a list is sorted.",
+    "notes": "Small but real task change."
+  },
+  {
+    "id": "positive_control_different",
+    "category": "positive_control",
+    "prompt_a": "Summarize the concept of Lyapunov exponents for an engineering audience.",
+    "prompt_b": "Draft a dinner menu for a vegetarian birthday party.",
+    "notes": "Clearly different topics; should diverge."
+  }
+]
+

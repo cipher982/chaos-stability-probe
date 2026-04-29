@@ -1,0 +1,254 @@
+[
+  {
+    "id": "control_weather",
+    "category": "control_identical",
+    "prompt_a": "Explain why weather forecasts become unreliable after enough time, in one concise paragraph.",
+    "prompt_b": "Explain why weather forecasts become unreliable after enough time, in one concise paragraph."
+  },
+  {
+    "id": "control_tests",
+    "category": "control_identical",
+    "prompt_a": "Explain why regression tests are useful after refactoring code.",
+    "prompt_b": "Explain why regression tests are useful after refactoring code."
+  },
+  {
+    "id": "control_queue",
+    "category": "control_identical",
+    "prompt_a": "Describe how a background job queue should handle retries.",
+    "prompt_b": "Describe how a background job queue should handle retries."
+  },
+  {
+    "id": "control_cache",
+    "category": "control_identical",
+    "prompt_a": "Describe when a cache should be invalidated in a web application.",
+    "prompt_b": "Describe when a cache should be invalidated in a web application."
+  },
+  {
+    "id": "control_palindrome",
+    "category": "control_identical",
+    "prompt_a": "Write a concise Python function that checks whether a string is a palindrome.",
+    "prompt_b": "Write a concise Python function that checks whether a string is a palindrome."
+  },
+  {
+    "id": "noop_weather_trailing_newline",
+    "category": "noop_format",
+    "prompt_a": "Explain why weather forecasts become unreliable after enough time, in one concise paragraph.",
+    "prompt_b": "Explain why weather forecasts become unreliable after enough time, in one concise paragraph.\n"
+  },
+  {
+    "id": "noop_cache_leading_newline",
+    "category": "noop_format",
+    "prompt_a": "Describe when a cache should be invalidated in a web application.",
+    "prompt_b": "\nDescribe when a cache should be invalidated in a web application."
+  },
+  {
+    "id": "noop_palindrome_trailing_space",
+    "category": "noop_format",
+    "prompt_a": "Write a concise Python function that checks whether a string is a palindrome.",
+    "prompt_b": "Write a concise Python function that checks whether a string is a palindrome. "
+  },
+  {
+    "id": "noop_api_double_space",
+    "category": "noop_format",
+    "prompt_a": "List the main risks of depending on an external API in production.",
+    "prompt_b": "List the main risks of depending on an external API  in production."
+  },
+  {
+    "id": "noop_json_blank_line",
+    "category": "noop_format",
+    "prompt_a": "Explain why JSON schemas are useful for service interfaces.",
+    "prompt_b": "Explain why JSON schemas are useful for service interfaces.\n\n"
+  },
+  {
+    "id": "noop_monitoring_leading_space",
+    "category": "noop_format",
+    "prompt_a": "Give three reasons production services need monitoring.",
+    "prompt_b": " Give three reasons production services need monitoring."
+  },
+  {
+    "id": "noop_rate_limits_trailing_space",
+    "category": "noop_format",
+    "prompt_a": "Explain how rate limits should influence background job design.",
+    "prompt_b": "Explain how rate limits should influence background job design. "
+  },
+  {
+    "id": "noop_database_newline",
+    "category": "noop_format",
+    "prompt_a": "Explain why database migrations should be reviewed carefully.",
+    "prompt_b": "Explain why database migrations should be reviewed carefully.\n"
+  },
+  {
+    "id": "punctuation_complex_system",
+    "category": "punctuation",
+    "prompt_a": "Explain how small changes can affect a complex system over time.",
+    "prompt_b": "Explain how small changes can affect a complex system, over time."
+  },
+  {
+    "id": "punctuation_api",
+    "category": "punctuation",
+    "prompt_a": "List the main risks of depending on an external API in production.",
+    "prompt_b": "List the main risks of depending on an external API, in production."
+  },
+  {
+    "id": "punctuation_cache",
+    "category": "punctuation",
+    "prompt_a": "Describe when a cache should be invalidated in a web application.",
+    "prompt_b": "Describe when a cache should be invalidated, in a web application."
+  },
+  {
+    "id": "punctuation_monitoring",
+    "category": "punctuation",
+    "prompt_a": "Explain why monitoring matters when a system has many dependencies.",
+    "prompt_b": "Explain why monitoring matters, when a system has many dependencies."
+  },
+  {
+    "id": "punctuation_rate_limits",
+    "category": "punctuation",
+    "prompt_a": "Explain how rate limits should influence background job design.",
+    "prompt_b": "Explain how rate limits should influence background job design?"
+  },
+  {
+    "id": "punctuation_security",
+    "category": "punctuation",
+    "prompt_a": "List the main reasons secrets should not be committed to a repository.",
+    "prompt_b": "List the main reasons secrets should not be committed to a repository:"
+  },
+  {
+    "id": "punctuation_json",
+    "category": "punctuation",
+    "prompt_a": "Explain why JSON schemas are useful for service interfaces.",
+    "prompt_b": "Explain why JSON schemas are useful for service interfaces?"
+  },
+  {
+    "id": "punctuation_incident",
+    "category": "punctuation",
+    "prompt_a": "Describe how an incident review should help a software team improve.",
+    "prompt_b": "Describe how an incident review should help a software team improve."
+  },
+  {
+    "id": "synonym_fast_quick",
+    "category": "synonym",
+    "prompt_a": "Explain why fast feedback loops improve software development.",
+    "prompt_b": "Explain why quick feedback loops improve software development."
+  },
+  {
+    "id": "synonym_small_tiny",
+    "category": "synonym",
+    "prompt_a": "Explain how a small perturbation can grow in a chaotic system.",
+    "prompt_b": "Explain how a tiny perturbation can grow in a chaotic system."
+  },
+  {
+    "id": "synonym_happy_joyful",
+    "category": "synonym",
+    "prompt_a": "Write a short story about a happy scientist discovering an unexpected pattern.",
+    "prompt_b": "Write a short story about a joyful scientist discovering an unexpected pattern."
+  },
+  {
+    "id": "synonym_safe_secure",
+    "category": "synonym",
+    "prompt_a": "Explain how to make a web service safe against common input mistakes.",
+    "prompt_b": "Explain how to make a web service secure against common input mistakes."
+  },
+  {
+    "id": "synonym_large_big",
+    "category": "synonym",
+    "prompt_a": "Explain why large systems often need observability.",
+    "prompt_b": "Explain why big systems often need observability."
+  },
+  {
+    "id": "synonym_error_failure",
+    "category": "synonym",
+    "prompt_a": "Describe how an error in one service can affect downstream systems.",
+    "prompt_b": "Describe how a failure in one service can affect downstream systems."
+  },
+  {
+    "id": "synonym_simple_basic",
+    "category": "synonym",
+    "prompt_a": "Give a simple explanation of why indexes speed up database queries.",
+    "prompt_b": "Give a basic explanation of why indexes speed up database queries."
+  },
+  {
+    "id": "synonym_reduce_lower",
+    "category": "synonym",
+    "prompt_a": "Explain how caching can reduce latency for repeated requests.",
+    "prompt_b": "Explain how caching can lower latency for repeated requests."
+  },
+  {
+    "id": "paraphrase_stability",
+    "category": "paraphrase",
+    "prompt_a": "Give three practical reasons a software team might care about model output stability.",
+    "prompt_b": "List three practical reasons why output stability could matter to a software team using language models."
+  },
+  {
+    "id": "paraphrase_rate_limits",
+    "category": "paraphrase",
+    "prompt_a": "Explain how rate limits should influence the design of a background job queue.",
+    "prompt_b": "Describe how a background job queue design should change when an API enforces rate limits."
+  },
+  {
+    "id": "paraphrase_tests",
+    "category": "paraphrase",
+    "prompt_a": "Explain why regression tests are useful after refactoring code.",
+    "prompt_b": "Describe the value of running regression tests once a codebase has been refactored."
+  },
+  {
+    "id": "paraphrase_monitoring",
+    "category": "paraphrase",
+    "prompt_a": "Explain why monitoring matters when a system has many dependencies.",
+    "prompt_b": "Describe why teams should monitor services that rely on many dependencies."
+  },
+  {
+    "id": "paraphrase_incident",
+    "category": "paraphrase",
+    "prompt_a": "Describe how an incident review should help a software team improve.",
+    "prompt_b": "Explain what a software team should learn from reviewing an incident."
+  },
+  {
+    "id": "semantic_weather_markets",
+    "category": "semantic_small",
+    "prompt_a": "Explain why weather forecasts become unreliable after enough time, in one concise paragraph.",
+    "prompt_b": "Explain why stock market forecasts become unreliable after enough time, in one concise paragraph."
+  },
+  {
+    "id": "semantic_palindrome_sorted",
+    "category": "semantic_small",
+    "prompt_a": "Write a concise Python function that checks whether a string is a palindrome.",
+    "prompt_b": "Write a concise Python function that checks whether a list is sorted."
+  },
+  {
+    "id": "semantic_cache_queue",
+    "category": "semantic_small",
+    "prompt_a": "Describe when a cache should be invalidated in a web application.",
+    "prompt_b": "Describe when a background job should be retried in a web application."
+  },
+  {
+    "id": "semantic_monitoring_logging",
+    "category": "semantic_small",
+    "prompt_a": "Explain why monitoring matters when a system has many dependencies.",
+    "prompt_b": "Explain why structured logging matters when a system has many dependencies."
+  },
+  {
+    "id": "semantic_schema_migration",
+    "category": "semantic_small",
+    "prompt_a": "Explain why JSON schemas are useful for service interfaces.",
+    "prompt_b": "Explain why database migrations are risky for service interfaces."
+  },
+  {
+    "id": "positive_lyapunov_menu",
+    "category": "positive_control",
+    "prompt_a": "Summarize the concept of Lyapunov exponents for an engineering audience.",
+    "prompt_b": "Draft a dinner menu for a vegetarian birthday party."
+  },
+  {
+    "id": "positive_python_poem",
+    "category": "positive_control",
+    "prompt_a": "Write a concise Python function that merges two sorted lists.",
+    "prompt_b": "Write a short poem about a quiet harbor at sunrise."
+  },
+  {
+    "id": "positive_cache_history",
+    "category": "positive_control",
+    "prompt_a": "Describe when a cache should be invalidated in a web application.",
+    "prompt_b": "Explain the causes of the French Revolution in one paragraph."
+  }
+]

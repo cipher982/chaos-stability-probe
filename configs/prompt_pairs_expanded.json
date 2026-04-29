@@ -1,0 +1,129 @@
+[
+  {
+    "id": "control_weather",
+    "category": "control_identical",
+    "prompt_a": "Explain why weather forecasts become unreliable after enough time, in one concise paragraph.",
+    "prompt_b": "Explain why weather forecasts become unreliable after enough time, in one concise paragraph."
+  },
+  {
+    "id": "control_palindrome",
+    "category": "control_identical",
+    "prompt_a": "Write a concise Python function that checks whether a string is a palindrome.",
+    "prompt_b": "Write a concise Python function that checks whether a string is a palindrome."
+  },
+  {
+    "id": "control_stability",
+    "category": "control_identical",
+    "prompt_a": "Give three practical reasons a software team might care about model output stability.",
+    "prompt_b": "Give three practical reasons a software team might care about model output stability."
+  },
+  {
+    "id": "noop_weather_newline",
+    "category": "noop_format",
+    "prompt_a": "Explain why weather forecasts become unreliable after enough time, in one concise paragraph.",
+    "prompt_b": "Explain why weather forecasts become unreliable after enough time, in one concise paragraph.\n"
+  },
+  {
+    "id": "noop_palindrome_spaces",
+    "category": "noop_format",
+    "prompt_a": "Write a concise Python function that checks whether a string is a palindrome.",
+    "prompt_b": "Write a concise Python function that checks whether a string is a palindrome. "
+  },
+  {
+    "id": "noop_stability_newline",
+    "category": "noop_format",
+    "prompt_a": "Give three practical reasons a software team might care about model output stability.",
+    "prompt_b": "\nGive three practical reasons a software team might care about model output stability."
+  },
+  {
+    "id": "punctuation_complex_system",
+    "category": "punctuation",
+    "prompt_a": "Explain how small changes can affect a complex system over time.",
+    "prompt_b": "Explain how small changes can affect a complex system, over time."
+  },
+  {
+    "id": "punctuation_api",
+    "category": "punctuation",
+    "prompt_a": "List the main risks of depending on an external API in production.",
+    "prompt_b": "List the main risks of depending on an external API, in production."
+  },
+  {
+    "id": "punctuation_cache",
+    "category": "punctuation",
+    "prompt_a": "Describe when a cache should be invalidated in a web application.",
+    "prompt_b": "Describe when a cache should be invalidated, in a web application."
+  },
+  {
+    "id": "synonym_happy_joyful",
+    "category": "synonym",
+    "prompt_a": "Write a short story about a happy scientist discovering an unexpected pattern.",
+    "prompt_b": "Write a short story about a joyful scientist discovering an unexpected pattern."
+  },
+  {
+    "id": "synonym_fast_quick",
+    "category": "synonym",
+    "prompt_a": "Explain why fast feedback loops improve software development.",
+    "prompt_b": "Explain why quick feedback loops improve software development."
+  },
+  {
+    "id": "synonym_small_tiny",
+    "category": "synonym",
+    "prompt_a": "Explain how a small perturbation can grow in a chaotic system.",
+    "prompt_b": "Explain how a tiny perturbation can grow in a chaotic system."
+  },
+  {
+    "id": "paraphrase_stability",
+    "category": "paraphrase",
+    "prompt_a": "Give three practical reasons a software team might care about model output stability.",
+    "prompt_b": "List three practical reasons why output stability could matter to a software team using language models."
+  },
+  {
+    "id": "paraphrase_rate_limits",
+    "category": "paraphrase",
+    "prompt_a": "Explain how rate limits should influence the design of a background job queue.",
+    "prompt_b": "Describe how a background job queue design should change when an API enforces rate limits."
+  },
+  {
+    "id": "paraphrase_tests",
+    "category": "paraphrase",
+    "prompt_a": "Explain why regression tests are useful after refactoring code.",
+    "prompt_b": "Describe the value of running regression tests once a codebase has been refactored."
+  },
+  {
+    "id": "semantic_palindrome_sorted",
+    "category": "semantic_small",
+    "prompt_a": "Write a concise Python function that checks whether a string is a palindrome.",
+    "prompt_b": "Write a concise Python function that checks whether a list is sorted."
+  },
+  {
+    "id": "semantic_weather_markets",
+    "category": "semantic_small",
+    "prompt_a": "Explain why weather forecasts become unreliable after enough time, in one concise paragraph.",
+    "prompt_b": "Explain why stock market forecasts become unreliable after enough time, in one concise paragraph."
+  },
+  {
+    "id": "semantic_cache_queue",
+    "category": "semantic_small",
+    "prompt_a": "Describe when a cache should be invalidated in a web application.",
+    "prompt_b": "Describe when a background job should be retried in a web application."
+  },
+  {
+    "id": "positive_lyapunov_menu",
+    "category": "positive_control",
+    "prompt_a": "Summarize the concept of Lyapunov exponents for an engineering audience.",
+    "prompt_b": "Draft a dinner menu for a vegetarian birthday party."
+  },
+  {
+    "id": "positive_python_poem",
+    "category": "positive_control",
+    "prompt_a": "Write a concise Python function that merges two sorted lists.",
+    "prompt_b": "Write a short poem about a quiet harbor at sunrise."
+  },
+  {
+    "id": "positive_cache_history",
+    "category": "positive_control",
+    "prompt_a": "Describe when a cache should be invalidated in a web application.",
+    "prompt_b": "Explain the causes of the French Revolution in one paragraph."
+  }
+]
+

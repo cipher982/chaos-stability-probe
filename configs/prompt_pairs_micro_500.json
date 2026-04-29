@@ -1,0 +1,3152 @@
+[
+  {
+    "id": "micro_control_identical_000",
+    "category": "micro_control_identical",
+    "prompt_a": "Explain why weather forecasts become unreliable after enough time, in one concise paragraph.",
+    "prompt_b": "Explain why weather forecasts become unreliable after enough time, in one concise paragraph."
+  },
+  {
+    "id": "micro_control_identical_001",
+    "category": "micro_control_identical",
+    "prompt_a": "Describe when a cache should be invalidated in a web application.",
+    "prompt_b": "Describe when a cache should be invalidated in a web application."
+  },
+  {
+    "id": "micro_control_identical_002",
+    "category": "micro_control_identical",
+    "prompt_a": "List the main risks of depending on an external API in production.",
+    "prompt_b": "List the main risks of depending on an external API in production."
+  },
+  {
+    "id": "micro_control_identical_003",
+    "category": "micro_control_identical",
+    "prompt_a": "Explain why JSON schemas are useful for service interfaces.",
+    "prompt_b": "Explain why JSON schemas are useful for service interfaces."
+  },
+  {
+    "id": "micro_control_identical_004",
+    "category": "micro_control_identical",
+    "prompt_a": "Give three reasons production services need monitoring.",
+    "prompt_b": "Give three reasons production services need monitoring."
+  },
+  {
+    "id": "micro_control_identical_005",
+    "category": "micro_control_identical",
+    "prompt_a": "Explain how rate limits should influence background job design.",
+    "prompt_b": "Explain how rate limits should influence background job design."
+  },
+  {
+    "id": "micro_control_identical_006",
+    "category": "micro_control_identical",
+    "prompt_a": "List the main reasons secrets should not be committed to a repository.",
+    "prompt_b": "List the main reasons secrets should not be committed to a repository."
+  },
+  {
+    "id": "micro_control_identical_007",
+    "category": "micro_control_identical",
+    "prompt_a": "Write a concise Python function that checks whether a string is a palindrome.",
+    "prompt_b": "Write a concise Python function that checks whether a string is a palindrome."
+  },
+  {
+    "id": "micro_control_identical_008",
+    "category": "micro_control_identical",
+    "prompt_a": "Explain why regression tests are useful after refactoring code.",
+    "prompt_b": "Explain why regression tests are useful after refactoring code."
+  },
+  {
+    "id": "micro_control_identical_009",
+    "category": "micro_control_identical",
+    "prompt_a": "Describe how a background job queue should handle retries.",
+    "prompt_b": "Describe how a background job queue should handle retries."
+  },
+  {
+    "id": "micro_control_identical_010",
+    "category": "micro_control_identical",
+    "prompt_a": "Explain why database migrations should be reviewed carefully.",
+    "prompt_b": "Explain why database migrations should be reviewed carefully."
+  },
+  {
+    "id": "micro_control_identical_011",
+    "category": "micro_control_identical",
+    "prompt_a": "Describe how feature flags reduce deployment risk.",
+    "prompt_b": "Describe how feature flags reduce deployment risk."
+  },
+  {
+    "id": "micro_control_identical_012",
+    "category": "micro_control_identical",
+    "prompt_a": "Explain why retry logic should use exponential backoff.",
+    "prompt_b": "Explain why retry logic should use exponential backoff."
+  },
+  {
+    "id": "micro_control_identical_013",
+    "category": "micro_control_identical",
+    "prompt_a": "List the tradeoffs of using a monorepo for many services.",
+    "prompt_b": "List the tradeoffs of using a monorepo for many services."
+  },
+  {
+    "id": "micro_control_identical_014",
+    "category": "micro_control_identical",
+    "prompt_a": "Explain why observability matters in distributed systems.",
+    "prompt_b": "Explain why observability matters in distributed systems."
+  },
+  {
+    "id": "micro_control_identical_015",
+    "category": "micro_control_identical",
+    "prompt_a": "Describe how an idempotency key prevents duplicate work.",
+    "prompt_b": "Describe how an idempotency key prevents duplicate work."
+  },
+  {
+    "id": "micro_control_identical_016",
+    "category": "micro_control_identical",
+    "prompt_a": "Explain why user input should be validated at service boundaries.",
+    "prompt_b": "Explain why user input should be validated at service boundaries."
+  },
+  {
+    "id": "micro_control_identical_017",
+    "category": "micro_control_identical",
+    "prompt_a": "List the main benefits of type checking in a large codebase.",
+    "prompt_b": "List the main benefits of type checking in a large codebase."
+  },
+  {
+    "id": "micro_control_identical_018",
+    "category": "micro_control_identical",
+    "prompt_a": "Describe how a circuit breaker protects a downstream dependency.",
+    "prompt_b": "Describe how a circuit breaker protects a downstream dependency."
+  },
+  {
+    "id": "micro_control_identical_019",
+    "category": "micro_control_identical",
+    "prompt_a": "Explain why small changes can have large effects in complex systems.",
+    "prompt_b": "Explain why small changes can have large effects in complex systems."
+  },
+  {
+    "id": "micro_control_identical_020",
+    "category": "micro_control_identical",
+    "prompt_a": "Explain why weather forecasts become unreliable after enough time, in one concise paragraph.",
+    "prompt_b": "Explain why weather forecasts become unreliable after enough time, in one concise paragraph."
+  },
+  {
+    "id": "micro_control_identical_021",
+    "category": "micro_control_identical",
+    "prompt_a": "Describe when a cache should be invalidated in a web application.",
+    "prompt_b": "Describe when a cache should be invalidated in a web application."
+  },
+  {
+    "id": "micro_control_identical_022",
+    "category": "micro_control_identical",
+    "prompt_a": "List the main risks of depending on an external API in production.",
+    "prompt_b": "List the main risks of depending on an external API in production."
+  },
+  {
+    "id": "micro_control_identical_023",
+    "category": "micro_control_identical",
+    "prompt_a": "Explain why JSON schemas are useful for service interfaces.",
+    "prompt_b": "Explain why JSON schemas are useful for service interfaces."
+  },
+  {
+    "id": "micro_control_identical_024",
+    "category": "micro_control_identical",
+    "prompt_a": "Give three reasons production services need monitoring.",
+    "prompt_b": "Give three reasons production services need monitoring."
+  },
+  {
+    "id": "micro_trailing_space_0000",
+    "category": "micro_trailing_space",
+    "prompt_a": "Explain why weather forecasts become unreliable after enough time, in one concise paragraph.",
+    "prompt_b": "Explain why weather forecasts become unreliable after enough time, in one concise paragraph. "
+  },
+  {
+    "id": "micro_crlf_suffix_0001",
+    "category": "micro_crlf_suffix",
+    "prompt_a": "Describe when a cache should be invalidated in a web application.",
+    "prompt_b": "Describe when a cache should be invalidated in a web application.\r\n"
+  },
+  {
+    "id": "micro_duplicate_punctuation_0002",
+    "category": "micro_duplicate_punctuation",
+    "prompt_a": "List the main risks of depending on an external API in production.",
+    "prompt_b": "List the main risks of depending on an external API in production.."
+  },
+  {
+    "id": "micro_trailing_newline_0003",
+    "category": "micro_trailing_newline",
+    "prompt_a": "Explain why JSON schemas are useful for service interfaces.",
+    "prompt_b": "Explain why JSON schemas are useful for service interfaces.\n"
+  },
+  {
+    "id": "micro_space_before_punctuation_0004",
+    "category": "micro_space_before_punctuation",
+    "prompt_a": "Give three reasons production services need monitoring.",
+    "prompt_b": "Give three reasons production services need monitoring ."
+  },
+  {
+    "id": "micro_tab_indent_0005",
+    "category": "micro_tab_indent",
+    "prompt_a": "Explain how rate limits should influence background job design.",
+    "prompt_b": "\tExplain how rate limits should influence background job design."
+  },
+  {
+    "id": "micro_double_internal_space_0006",
+    "category": "micro_double_internal_space",
+    "prompt_a": "List the main reasons secrets should not be committed to a repository.",
+    "prompt_b": "List the main  reasons secrets should not be committed to a repository."
+  },
+  {
+    "id": "micro_duplicate_small_word_0007",
+    "category": "micro_duplicate_small_word",
+    "prompt_a": "Write a concise Python function that checks whether a string is a palindrome.",
+    "prompt_b": "Write a concise Python function that checks whether a string is a a palindrome."
+  },
+  {
+    "id": "micro_leading_space_0008",
+    "category": "micro_leading_space",
+    "prompt_a": "Explain why regression tests are useful after refactoring code.",
+    "prompt_b": "    Explain why regression tests are useful after refactoring code."
+  },
+  {
+    "id": "micro_line_wrap_0009",
+    "category": "micro_line_wrap",
+    "prompt_a": "Describe how a background job queue should handle retries.",
+    "prompt_b": "Describe how a\nbackground job queue should handle retries."
+  },
+  {
+    "id": "micro_space_after_punctuation_0010",
+    "category": "micro_space_after_punctuation",
+    "prompt_a": "Explain why database migrations should be reviewed carefully.",
+    "prompt_b": "Explain why database migrations should be reviewed carefully. "
+  },
+  {
+    "id": "micro_leading_newline_0011",
+    "category": "micro_leading_newline",
+    "prompt_a": "Describe how feature flags reduce deployment risk.",
+    "prompt_b": "\n\nDescribe how feature flags reduce deployment risk."
+  },
+  {
+    "id": "micro_parenthesize_word_0012",
+    "category": "micro_parenthesize_word",
+    "prompt_a": "Explain why retry logic should use exponential backoff.",
+    "prompt_b": "Explain why retry logic (should) use exponential backoff."
+  },
+  {
+    "id": "micro_tab_after_space_0013",
+    "category": "micro_tab_after_space",
+    "prompt_a": "List the tradeoffs of using a monorepo for many services.",
+    "prompt_b": "List the tradeoffs of using a monorepo \tfor many services."
+  },
+  {
+    "id": "micro_triple_internal_space_0014",
+    "category": "micro_triple_internal_space",
+    "prompt_a": "Explain why observability matters in distributed systems.",
+    "prompt_b": "Explain why observability matters   in distributed systems."
+  },
+  {
+    "id": "micro_trailing_space_0015",
+    "category": "micro_trailing_space",
+    "prompt_a": "Describe how an idempotency key prevents duplicate work.",
+    "prompt_b": "Describe how an idempotency key prevents duplicate work.   "
+  },
+  {
+    "id": "micro_blank_line_wrap_0016",
+    "category": "micro_blank_line_wrap",
+    "prompt_a": "Explain why user input should be validated at service boundaries.",
+    "prompt_b": "Explain why user input should\n\nbe validated at service boundaries."
+  },
+  {
+    "id": "micro_crlf_suffix_0017",
+    "category": "micro_crlf_suffix",
+    "prompt_a": "List the main benefits of type checking in a large codebase.",
+    "prompt_b": "List the main benefits of type checking in a large codebase.\r\n"
+  },
+  {
+    "id": "micro_trailing_newline_0018",
+    "category": "micro_trailing_newline",
+    "prompt_a": "Describe how a circuit breaker protects a downstream dependency.",
+    "prompt_b": "Describe how a circuit breaker protects a downstream dependency.\n\n\n"
+  },
+  {
+    "id": "micro_tab_indent_0019",
+    "category": "micro_tab_indent",
+    "prompt_a": "Explain why small changes can have large effects in complex systems.",
+    "prompt_b": "\tExplain why small changes can have large effects in complex systems."
+  },
+  {
+    "id": "micro_line_wrap_0020",
+    "category": "micro_line_wrap",
+    "prompt_a": "Explain why weather forecasts become unreliable after enough time, in one concise paragraph.",
+    "prompt_b": "Explain\nwhy weather forecasts become unreliable after enough time, in one concise paragraph."
+  },
+  {
+    "id": "micro_blank_line_wrap_0021",
+    "category": "micro_blank_line_wrap",
+    "prompt_a": "Describe when a cache should be invalidated in a web application.",
+    "prompt_b": "Describe when a cache\n\nshould be invalidated in a web application."
+  },
+  {
+    "id": "micro_trailing_space_0022",
+    "category": "micro_trailing_space",
+    "prompt_a": "List the main risks of depending on an external API in production.",
+    "prompt_b": "List the main risks of depending on an external API in production.    "
+  },
+  {
+    "id": "micro_leading_newline_0023",
+    "category": "micro_leading_newline",
+    "prompt_a": "Explain why JSON schemas are useful for service interfaces.",
+    "prompt_b": "\nExplain why JSON schemas are useful for service interfaces."
+  },
+  {
+    "id": "micro_leading_space_0024",
+    "category": "micro_leading_space",
+    "prompt_a": "Give three reasons production services need monitoring.",
+    "prompt_b": "  Give three reasons production services need monitoring."
+  },
+  {
+    "id": "micro_parenthesize_word_0025",
+    "category": "micro_parenthesize_word",
+    "prompt_a": "Explain how rate limits should influence background job design.",
+    "prompt_b": "Explain how rate limits should influence background (job) design."
+  },
+  {
+    "id": "micro_space_after_punctuation_0026",
+    "category": "micro_space_after_punctuation",
+    "prompt_a": "List the main reasons secrets should not be committed to a repository.",
+    "prompt_b": "List the main reasons secrets should not be committed to a repository. "
+  },
+  {
+    "id": "micro_double_internal_space_0027",
+    "category": "micro_double_internal_space",
+    "prompt_a": "Write a concise Python function that checks whether a string is a palindrome.",
+    "prompt_b": "Write a concise Python function that  checks whether a string is a palindrome."
+  },
+  {
+    "id": "micro_duplicate_punctuation_0028",
+    "category": "micro_duplicate_punctuation",
+    "prompt_a": "Explain why regression tests are useful after refactoring code.",
+    "prompt_b": "Explain why regression tests are useful after refactoring code.."
+  },
+  {
+    "id": "micro_triple_internal_space_0029",
+    "category": "micro_triple_internal_space",
+    "prompt_a": "Describe how a background job queue should handle retries.",
+    "prompt_b": "Describe how a background job queue should   handle retries."
+  },
+  {
+    "id": "micro_tab_after_space_0030",
+    "category": "micro_tab_after_space",
+    "prompt_a": "Explain why database migrations should be reviewed carefully.",
+    "prompt_b": "Explain \twhy database migrations should be reviewed carefully."
+  },
+  {
+    "id": "micro_duplicate_small_word_0031",
+    "category": "micro_duplicate_small_word",
+    "prompt_a": "Describe how feature flags reduce deployment risk.",
+    "prompt_b": "Describe how feature flags reduce deployment risk. "
+  },
+  {
+    "id": "micro_space_before_punctuation_0032",
+    "category": "micro_space_before_punctuation",
+    "prompt_a": "Explain why retry logic should use exponential backoff.",
+    "prompt_b": "Explain why retry logic should use exponential backoff ."
+  },
+  {
+    "id": "micro_space_after_punctuation_0033",
+    "category": "micro_space_after_punctuation",
+    "prompt_a": "List the tradeoffs of using a monorepo for many services.",
+    "prompt_b": "List the tradeoffs of using a monorepo for many services. "
+  },
+  {
+    "id": "micro_tab_after_space_0034",
+    "category": "micro_tab_after_space",
+    "prompt_a": "Explain why observability matters in distributed systems.",
+    "prompt_b": "Explain why \tobservability matters in distributed systems."
+  },
+  {
+    "id": "micro_blank_line_wrap_0035",
+    "category": "micro_blank_line_wrap",
+    "prompt_a": "Describe how an idempotency key prevents duplicate work.",
+    "prompt_b": "Describe how\n\nan idempotency key prevents duplicate work."
+  },
+  {
+    "id": "micro_double_internal_space_0036",
+    "category": "micro_double_internal_space",
+    "prompt_a": "Explain why user input should be validated at service boundaries.",
+    "prompt_b": "Explain why user input should be validated at service  boundaries."
+  },
+  {
+    "id": "micro_duplicate_small_word_0037",
+    "category": "micro_duplicate_small_word",
+    "prompt_a": "List the main benefits of type checking in a large codebase.",
+    "prompt_b": "List the main benefits of type checking in a a large codebase."
+  },
+  {
+    "id": "micro_triple_internal_space_0038",
+    "category": "micro_triple_internal_space",
+    "prompt_a": "Describe how a circuit breaker protects a downstream dependency.",
+    "prompt_b": "Describe how a circuit breaker protects   a downstream dependency."
+  },
+  {
+    "id": "micro_line_wrap_0039",
+    "category": "micro_line_wrap",
+    "prompt_a": "Explain why small changes can have large effects in complex systems.",
+    "prompt_b": "Explain why small changes can have large effects\nin complex systems."
+  },
+  {
+    "id": "micro_space_before_punctuation_0040",
+    "category": "micro_space_before_punctuation",
+    "prompt_a": "Explain why weather forecasts become unreliable after enough time, in one concise paragraph.",
+    "prompt_b": "Explain why weather forecasts become unreliable after enough time , in one concise paragraph."
+  },
+  {
+    "id": "micro_crlf_suffix_0041",
+    "category": "micro_crlf_suffix",
+    "prompt_a": "Describe when a cache should be invalidated in a web application.",
+    "prompt_b": "Describe when a cache should be invalidated in a web application.\r\n"
+  },
+  {
+    "id": "micro_duplicate_punctuation_0042",
+    "category": "micro_duplicate_punctuation",
+    "prompt_a": "List the main risks of depending on an external API in production.",
+    "prompt_b": "List the main risks of depending on an external API in production.."
+  },
+  {
+    "id": "micro_tab_indent_0043",
+    "category": "micro_tab_indent",
+    "prompt_a": "Explain why JSON schemas are useful for service interfaces.",
+    "prompt_b": "\tExplain why JSON schemas are useful for service interfaces."
+  },
+  {
+    "id": "micro_leading_newline_0044",
+    "category": "micro_leading_newline",
+    "prompt_a": "Give three reasons production services need monitoring.",
+    "prompt_b": "\n\nGive three reasons production services need monitoring."
+  },
+  {
+    "id": "micro_trailing_newline_0045",
+    "category": "micro_trailing_newline",
+    "prompt_a": "Explain how rate limits should influence background job design.",
+    "prompt_b": "Explain how rate limits should influence background job design.\n\n\n"
+  },
+  {
+    "id": "micro_leading_space_0046",
+    "category": "micro_leading_space",
+    "prompt_a": "List the main reasons secrets should not be committed to a repository.",
+    "prompt_b": "    List the main reasons secrets should not be committed to a repository."
+  },
+  {
+    "id": "micro_trailing_space_0047",
+    "category": "micro_trailing_space",
+    "prompt_a": "Write a concise Python function that checks whether a string is a palindrome.",
+    "prompt_b": "Write a concise Python function that checks whether a string is a palindrome.   "
+  },
+  {
+    "id": "micro_parenthesize_word_0048",
+    "category": "micro_parenthesize_word",
+    "prompt_a": "Explain why regression tests are useful after refactoring code.",
+    "prompt_b": "(Explain) why regression tests are useful after refactoring code."
+  },
+  {
+    "id": "micro_leading_space_0049",
+    "category": "micro_leading_space",
+    "prompt_a": "Describe how a background job queue should handle retries.",
+    "prompt_b": "  Describe how a background job queue should handle retries."
+  },
+  {
+    "id": "micro_triple_internal_space_0050",
+    "category": "micro_triple_internal_space",
+    "prompt_a": "Explain why database migrations should be reviewed carefully.",
+    "prompt_b": "Explain why database migrations should   be reviewed carefully."
+  },
+  {
+    "id": "micro_tab_indent_0051",
+    "category": "micro_tab_indent",
+    "prompt_a": "Describe how feature flags reduce deployment risk.",
+    "prompt_b": "\tDescribe how feature flags reduce deployment risk."
+  },
+  {
+    "id": "micro_leading_newline_0052",
+    "category": "micro_leading_newline",
+    "prompt_a": "Explain why retry logic should use exponential backoff.",
+    "prompt_b": "\n\nExplain why retry logic should use exponential backoff."
+  },
+  {
+    "id": "micro_trailing_newline_0053",
+    "category": "micro_trailing_newline",
+    "prompt_a": "List the tradeoffs of using a monorepo for many services.",
+    "prompt_b": "List the tradeoffs of using a monorepo for many services.\n\n"
+  },
+  {
+    "id": "micro_line_wrap_0054",
+    "category": "micro_line_wrap",
+    "prompt_a": "Explain why observability matters in distributed systems.",
+    "prompt_b": "Explain why\nobservability matters in distributed systems."
+  },
+  {
+    "id": "micro_double_internal_space_0055",
+    "category": "micro_double_internal_space",
+    "prompt_a": "Describe how an idempotency key prevents duplicate work.",
+    "prompt_b": "Describe  how an idempotency key prevents duplicate work."
+  },
+  {
+    "id": "micro_blank_line_wrap_0056",
+    "category": "micro_blank_line_wrap",
+    "prompt_a": "Explain why user input should be validated at service boundaries.",
+    "prompt_b": "Explain why user input should be validated\n\nat service boundaries."
+  },
+  {
+    "id": "micro_space_before_punctuation_0057",
+    "category": "micro_space_before_punctuation",
+    "prompt_a": "List the main benefits of type checking in a large codebase.",
+    "prompt_b": "List the main benefits of type checking in a large codebase ."
+  },
+  {
+    "id": "micro_space_after_punctuation_0058",
+    "category": "micro_space_after_punctuation",
+    "prompt_a": "Describe how a circuit breaker protects a downstream dependency.",
+    "prompt_b": "Describe how a circuit breaker protects a downstream dependency. "
+  },
+  {
+    "id": "micro_trailing_space_0059",
+    "category": "micro_trailing_space",
+    "prompt_a": "Explain why small changes can have large effects in complex systems.",
+    "prompt_b": "Explain why small changes can have large effects in complex systems.    "
+  },
+  {
+    "id": "micro_duplicate_punctuation_0060",
+    "category": "micro_duplicate_punctuation",
+    "prompt_a": "Explain why weather forecasts become unreliable after enough time, in one concise paragraph.",
+    "prompt_b": "Explain why weather forecasts become unreliable after enough time,, in one concise paragraph."
+  },
+  {
+    "id": "micro_crlf_suffix_0061",
+    "category": "micro_crlf_suffix",
+    "prompt_a": "Describe when a cache should be invalidated in a web application.",
+    "prompt_b": "Describe when a cache should be invalidated in a web application.\r\n"
+  },
+  {
+    "id": "micro_parenthesize_word_0062",
+    "category": "micro_parenthesize_word",
+    "prompt_a": "List the main risks of depending on an external API in production.",
+    "prompt_b": "List the main risks of depending on an external (API) in production."
+  },
+  {
+    "id": "micro_tab_after_space_0063",
+    "category": "micro_tab_after_space",
+    "prompt_a": "Explain why JSON schemas are useful for service interfaces.",
+    "prompt_b": "Explain why JSON schemas are useful for service \tinterfaces."
+  },
+  {
+    "id": "micro_duplicate_small_word_0064",
+    "category": "micro_duplicate_small_word",
+    "prompt_a": "Give three reasons production services need monitoring.",
+    "prompt_b": "Give three reasons production services need monitoring. "
+  },
+  {
+    "id": "micro_space_after_punctuation_0065",
+    "category": "micro_space_after_punctuation",
+    "prompt_a": "Explain how rate limits should influence background job design.",
+    "prompt_b": "Explain how rate limits should influence background job design. "
+  },
+  {
+    "id": "micro_double_internal_space_0066",
+    "category": "micro_double_internal_space",
+    "prompt_a": "List the main reasons secrets should not be committed to a repository.",
+    "prompt_b": "List the main reasons  secrets should not be committed to a repository."
+  },
+  {
+    "id": "micro_tab_after_space_0067",
+    "category": "micro_tab_after_space",
+    "prompt_a": "Write a concise Python function that checks whether a string is a palindrome.",
+    "prompt_b": "Write a concise Python function that checks whether a string is a \tpalindrome."
+  },
+  {
+    "id": "micro_duplicate_punctuation_0068",
+    "category": "micro_duplicate_punctuation",
+    "prompt_a": "Explain why regression tests are useful after refactoring code.",
+    "prompt_b": "Explain why regression tests are useful after refactoring code.."
+  },
+  {
+    "id": "micro_space_before_punctuation_0069",
+    "category": "micro_space_before_punctuation",
+    "prompt_a": "Describe how a background job queue should handle retries.",
+    "prompt_b": "Describe how a background job queue should handle retries ."
+  },
+  {
+    "id": "micro_line_wrap_0070",
+    "category": "micro_line_wrap",
+    "prompt_a": "Explain why database migrations should be reviewed carefully.",
+    "prompt_b": "Explain why\ndatabase migrations should be reviewed carefully."
+  },
+  {
+    "id": "micro_leading_space_0071",
+    "category": "micro_leading_space",
+    "prompt_a": "Describe how feature flags reduce deployment risk.",
+    "prompt_b": "  Describe how feature flags reduce deployment risk."
+  },
+  {
+    "id": "micro_triple_internal_space_0072",
+    "category": "micro_triple_internal_space",
+    "prompt_a": "Explain why retry logic should use exponential backoff.",
+    "prompt_b": "Explain why retry   logic should use exponential backoff."
+  },
+  {
+    "id": "micro_duplicate_small_word_0073",
+    "category": "micro_duplicate_small_word",
+    "prompt_a": "List the tradeoffs of using a monorepo for many services.",
+    "prompt_b": "List the tradeoffs of of using a monorepo for many services."
+  },
+  {
+    "id": "micro_tab_indent_0074",
+    "category": "micro_tab_indent",
+    "prompt_a": "Explain why observability matters in distributed systems.",
+    "prompt_b": "\tExplain why observability matters in distributed systems."
+  },
+  {
+    "id": "micro_blank_line_wrap_0075",
+    "category": "micro_blank_line_wrap",
+    "prompt_a": "Describe how an idempotency key prevents duplicate work.",
+    "prompt_b": "Describe how an idempotency key prevents\n\nduplicate work."
+  },
+  {
+    "id": "micro_parenthesize_word_0076",
+    "category": "micro_parenthesize_word",
+    "prompt_a": "Explain why user input should be validated at service boundaries.",
+    "prompt_b": "Explain why user input should be validated (at) service boundaries."
+  },
+  {
+    "id": "micro_leading_newline_0077",
+    "category": "micro_leading_newline",
+    "prompt_a": "List the main benefits of type checking in a large codebase.",
+    "prompt_b": "\nList the main benefits of type checking in a large codebase."
+  },
+  {
+    "id": "micro_trailing_space_0078",
+    "category": "micro_trailing_space",
+    "prompt_a": "Describe how a circuit breaker protects a downstream dependency.",
+    "prompt_b": "Describe how a circuit breaker protects a downstream dependency.  "
+  },
+  {
+    "id": "micro_crlf_suffix_0079",
+    "category": "micro_crlf_suffix",
+    "prompt_a": "Explain why small changes can have large effects in complex systems.",
+    "prompt_b": "Explain why small changes can have large effects in complex systems.\r\n"
+  },
+  {
+    "id": "micro_trailing_newline_0080",
+    "category": "micro_trailing_newline",
+    "prompt_a": "Explain why weather forecasts become unreliable after enough time, in one concise paragraph.",
+    "prompt_b": "Explain why weather forecasts become unreliable after enough time, in one concise paragraph.\n\n"
+  },
+  {
+    "id": "micro_parenthesize_word_0081",
+    "category": "micro_parenthesize_word",
+    "prompt_a": "Describe when a cache should be invalidated in a web application.",
+    "prompt_b": "Describe when a cache should be invalidated in a web (application)."
+  },
+  {
+    "id": "micro_double_internal_space_0082",
+    "category": "micro_double_internal_space",
+    "prompt_a": "List the main risks of depending on an external API in production.",
+    "prompt_b": "List the main risks  of depending on an external API in production."
+  },
+  {
+    "id": "micro_crlf_suffix_0083",
+    "category": "micro_crlf_suffix",
+    "prompt_a": "Explain why JSON schemas are useful for service interfaces.",
+    "prompt_b": "Explain why JSON schemas are useful for service interfaces.\r\n"
+  },
+  {
+    "id": "micro_tab_after_space_0084",
+    "category": "micro_tab_after_space",
+    "prompt_a": "Give three reasons production services need monitoring.",
+    "prompt_b": "Give three reasons \tproduction services need monitoring."
+  },
+  {
+    "id": "micro_leading_space_0085",
+    "category": "micro_leading_space",
+    "prompt_a": "Explain how rate limits should influence background job design.",
+    "prompt_b": "   Explain how rate limits should influence background job design."
+  },
+  {
+    "id": "micro_space_after_punctuation_0086",
+    "category": "micro_space_after_punctuation",
+    "prompt_a": "List the main reasons secrets should not be committed to a repository.",
+    "prompt_b": "List the main reasons secrets should not be committed to a repository. "
+  },
+  {
+    "id": "micro_trailing_newline_0087",
+    "category": "micro_trailing_newline",
+    "prompt_a": "Write a concise Python function that checks whether a string is a palindrome.",
+    "prompt_b": "Write a concise Python function that checks whether a string is a palindrome.\n\n"
+  },
+  {
+    "id": "micro_duplicate_small_word_0088",
+    "category": "micro_duplicate_small_word",
+    "prompt_a": "Explain why regression tests are useful after refactoring code.",
+    "prompt_b": "Explain why regression tests are useful after refactoring code. "
+  },
+  {
+    "id": "micro_duplicate_punctuation_0089",
+    "category": "micro_duplicate_punctuation",
+    "prompt_a": "Describe how a background job queue should handle retries.",
+    "prompt_b": "Describe how a background job queue should handle retries.."
+  },
+  {
+    "id": "micro_line_wrap_0090",
+    "category": "micro_line_wrap",
+    "prompt_a": "Explain why database migrations should be reviewed carefully.",
+    "prompt_b": "Explain why database migrations should\nbe reviewed carefully."
+  },
+  {
+    "id": "micro_trailing_space_0091",
+    "category": "micro_trailing_space",
+    "prompt_a": "Describe how feature flags reduce deployment risk.",
+    "prompt_b": "Describe how feature flags reduce deployment risk.    "
+  },
+  {
+    "id": "micro_leading_newline_0092",
+    "category": "micro_leading_newline",
+    "prompt_a": "Explain why retry logic should use exponential backoff.",
+    "prompt_b": "\nExplain why retry logic should use exponential backoff."
+  },
+  {
+    "id": "micro_triple_internal_space_0093",
+    "category": "micro_triple_internal_space",
+    "prompt_a": "List the tradeoffs of using a monorepo for many services.",
+    "prompt_b": "List the tradeoffs   of using a monorepo for many services."
+  },
+  {
+    "id": "micro_blank_line_wrap_0094",
+    "category": "micro_blank_line_wrap",
+    "prompt_a": "Explain why observability matters in distributed systems.",
+    "prompt_b": "Explain\n\nwhy observability matters in distributed systems."
+  },
+  {
+    "id": "micro_space_before_punctuation_0095",
+    "category": "micro_space_before_punctuation",
+    "prompt_a": "Describe how an idempotency key prevents duplicate work.",
+    "prompt_b": "Describe how an idempotency key prevents duplicate work ."
+  },
+  {
+    "id": "micro_tab_indent_0096",
+    "category": "micro_tab_indent",
+    "prompt_a": "Explain why user input should be validated at service boundaries.",
+    "prompt_b": "\tExplain why user input should be validated at service boundaries."
+  },
+  {
+    "id": "micro_space_after_punctuation_0097",
+    "category": "micro_space_after_punctuation",
+    "prompt_a": "List the main benefits of type checking in a large codebase.",
+    "prompt_b": "List the main benefits of type checking in a large codebase. "
+  },
+  {
+    "id": "micro_trailing_space_0098",
+    "category": "micro_trailing_space",
+    "prompt_a": "Describe how a circuit breaker protects a downstream dependency.",
+    "prompt_b": "Describe how a circuit breaker protects a downstream dependency.    "
+  },
+  {
+    "id": "micro_leading_space_0099",
+    "category": "micro_leading_space",
+    "prompt_a": "Explain why small changes can have large effects in complex systems.",
+    "prompt_b": "  Explain why small changes can have large effects in complex systems."
+  },
+  {
+    "id": "micro_triple_internal_space_0100",
+    "category": "micro_triple_internal_space",
+    "prompt_a": "Explain why weather forecasts become unreliable after enough time, in one concise paragraph.",
+    "prompt_b": "Explain why weather forecasts become unreliable after   enough time, in one concise paragraph."
+  },
+  {
+    "id": "micro_tab_after_space_0101",
+    "category": "micro_tab_after_space",
+    "prompt_a": "Describe when a cache should be invalidated in a web application.",
+    "prompt_b": "Describe when a cache should \tbe invalidated in a web application."
+  },
+  {
+    "id": "micro_trailing_newline_0102",
+    "category": "micro_trailing_newline",
+    "prompt_a": "List the main risks of depending on an external API in production.",
+    "prompt_b": "List the main risks of depending on an external API in production.\n\n"
+  },
+  {
+    "id": "micro_double_internal_space_0103",
+    "category": "micro_double_internal_space",
+    "prompt_a": "Explain why JSON schemas are useful for service interfaces.",
+    "prompt_b": "Explain why JSON schemas  are useful for service interfaces."
+  },
+  {
+    "id": "micro_tab_indent_0104",
+    "category": "micro_tab_indent",
+    "prompt_a": "Give three reasons production services need monitoring.",
+    "prompt_b": "\tGive three reasons production services need monitoring."
+  },
+  {
+    "id": "micro_duplicate_small_word_0105",
+    "category": "micro_duplicate_small_word",
+    "prompt_a": "Explain how rate limits should influence background job design.",
+    "prompt_b": "Explain how rate limits should influence background job design. "
+  },
+  {
+    "id": "micro_line_wrap_0106",
+    "category": "micro_line_wrap",
+    "prompt_a": "List the main reasons secrets should not be committed to a repository.",
+    "prompt_b": "List the main\nreasons secrets should not be committed to a repository."
+  },
+  {
+    "id": "micro_blank_line_wrap_0107",
+    "category": "micro_blank_line_wrap",
+    "prompt_a": "Write a concise Python function that checks whether a string is a palindrome.",
+    "prompt_b": "Write a concise Python function that checks whether a\n\nstring is a palindrome."
+  },
+  {
+    "id": "micro_leading_newline_0108",
+    "category": "micro_leading_newline",
+    "prompt_a": "Explain why regression tests are useful after refactoring code.",
+    "prompt_b": "\n\nExplain why regression tests are useful after refactoring code."
+  },
+  {
+    "id": "micro_space_before_punctuation_0109",
+    "category": "micro_space_before_punctuation",
+    "prompt_a": "Describe how a background job queue should handle retries.",
+    "prompt_b": "Describe how a background job queue should handle retries ."
+  },
+  {
+    "id": "micro_crlf_suffix_0110",
+    "category": "micro_crlf_suffix",
+    "prompt_a": "Explain why database migrations should be reviewed carefully.",
+    "prompt_b": "Explain why database migrations should be reviewed carefully.\r\n"
+  },
+  {
+    "id": "micro_duplicate_punctuation_0111",
+    "category": "micro_duplicate_punctuation",
+    "prompt_a": "Describe how feature flags reduce deployment risk.",
+    "prompt_b": "Describe how feature flags reduce deployment risk.."
+  },
+  {
+    "id": "micro_parenthesize_word_0112",
+    "category": "micro_parenthesize_word",
+    "prompt_a": "Explain why retry logic should use exponential backoff.",
+    "prompt_b": "Explain why retry logic should use exponential (backoff)."
+  },
+  {
+    "id": "micro_duplicate_punctuation_0113",
+    "category": "micro_duplicate_punctuation",
+    "prompt_a": "List the tradeoffs of using a monorepo for many services.",
+    "prompt_b": "List the tradeoffs of using a monorepo for many services.."
+  },
+  {
+    "id": "micro_trailing_space_0114",
+    "category": "micro_trailing_space",
+    "prompt_a": "Explain why observability matters in distributed systems.",
+    "prompt_b": "Explain why observability matters in distributed systems. "
+  },
+  {
+    "id": "micro_space_after_punctuation_0115",
+    "category": "micro_space_after_punctuation",
+    "prompt_a": "Describe how an idempotency key prevents duplicate work.",
+    "prompt_b": "Describe how an idempotency key prevents duplicate work. "
+  },
+  {
+    "id": "micro_duplicate_small_word_0116",
+    "category": "micro_duplicate_small_word",
+    "prompt_a": "Explain why user input should be validated at service boundaries.",
+    "prompt_b": "Explain why user input should be be validated at service boundaries."
+  },
+  {
+    "id": "micro_crlf_suffix_0117",
+    "category": "micro_crlf_suffix",
+    "prompt_a": "List the main benefits of type checking in a large codebase.",
+    "prompt_b": "List the main benefits of type checking in a large codebase.\r\n"
+  },
+  {
+    "id": "micro_tab_after_space_0118",
+    "category": "micro_tab_after_space",
+    "prompt_a": "Describe how a circuit breaker protects a downstream dependency.",
+    "prompt_b": "Describe \thow a circuit breaker protects a downstream dependency."
+  },
+  {
+    "id": "micro_leading_space_0119",
+    "category": "micro_leading_space",
+    "prompt_a": "Explain why small changes can have large effects in complex systems.",
+    "prompt_b": "   Explain why small changes can have large effects in complex systems."
+  },
+  {
+    "id": "micro_space_before_punctuation_0120",
+    "category": "micro_space_before_punctuation",
+    "prompt_a": "Explain why weather forecasts become unreliable after enough time, in one concise paragraph.",
+    "prompt_b": "Explain why weather forecasts become unreliable after enough time, in one concise paragraph ."
+  },
+  {
+    "id": "micro_blank_line_wrap_0121",
+    "category": "micro_blank_line_wrap",
+    "prompt_a": "Describe when a cache should be invalidated in a web application.",
+    "prompt_b": "Describe when a cache should be\n\ninvalidated in a web application."
+  },
+  {
+    "id": "micro_leading_newline_0122",
+    "category": "micro_leading_newline",
+    "prompt_a": "List the main risks of depending on an external API in production.",
+    "prompt_b": "\n\nList the main risks of depending on an external API in production."
+  },
+  {
+    "id": "micro_triple_internal_space_0123",
+    "category": "micro_triple_internal_space",
+    "prompt_a": "Explain why JSON schemas are useful for service interfaces.",
+    "prompt_b": "Explain why JSON schemas   are useful for service interfaces."
+  },
+  {
+    "id": "micro_double_internal_space_0124",
+    "category": "micro_double_internal_space",
+    "prompt_a": "Give three reasons production services need monitoring.",
+    "prompt_b": "Give three reasons  production services need monitoring."
+  },
+  {
+    "id": "micro_line_wrap_0125",
+    "category": "micro_line_wrap",
+    "prompt_a": "Explain how rate limits should influence background job design.",
+    "prompt_b": "Explain how rate limits should influence\nbackground job design."
+  },
+  {
+    "id": "micro_parenthesize_word_0126",
+    "category": "micro_parenthesize_word",
+    "prompt_a": "List the main reasons secrets should not be committed to a repository.",
+    "prompt_b": "List the main (reasons) secrets should not be committed to a repository."
+  },
+  {
+    "id": "micro_trailing_newline_0127",
+    "category": "micro_trailing_newline",
+    "prompt_a": "Write a concise Python function that checks whether a string is a palindrome.",
+    "prompt_b": "Write a concise Python function that checks whether a string is a palindrome.\n\n\n"
+  },
+  {
+    "id": "micro_tab_indent_0128",
+    "category": "micro_tab_indent",
+    "prompt_a": "Explain why regression tests are useful after refactoring code.",
+    "prompt_b": "\tExplain why regression tests are useful after refactoring code."
+  },
+  {
+    "id": "micro_duplicate_small_word_0129",
+    "category": "micro_duplicate_small_word",
+    "prompt_a": "Describe how a background job queue should handle retries.",
+    "prompt_b": "Describe how a a background job queue should handle retries."
+  },
+  {
+    "id": "micro_trailing_newline_0130",
+    "category": "micro_trailing_newline",
+    "prompt_a": "Explain why database migrations should be reviewed carefully.",
+    "prompt_b": "Explain why database migrations should be reviewed carefully.\n\n\n"
+  },
+  {
+    "id": "micro_space_before_punctuation_0131",
+    "category": "micro_space_before_punctuation",
+    "prompt_a": "Describe how feature flags reduce deployment risk.",
+    "prompt_b": "Describe how feature flags reduce deployment risk ."
+  },
+  {
+    "id": "micro_trailing_space_0132",
+    "category": "micro_trailing_space",
+    "prompt_a": "Explain why retry logic should use exponential backoff.",
+    "prompt_b": "Explain why retry logic should use exponential backoff. "
+  },
+  {
+    "id": "micro_triple_internal_space_0133",
+    "category": "micro_triple_internal_space",
+    "prompt_a": "List the tradeoffs of using a monorepo for many services.",
+    "prompt_b": "List the tradeoffs of using a monorepo for   many services."
+  },
+  {
+    "id": "micro_crlf_suffix_0134",
+    "category": "micro_crlf_suffix",
+    "prompt_a": "Explain why observability matters in distributed systems.",
+    "prompt_b": "Explain why observability matters in distributed systems.\r\n"
+  },
+  {
+    "id": "micro_double_internal_space_0135",
+    "category": "micro_double_internal_space",
+    "prompt_a": "Describe how an idempotency key prevents duplicate work.",
+    "prompt_b": "Describe how an idempotency key prevents  duplicate work."
+  },
+  {
+    "id": "micro_leading_newline_0136",
+    "category": "micro_leading_newline",
+    "prompt_a": "Explain why user input should be validated at service boundaries.",
+    "prompt_b": "\nExplain why user input should be validated at service boundaries."
+  },
+  {
+    "id": "micro_tab_indent_0137",
+    "category": "micro_tab_indent",
+    "prompt_a": "List the main benefits of type checking in a large codebase.",
+    "prompt_b": "\tList the main benefits of type checking in a large codebase."
+  },
+  {
+    "id": "micro_line_wrap_0138",
+    "category": "micro_line_wrap",
+    "prompt_a": "Describe how a circuit breaker protects a downstream dependency.",
+    "prompt_b": "Describe how a circuit breaker\nprotects a downstream dependency."
+  },
+  {
+    "id": "micro_duplicate_punctuation_0139",
+    "category": "micro_duplicate_punctuation",
+    "prompt_a": "Explain why small changes can have large effects in complex systems.",
+    "prompt_b": "Explain why small changes can have large effects in complex systems.."
+  },
+  {
+    "id": "micro_tab_after_space_0140",
+    "category": "micro_tab_after_space",
+    "prompt_a": "Explain why weather forecasts become unreliable after enough time, in one concise paragraph.",
+    "prompt_b": "Explain why \tweather forecasts become unreliable after enough time, in one concise paragraph."
+  },
+  {
+    "id": "micro_leading_space_0141",
+    "category": "micro_leading_space",
+    "prompt_a": "Describe when a cache should be invalidated in a web application.",
+    "prompt_b": " Describe when a cache should be invalidated in a web application."
+  },
+  {
+    "id": "micro_parenthesize_word_0142",
+    "category": "micro_parenthesize_word",
+    "prompt_a": "List the main risks of depending on an external API in production.",
+    "prompt_b": "List the main (risks) of depending on an external API in production."
+  },
+  {
+    "id": "micro_space_after_punctuation_0143",
+    "category": "micro_space_after_punctuation",
+    "prompt_a": "Explain why JSON schemas are useful for service interfaces.",
+    "prompt_b": "Explain why JSON schemas are useful for service interfaces. "
+  },
+  {
+    "id": "micro_blank_line_wrap_0144",
+    "category": "micro_blank_line_wrap",
+    "prompt_a": "Give three reasons production services need monitoring.",
+    "prompt_b": "Give\n\nthree reasons production services need monitoring."
+  },
+  {
+    "id": "micro_line_wrap_0145",
+    "category": "micro_line_wrap",
+    "prompt_a": "Explain how rate limits should influence background job design.",
+    "prompt_b": "Explain how rate limits should influence background job\ndesign."
+  },
+  {
+    "id": "micro_duplicate_punctuation_0146",
+    "category": "micro_duplicate_punctuation",
+    "prompt_a": "List the main reasons secrets should not be committed to a repository.",
+    "prompt_b": "List the main reasons secrets should not be committed to a repository.."
+  },
+  {
+    "id": "micro_crlf_suffix_0147",
+    "category": "micro_crlf_suffix",
+    "prompt_a": "Write a concise Python function that checks whether a string is a palindrome.",
+    "prompt_b": "Write a concise Python function that checks whether a string is a palindrome.\r\n"
+  },
+  {
+    "id": "micro_space_before_punctuation_0148",
+    "category": "micro_space_before_punctuation",
+    "prompt_a": "Explain why regression tests are useful after refactoring code.",
+    "prompt_b": "Explain why regression tests are useful after refactoring code ."
+  },
+  {
+    "id": "micro_blank_line_wrap_0149",
+    "category": "micro_blank_line_wrap",
+    "prompt_a": "Describe how a background job queue should handle retries.",
+    "prompt_b": "Describe how a\n\nbackground job queue should handle retries."
+  },
+  {
+    "id": "micro_parenthesize_word_0150",
+    "category": "micro_parenthesize_word",
+    "prompt_a": "Explain why database migrations should be reviewed carefully.",
+    "prompt_b": "Explain why database (migrations) should be reviewed carefully."
+  },
+  {
+    "id": "micro_leading_newline_0151",
+    "category": "micro_leading_newline",
+    "prompt_a": "Describe how feature flags reduce deployment risk.",
+    "prompt_b": "\nDescribe how feature flags reduce deployment risk."
+  },
+  {
+    "id": "micro_leading_space_0152",
+    "category": "micro_leading_space",
+    "prompt_a": "Explain why retry logic should use exponential backoff.",
+    "prompt_b": "    Explain why retry logic should use exponential backoff."
+  },
+  {
+    "id": "micro_tab_indent_0153",
+    "category": "micro_tab_indent",
+    "prompt_a": "List the tradeoffs of using a monorepo for many services.",
+    "prompt_b": "\tList the tradeoffs of using a monorepo for many services."
+  },
+  {
+    "id": "micro_space_after_punctuation_0154",
+    "category": "micro_space_after_punctuation",
+    "prompt_a": "Explain why observability matters in distributed systems.",
+    "prompt_b": "Explain why observability matters in distributed systems. "
+  },
+  {
+    "id": "micro_triple_internal_space_0155",
+    "category": "micro_triple_internal_space",
+    "prompt_a": "Describe how an idempotency key prevents duplicate work.",
+    "prompt_b": "Describe   how an idempotency key prevents duplicate work."
+  },
+  {
+    "id": "micro_tab_after_space_0156",
+    "category": "micro_tab_after_space",
+    "prompt_a": "Explain why user input should be validated at service boundaries.",
+    "prompt_b": "Explain why user input should be validated at \tservice boundaries."
+  },
+  {
+    "id": "micro_double_internal_space_0157",
+    "category": "micro_double_internal_space",
+    "prompt_a": "List the main benefits of type checking in a large codebase.",
+    "prompt_b": "List the main benefits of type  checking in a large codebase."
+  },
+  {
+    "id": "micro_trailing_space_0158",
+    "category": "micro_trailing_space",
+    "prompt_a": "Describe how a circuit breaker protects a downstream dependency.",
+    "prompt_b": "Describe how a circuit breaker protects a downstream dependency.   "
+  },
+  {
+    "id": "micro_duplicate_small_word_0159",
+    "category": "micro_duplicate_small_word",
+    "prompt_a": "Explain why small changes can have large effects in complex systems.",
+    "prompt_b": "Explain why small changes can have large effects in in complex systems."
+  },
+  {
+    "id": "micro_trailing_newline_0160",
+    "category": "micro_trailing_newline",
+    "prompt_a": "Explain why weather forecasts become unreliable after enough time, in one concise paragraph.",
+    "prompt_b": "Explain why weather forecasts become unreliable after enough time, in one concise paragraph.\n\n\n"
+  },
+  {
+    "id": "micro_duplicate_punctuation_0161",
+    "category": "micro_duplicate_punctuation",
+    "prompt_a": "Describe when a cache should be invalidated in a web application.",
+    "prompt_b": "Describe when a cache should be invalidated in a web application.."
+  },
+  {
+    "id": "micro_double_internal_space_0162",
+    "category": "micro_double_internal_space",
+    "prompt_a": "List the main risks of depending on an external API in production.",
+    "prompt_b": "List the main risks of  depending on an external API in production."
+  },
+  {
+    "id": "micro_tab_after_space_0163",
+    "category": "micro_tab_after_space",
+    "prompt_a": "Explain why JSON schemas are useful for service interfaces.",
+    "prompt_b": "Explain \twhy JSON schemas are useful for service interfaces."
+  },
+  {
+    "id": "micro_parenthesize_word_0164",
+    "category": "micro_parenthesize_word",
+    "prompt_a": "Give three reasons production services need monitoring.",
+    "prompt_b": "Give three reasons production services need (monitoring)."
+  },
+  {
+    "id": "micro_tab_indent_0165",
+    "category": "micro_tab_indent",
+    "prompt_a": "Explain how rate limits should influence background job design.",
+    "prompt_b": "\tExplain how rate limits should influence background job design."
+  },
+  {
+    "id": "micro_blank_line_wrap_0166",
+    "category": "micro_blank_line_wrap",
+    "prompt_a": "List the main reasons secrets should not be committed to a repository.",
+    "prompt_b": "List\n\nthe main reasons secrets should not be committed to a repository."
+  },
+  {
+    "id": "micro_space_before_punctuation_0167",
+    "category": "micro_space_before_punctuation",
+    "prompt_a": "Write a concise Python function that checks whether a string is a palindrome.",
+    "prompt_b": "Write a concise Python function that checks whether a string is a palindrome ."
+  },
+  {
+    "id": "micro_leading_space_0168",
+    "category": "micro_leading_space",
+    "prompt_a": "Explain why regression tests are useful after refactoring code.",
+    "prompt_b": "  Explain why regression tests are useful after refactoring code."
+  },
+  {
+    "id": "micro_space_after_punctuation_0169",
+    "category": "micro_space_after_punctuation",
+    "prompt_a": "Describe how a background job queue should handle retries.",
+    "prompt_b": "Describe how a background job queue should handle retries. "
+  },
+  {
+    "id": "micro_leading_newline_0170",
+    "category": "micro_leading_newline",
+    "prompt_a": "Explain why database migrations should be reviewed carefully.",
+    "prompt_b": "\n\nExplain why database migrations should be reviewed carefully."
+  },
+  {
+    "id": "micro_trailing_newline_0171",
+    "category": "micro_trailing_newline",
+    "prompt_a": "Describe how feature flags reduce deployment risk.",
+    "prompt_b": "Describe how feature flags reduce deployment risk.\n\n"
+  },
+  {
+    "id": "micro_triple_internal_space_0172",
+    "category": "micro_triple_internal_space",
+    "prompt_a": "Explain why retry logic should use exponential backoff.",
+    "prompt_b": "Explain why retry logic   should use exponential backoff."
+  },
+  {
+    "id": "micro_trailing_space_0173",
+    "category": "micro_trailing_space",
+    "prompt_a": "List the tradeoffs of using a monorepo for many services.",
+    "prompt_b": "List the tradeoffs of using a monorepo for many services.    "
+  },
+  {
+    "id": "micro_line_wrap_0174",
+    "category": "micro_line_wrap",
+    "prompt_a": "Explain why observability matters in distributed systems.",
+    "prompt_b": "Explain why observability matters in\ndistributed systems."
+  },
+  {
+    "id": "micro_crlf_suffix_0175",
+    "category": "micro_crlf_suffix",
+    "prompt_a": "Describe how an idempotency key prevents duplicate work.",
+    "prompt_b": "Describe how an idempotency key prevents duplicate work.\r\n"
+  },
+  {
+    "id": "micro_duplicate_small_word_0176",
+    "category": "micro_duplicate_small_word",
+    "prompt_a": "Explain why user input should be validated at service boundaries.",
+    "prompt_b": "Explain why user input should be be validated at service boundaries."
+  },
+  {
+    "id": "micro_blank_line_wrap_0177",
+    "category": "micro_blank_line_wrap",
+    "prompt_a": "List the main benefits of type checking in a large codebase.",
+    "prompt_b": "List the\n\nmain benefits of type checking in a large codebase."
+  },
+  {
+    "id": "micro_triple_internal_space_0178",
+    "category": "micro_triple_internal_space",
+    "prompt_a": "Describe how a circuit breaker protects a downstream dependency.",
+    "prompt_b": "Describe how a circuit breaker protects   a downstream dependency."
+  },
+  {
+    "id": "micro_space_before_punctuation_0179",
+    "category": "micro_space_before_punctuation",
+    "prompt_a": "Explain why small changes can have large effects in complex systems.",
+    "prompt_b": "Explain why small changes can have large effects in complex systems ."
+  },
+  {
+    "id": "micro_tab_indent_0180",
+    "category": "micro_tab_indent",
+    "prompt_a": "Explain why weather forecasts become unreliable after enough time, in one concise paragraph.",
+    "prompt_b": "\tExplain why weather forecasts become unreliable after enough time, in one concise paragraph."
+  },
+  {
+    "id": "micro_parenthesize_word_0181",
+    "category": "micro_parenthesize_word",
+    "prompt_a": "Describe when a cache should be invalidated in a web application.",
+    "prompt_b": "Describe when (a) cache should be invalidated in a web application."
+  },
+  {
+    "id": "micro_trailing_space_0182",
+    "category": "micro_trailing_space",
+    "prompt_a": "List the main risks of depending on an external API in production.",
+    "prompt_b": "List the main risks of depending on an external API in production.   "
+  },
+  {
+    "id": "micro_crlf_suffix_0183",
+    "category": "micro_crlf_suffix",
+    "prompt_a": "Explain why JSON schemas are useful for service interfaces.",
+    "prompt_b": "Explain why JSON schemas are useful for service interfaces.\r\n"
+  },
+  {
+    "id": "micro_double_internal_space_0184",
+    "category": "micro_double_internal_space",
+    "prompt_a": "Give three reasons production services need monitoring.",
+    "prompt_b": "Give three reasons production services need  monitoring."
+  },
+  {
+    "id": "micro_leading_newline_0185",
+    "category": "micro_leading_newline",
+    "prompt_a": "Explain how rate limits should influence background job design.",
+    "prompt_b": "\n\nExplain how rate limits should influence background job design."
+  },
+  {
+    "id": "micro_leading_space_0186",
+    "category": "micro_leading_space",
+    "prompt_a": "List the main reasons secrets should not be committed to a repository.",
+    "prompt_b": "   List the main reasons secrets should not be committed to a repository."
+  },
+  {
+    "id": "micro_tab_after_space_0187",
+    "category": "micro_tab_after_space",
+    "prompt_a": "Write a concise Python function that checks whether a string is a palindrome.",
+    "prompt_b": "Write a concise Python function \tthat checks whether a string is a palindrome."
+  },
+  {
+    "id": "micro_trailing_newline_0188",
+    "category": "micro_trailing_newline",
+    "prompt_a": "Explain why regression tests are useful after refactoring code.",
+    "prompt_b": "Explain why regression tests are useful after refactoring code.\n\n\n"
+  },
+  {
+    "id": "micro_duplicate_punctuation_0189",
+    "category": "micro_duplicate_punctuation",
+    "prompt_a": "Describe how a background job queue should handle retries.",
+    "prompt_b": "Describe how a background job queue should handle retries.."
+  },
+  {
+    "id": "micro_duplicate_small_word_0190",
+    "category": "micro_duplicate_small_word",
+    "prompt_a": "Explain why database migrations should be reviewed carefully.",
+    "prompt_b": "Explain why database migrations should be be reviewed carefully."
+  },
+  {
+    "id": "micro_line_wrap_0191",
+    "category": "micro_line_wrap",
+    "prompt_a": "Describe how feature flags reduce deployment risk.",
+    "prompt_b": "Describe how feature\nflags reduce deployment risk."
+  },
+  {
+    "id": "micro_space_after_punctuation_0192",
+    "category": "micro_space_after_punctuation",
+    "prompt_a": "Explain why retry logic should use exponential backoff.",
+    "prompt_b": "Explain why retry logic should use exponential backoff. "
+  },
+  {
+    "id": "micro_tab_after_space_0193",
+    "category": "micro_tab_after_space",
+    "prompt_a": "List the tradeoffs of using a monorepo for many services.",
+    "prompt_b": "List \tthe tradeoffs of using a monorepo for many services."
+  },
+  {
+    "id": "micro_space_before_punctuation_0194",
+    "category": "micro_space_before_punctuation",
+    "prompt_a": "Explain why observability matters in distributed systems.",
+    "prompt_b": "Explain why observability matters in distributed systems ."
+  },
+  {
+    "id": "micro_duplicate_punctuation_0195",
+    "category": "micro_duplicate_punctuation",
+    "prompt_a": "Describe how an idempotency key prevents duplicate work.",
+    "prompt_b": "Describe how an idempotency key prevents duplicate work.."
+  },
+  {
+    "id": "micro_leading_space_0196",
+    "category": "micro_leading_space",
+    "prompt_a": "Explain why user input should be validated at service boundaries.",
+    "prompt_b": "   Explain why user input should be validated at service boundaries."
+  },
+  {
+    "id": "micro_leading_newline_0197",
+    "category": "micro_leading_newline",
+    "prompt_a": "List the main benefits of type checking in a large codebase.",
+    "prompt_b": "\n\nList the main benefits of type checking in a large codebase."
+  },
+  {
+    "id": "micro_duplicate_small_word_0198",
+    "category": "micro_duplicate_small_word",
+    "prompt_a": "Describe how a circuit breaker protects a downstream dependency.",
+    "prompt_b": "Describe how a a circuit breaker protects a downstream dependency."
+  },
+  {
+    "id": "micro_trailing_space_0199",
+    "category": "micro_trailing_space",
+    "prompt_a": "Explain why small changes can have large effects in complex systems.",
+    "prompt_b": "Explain why small changes can have large effects in complex systems.    "
+  },
+  {
+    "id": "micro_triple_internal_space_0200",
+    "category": "micro_triple_internal_space",
+    "prompt_a": "Explain why weather forecasts become unreliable after enough time, in one concise paragraph.",
+    "prompt_b": "Explain why weather forecasts become unreliable after enough time,   in one concise paragraph."
+  },
+  {
+    "id": "micro_space_after_punctuation_0201",
+    "category": "micro_space_after_punctuation",
+    "prompt_a": "Describe when a cache should be invalidated in a web application.",
+    "prompt_b": "Describe when a cache should be invalidated in a web application. "
+  },
+  {
+    "id": "micro_tab_indent_0202",
+    "category": "micro_tab_indent",
+    "prompt_a": "List the main risks of depending on an external API in production.",
+    "prompt_b": "\tList the main risks of depending on an external API in production."
+  },
+  {
+    "id": "micro_parenthesize_word_0203",
+    "category": "micro_parenthesize_word",
+    "prompt_a": "Explain why JSON schemas are useful for service interfaces.",
+    "prompt_b": "Explain why JSON schemas are useful (for) service interfaces."
+  },
+  {
+    "id": "micro_line_wrap_0204",
+    "category": "micro_line_wrap",
+    "prompt_a": "Give three reasons production services need monitoring.",
+    "prompt_b": "Give three reasons\nproduction services need monitoring."
+  },
+  {
+    "id": "micro_double_internal_space_0205",
+    "category": "micro_double_internal_space",
+    "prompt_a": "Explain how rate limits should influence background job design.",
+    "prompt_b": "Explain  how rate limits should influence background job design."
+  },
+  {
+    "id": "micro_blank_line_wrap_0206",
+    "category": "micro_blank_line_wrap",
+    "prompt_a": "List the main reasons secrets should not be committed to a repository.",
+    "prompt_b": "List the main reasons secrets\n\nshould not be committed to a repository."
+  },
+  {
+    "id": "micro_crlf_suffix_0207",
+    "category": "micro_crlf_suffix",
+    "prompt_a": "Write a concise Python function that checks whether a string is a palindrome.",
+    "prompt_b": "Write a concise Python function that checks whether a string is a palindrome.\r\n"
+  },
+  {
+    "id": "micro_trailing_newline_0208",
+    "category": "micro_trailing_newline",
+    "prompt_a": "Explain why regression tests are useful after refactoring code.",
+    "prompt_b": "Explain why regression tests are useful after refactoring code.\n"
+  },
+  {
+    "id": "micro_double_internal_space_0209",
+    "category": "micro_double_internal_space",
+    "prompt_a": "Describe how a background job queue should handle retries.",
+    "prompt_b": "Describe how a background job queue should  handle retries."
+  },
+  {
+    "id": "micro_line_wrap_0210",
+    "category": "micro_line_wrap",
+    "prompt_a": "Explain why database migrations should be reviewed carefully.",
+    "prompt_b": "Explain why database\nmigrations should be reviewed carefully."
+  },
+  {
+    "id": "micro_space_after_punctuation_0211",
+    "category": "micro_space_after_punctuation",
+    "prompt_a": "Describe how feature flags reduce deployment risk.",
+    "prompt_b": "Describe how feature flags reduce deployment risk. "
+  },
+  {
+    "id": "micro_duplicate_punctuation_0212",
+    "category": "micro_duplicate_punctuation",
+    "prompt_a": "Explain why retry logic should use exponential backoff.",
+    "prompt_b": "Explain why retry logic should use exponential backoff.."
+  },
+  {
+    "id": "micro_leading_newline_0213",
+    "category": "micro_leading_newline",
+    "prompt_a": "List the tradeoffs of using a monorepo for many services.",
+    "prompt_b": "\nList the tradeoffs of using a monorepo for many services."
+  },
+  {
+    "id": "micro_blank_line_wrap_0214",
+    "category": "micro_blank_line_wrap",
+    "prompt_a": "Explain why observability matters in distributed systems.",
+    "prompt_b": "Explain why\n\nobservability matters in distributed systems."
+  },
+  {
+    "id": "micro_trailing_space_0215",
+    "category": "micro_trailing_space",
+    "prompt_a": "Describe how an idempotency key prevents duplicate work.",
+    "prompt_b": "Describe how an idempotency key prevents duplicate work. "
+  },
+  {
+    "id": "micro_triple_internal_space_0216",
+    "category": "micro_triple_internal_space",
+    "prompt_a": "Explain why user input should be validated at service boundaries.",
+    "prompt_b": "Explain why user   input should be validated at service boundaries."
+  },
+  {
+    "id": "micro_trailing_newline_0217",
+    "category": "micro_trailing_newline",
+    "prompt_a": "List the main benefits of type checking in a large codebase.",
+    "prompt_b": "List the main benefits of type checking in a large codebase.\n\n"
+  },
+  {
+    "id": "micro_leading_space_0218",
+    "category": "micro_leading_space",
+    "prompt_a": "Describe how a circuit breaker protects a downstream dependency.",
+    "prompt_b": "  Describe how a circuit breaker protects a downstream dependency."
+  },
+  {
+    "id": "micro_space_before_punctuation_0219",
+    "category": "micro_space_before_punctuation",
+    "prompt_a": "Explain why small changes can have large effects in complex systems.",
+    "prompt_b": "Explain why small changes can have large effects in complex systems ."
+  },
+  {
+    "id": "micro_parenthesize_word_0220",
+    "category": "micro_parenthesize_word",
+    "prompt_a": "Explain why weather forecasts become unreliable after enough time, in one concise paragraph.",
+    "prompt_b": "Explain why weather forecasts become unreliable after enough time, in one (concise) paragraph."
+  },
+  {
+    "id": "micro_crlf_suffix_0221",
+    "category": "micro_crlf_suffix",
+    "prompt_a": "Describe when a cache should be invalidated in a web application.",
+    "prompt_b": "Describe when a cache should be invalidated in a web application.\r\n"
+  },
+  {
+    "id": "micro_duplicate_small_word_0222",
+    "category": "micro_duplicate_small_word",
+    "prompt_a": "List the main risks of depending on an external API in production.",
+    "prompt_b": "List the the main risks of depending on an external API in production."
+  },
+  {
+    "id": "micro_tab_after_space_0223",
+    "category": "micro_tab_after_space",
+    "prompt_a": "Explain why JSON schemas are useful for service interfaces.",
+    "prompt_b": "Explain why JSON schemas are \tuseful for service interfaces."
+  },
+  {
+    "id": "micro_tab_indent_0224",
+    "category": "micro_tab_indent",
+    "prompt_a": "Give three reasons production services need monitoring.",
+    "prompt_b": "\tGive three reasons production services need monitoring."
+  },
+  {
+    "id": "micro_leading_space_0225",
+    "category": "micro_leading_space",
+    "prompt_a": "Explain how rate limits should influence background job design.",
+    "prompt_b": " Explain how rate limits should influence background job design."
+  },
+  {
+    "id": "micro_tab_after_space_0226",
+    "category": "micro_tab_after_space",
+    "prompt_a": "List the main reasons secrets should not be committed to a repository.",
+    "prompt_b": "List the main reasons secrets should \tnot be committed to a repository."
+  },
+  {
+    "id": "micro_double_internal_space_0227",
+    "category": "micro_double_internal_space",
+    "prompt_a": "Write a concise Python function that checks whether a string is a palindrome.",
+    "prompt_b": "Write a concise Python function that checks whether  a string is a palindrome."
+  },
+  {
+    "id": "micro_blank_line_wrap_0228",
+    "category": "micro_blank_line_wrap",
+    "prompt_a": "Explain why regression tests are useful after refactoring code.",
+    "prompt_b": "Explain\n\nwhy regression tests are useful after refactoring code."
+  },
+  {
+    "id": "micro_trailing_space_0229",
+    "category": "micro_trailing_space",
+    "prompt_a": "Describe how a background job queue should handle retries.",
+    "prompt_b": "Describe how a background job queue should handle retries.    "
+  },
+  {
+    "id": "micro_duplicate_small_word_0230",
+    "category": "micro_duplicate_small_word",
+    "prompt_a": "Explain why database migrations should be reviewed carefully.",
+    "prompt_b": "Explain why database migrations should be be reviewed carefully."
+  },
+  {
+    "id": "micro_leading_newline_0231",
+    "category": "micro_leading_newline",
+    "prompt_a": "Describe how feature flags reduce deployment risk.",
+    "prompt_b": "\nDescribe how feature flags reduce deployment risk."
+  },
+  {
+    "id": "micro_line_wrap_0232",
+    "category": "micro_line_wrap",
+    "prompt_a": "Explain why retry logic should use exponential backoff.",
+    "prompt_b": "Explain why\nretry logic should use exponential backoff."
+  },
+  {
+    "id": "micro_space_before_punctuation_0233",
+    "category": "micro_space_before_punctuation",
+    "prompt_a": "List the tradeoffs of using a monorepo for many services.",
+    "prompt_b": "List the tradeoffs of using a monorepo for many services ."
+  },
+  {
+    "id": "micro_parenthesize_word_0234",
+    "category": "micro_parenthesize_word",
+    "prompt_a": "Explain why observability matters in distributed systems.",
+    "prompt_b": "Explain why (observability) matters in distributed systems."
+  },
+  {
+    "id": "micro_triple_internal_space_0235",
+    "category": "micro_triple_internal_space",
+    "prompt_a": "Describe how an idempotency key prevents duplicate work.",
+    "prompt_b": "Describe how an idempotency   key prevents duplicate work."
+  },
+  {
+    "id": "micro_space_after_punctuation_0236",
+    "category": "micro_space_after_punctuation",
+    "prompt_a": "Explain why user input should be validated at service boundaries.",
+    "prompt_b": "Explain why user input should be validated at service boundaries. "
+  },
+  {
+    "id": "micro_crlf_suffix_0237",
+    "category": "micro_crlf_suffix",
+    "prompt_a": "List the main benefits of type checking in a large codebase.",
+    "prompt_b": "List the main benefits of type checking in a large codebase.\r\n"
+  },
+  {
+    "id": "micro_trailing_newline_0238",
+    "category": "micro_trailing_newline",
+    "prompt_a": "Describe how a circuit breaker protects a downstream dependency.",
+    "prompt_b": "Describe how a circuit breaker protects a downstream dependency.\n\n"
+  },
+  {
+    "id": "micro_tab_indent_0239",
+    "category": "micro_tab_indent",
+    "prompt_a": "Explain why small changes can have large effects in complex systems.",
+    "prompt_b": "\tExplain why small changes can have large effects in complex systems."
+  },
+  {
+    "id": "micro_duplicate_punctuation_0240",
+    "category": "micro_duplicate_punctuation",
+    "prompt_a": "Explain why weather forecasts become unreliable after enough time, in one concise paragraph.",
+    "prompt_b": "Explain why weather forecasts become unreliable after enough time, in one concise paragraph.."
+  },
+  {
+    "id": "micro_space_before_punctuation_0241",
+    "category": "micro_space_before_punctuation",
+    "prompt_a": "Describe when a cache should be invalidated in a web application.",
+    "prompt_b": "Describe when a cache should be invalidated in a web application ."
+  },
+  {
+    "id": "micro_tab_indent_0242",
+    "category": "micro_tab_indent",
+    "prompt_a": "List the main risks of depending on an external API in production.",
+    "prompt_b": "\tList the main risks of depending on an external API in production."
+  },
+  {
+    "id": "micro_line_wrap_0243",
+    "category": "micro_line_wrap",
+    "prompt_a": "Explain why JSON schemas are useful for service interfaces.",
+    "prompt_b": "Explain why JSON schemas are useful\nfor service interfaces."
+  },
+  {
+    "id": "micro_duplicate_small_word_0244",
+    "category": "micro_duplicate_small_word",
+    "prompt_a": "Give three reasons production services need monitoring.",
+    "prompt_b": "Give three reasons production services need monitoring. "
+  },
+  {
+    "id": "micro_blank_line_wrap_0245",
+    "category": "micro_blank_line_wrap",
+    "prompt_a": "Explain how rate limits should influence background job design.",
+    "prompt_b": "Explain how rate limits should influence background job\n\ndesign."
+  },
+  {
+    "id": "micro_crlf_suffix_0246",
+    "category": "micro_crlf_suffix",
+    "prompt_a": "List the main reasons secrets should not be committed to a repository.",
+    "prompt_b": "List the main reasons secrets should not be committed to a repository.\r\n"
+  },
+  {
+    "id": "micro_tab_after_space_0247",
+    "category": "micro_tab_after_space",
+    "prompt_a": "Write a concise Python function that checks whether a string is a palindrome.",
+    "prompt_b": "Write a concise Python function that checks whether a string is a \tpalindrome."
+  },
+  {
+    "id": "micro_triple_internal_space_0248",
+    "category": "micro_triple_internal_space",
+    "prompt_a": "Explain why regression tests are useful after refactoring code.",
+    "prompt_b": "Explain   why regression tests are useful after refactoring code."
+  },
+  {
+    "id": "micro_trailing_newline_0249",
+    "category": "micro_trailing_newline",
+    "prompt_a": "Describe how a background job queue should handle retries.",
+    "prompt_b": "Describe how a background job queue should handle retries.\n\n\n"
+  },
+  {
+    "id": "micro_parenthesize_word_0250",
+    "category": "micro_parenthesize_word",
+    "prompt_a": "Explain why database migrations should be reviewed carefully.",
+    "prompt_b": "Explain why (database) migrations should be reviewed carefully."
+  },
+  {
+    "id": "micro_double_internal_space_0251",
+    "category": "micro_double_internal_space",
+    "prompt_a": "Describe how feature flags reduce deployment risk.",
+    "prompt_b": "Describe how  feature flags reduce deployment risk."
+  },
+  {
+    "id": "micro_space_after_punctuation_0252",
+    "category": "micro_space_after_punctuation",
+    "prompt_a": "Explain why retry logic should use exponential backoff.",
+    "prompt_b": "Explain why retry logic should use exponential backoff. "
+  },
+  {
+    "id": "micro_leading_space_0253",
+    "category": "micro_leading_space",
+    "prompt_a": "List the tradeoffs of using a monorepo for many services.",
+    "prompt_b": "    List the tradeoffs of using a monorepo for many services."
+  },
+  {
+    "id": "micro_leading_newline_0254",
+    "category": "micro_leading_newline",
+    "prompt_a": "Explain why observability matters in distributed systems.",
+    "prompt_b": "\nExplain why observability matters in distributed systems."
+  },
+  {
+    "id": "micro_duplicate_punctuation_0255",
+    "category": "micro_duplicate_punctuation",
+    "prompt_a": "Describe how an idempotency key prevents duplicate work.",
+    "prompt_b": "Describe how an idempotency key prevents duplicate work.."
+  },
+  {
+    "id": "micro_trailing_space_0256",
+    "category": "micro_trailing_space",
+    "prompt_a": "Explain why user input should be validated at service boundaries.",
+    "prompt_b": "Explain why user input should be validated at service boundaries. "
+  },
+  {
+    "id": "micro_duplicate_punctuation_0257",
+    "category": "micro_duplicate_punctuation",
+    "prompt_a": "List the main benefits of type checking in a large codebase.",
+    "prompt_b": "List the main benefits of type checking in a large codebase.."
+  },
+  {
+    "id": "micro_parenthesize_word_0258",
+    "category": "micro_parenthesize_word",
+    "prompt_a": "Describe how a circuit breaker protects a downstream dependency.",
+    "prompt_b": "Describe how a circuit (breaker) protects a downstream dependency."
+  },
+  {
+    "id": "micro_leading_space_0259",
+    "category": "micro_leading_space",
+    "prompt_a": "Explain why small changes can have large effects in complex systems.",
+    "prompt_b": "   Explain why small changes can have large effects in complex systems."
+  },
+  {
+    "id": "micro_space_before_punctuation_0260",
+    "category": "micro_space_before_punctuation",
+    "prompt_a": "Explain why weather forecasts become unreliable after enough time, in one concise paragraph.",
+    "prompt_b": "Explain why weather forecasts become unreliable after enough time , in one concise paragraph."
+  },
+  {
+    "id": "micro_crlf_suffix_0261",
+    "category": "micro_crlf_suffix",
+    "prompt_a": "Describe when a cache should be invalidated in a web application.",
+    "prompt_b": "Describe when a cache should be invalidated in a web application.\r\n"
+  },
+  {
+    "id": "micro_space_after_punctuation_0262",
+    "category": "micro_space_after_punctuation",
+    "prompt_a": "List the main risks of depending on an external API in production.",
+    "prompt_b": "List the main risks of depending on an external API in production. "
+  },
+  {
+    "id": "micro_tab_after_space_0263",
+    "category": "micro_tab_after_space",
+    "prompt_a": "Explain why JSON schemas are useful for service interfaces.",
+    "prompt_b": "Explain \twhy JSON schemas are useful for service interfaces."
+  },
+  {
+    "id": "micro_trailing_newline_0264",
+    "category": "micro_trailing_newline",
+    "prompt_a": "Give three reasons production services need monitoring.",
+    "prompt_b": "Give three reasons production services need monitoring.\n\n"
+  },
+  {
+    "id": "micro_blank_line_wrap_0265",
+    "category": "micro_blank_line_wrap",
+    "prompt_a": "Explain how rate limits should influence background job design.",
+    "prompt_b": "Explain how\n\nrate limits should influence background job design."
+  },
+  {
+    "id": "micro_double_internal_space_0266",
+    "category": "micro_double_internal_space",
+    "prompt_a": "List the main reasons secrets should not be committed to a repository.",
+    "prompt_b": "List the main reasons secrets should  not be committed to a repository."
+  },
+  {
+    "id": "micro_line_wrap_0267",
+    "category": "micro_line_wrap",
+    "prompt_a": "Write a concise Python function that checks whether a string is a palindrome.",
+    "prompt_b": "Write a concise Python function that\nchecks whether a string is a palindrome."
+  },
+  {
+    "id": "micro_trailing_space_0268",
+    "category": "micro_trailing_space",
+    "prompt_a": "Explain why regression tests are useful after refactoring code.",
+    "prompt_b": "Explain why regression tests are useful after refactoring code.    "
+  },
+  {
+    "id": "micro_leading_newline_0269",
+    "category": "micro_leading_newline",
+    "prompt_a": "Describe how a background job queue should handle retries.",
+    "prompt_b": "\n\nDescribe how a background job queue should handle retries."
+  },
+  {
+    "id": "micro_tab_indent_0270",
+    "category": "micro_tab_indent",
+    "prompt_a": "Explain why database migrations should be reviewed carefully.",
+    "prompt_b": "\tExplain why database migrations should be reviewed carefully."
+  },
+  {
+    "id": "micro_triple_internal_space_0271",
+    "category": "micro_triple_internal_space",
+    "prompt_a": "Describe how feature flags reduce deployment risk.",
+    "prompt_b": "Describe how feature flags reduce deployment   risk."
+  },
+  {
+    "id": "micro_duplicate_small_word_0272",
+    "category": "micro_duplicate_small_word",
+    "prompt_a": "Explain why retry logic should use exponential backoff.",
+    "prompt_b": "Explain why retry logic should use exponential backoff. "
+  },
+  {
+    "id": "micro_blank_line_wrap_0273",
+    "category": "micro_blank_line_wrap",
+    "prompt_a": "List the tradeoffs of using a monorepo for many services.",
+    "prompt_b": "List the tradeoffs of using a monorepo for many\n\nservices."
+  },
+  {
+    "id": "micro_leading_newline_0274",
+    "category": "micro_leading_newline",
+    "prompt_a": "Explain why observability matters in distributed systems.",
+    "prompt_b": "\nExplain why observability matters in distributed systems."
+  },
+  {
+    "id": "micro_duplicate_punctuation_0275",
+    "category": "micro_duplicate_punctuation",
+    "prompt_a": "Describe how an idempotency key prevents duplicate work.",
+    "prompt_b": "Describe how an idempotency key prevents duplicate work.."
+  },
+  {
+    "id": "micro_space_after_punctuation_0276",
+    "category": "micro_space_after_punctuation",
+    "prompt_a": "Explain why user input should be validated at service boundaries.",
+    "prompt_b": "Explain why user input should be validated at service boundaries. "
+  },
+  {
+    "id": "micro_parenthesize_word_0277",
+    "category": "micro_parenthesize_word",
+    "prompt_a": "List the main benefits of type checking in a large codebase.",
+    "prompt_b": "List the (main) benefits of type checking in a large codebase."
+  },
+  {
+    "id": "micro_leading_space_0278",
+    "category": "micro_leading_space",
+    "prompt_a": "Describe how a circuit breaker protects a downstream dependency.",
+    "prompt_b": "    Describe how a circuit breaker protects a downstream dependency."
+  },
+  {
+    "id": "micro_trailing_space_0279",
+    "category": "micro_trailing_space",
+    "prompt_a": "Explain why small changes can have large effects in complex systems.",
+    "prompt_b": "Explain why small changes can have large effects in complex systems.   "
+  },
+  {
+    "id": "micro_duplicate_small_word_0280",
+    "category": "micro_duplicate_small_word",
+    "prompt_a": "Explain why weather forecasts become unreliable after enough time, in one concise paragraph.",
+    "prompt_b": "Explain why weather forecasts become unreliable after enough time, in in one concise paragraph."
+  },
+  {
+    "id": "micro_triple_internal_space_0281",
+    "category": "micro_triple_internal_space",
+    "prompt_a": "Describe when a cache should be invalidated in a web application.",
+    "prompt_b": "Describe when   a cache should be invalidated in a web application."
+  },
+  {
+    "id": "micro_space_before_punctuation_0282",
+    "category": "micro_space_before_punctuation",
+    "prompt_a": "List the main risks of depending on an external API in production.",
+    "prompt_b": "List the main risks of depending on an external API in production ."
+  },
+  {
+    "id": "micro_tab_indent_0283",
+    "category": "micro_tab_indent",
+    "prompt_a": "Explain why JSON schemas are useful for service interfaces.",
+    "prompt_b": "\tExplain why JSON schemas are useful for service interfaces."
+  },
+  {
+    "id": "micro_double_internal_space_0284",
+    "category": "micro_double_internal_space",
+    "prompt_a": "Give three reasons production services need monitoring.",
+    "prompt_b": "Give three reasons  production services need monitoring."
+  },
+  {
+    "id": "micro_tab_after_space_0285",
+    "category": "micro_tab_after_space",
+    "prompt_a": "Explain how rate limits should influence background job design.",
+    "prompt_b": "Explain how rate limits should influence \tbackground job design."
+  },
+  {
+    "id": "micro_trailing_newline_0286",
+    "category": "micro_trailing_newline",
+    "prompt_a": "List the main reasons secrets should not be committed to a repository.",
+    "prompt_b": "List the main reasons secrets should not be committed to a repository.\n\n"
+  },
+  {
+    "id": "micro_crlf_suffix_0287",
+    "category": "micro_crlf_suffix",
+    "prompt_a": "Write a concise Python function that checks whether a string is a palindrome.",
+    "prompt_b": "Write a concise Python function that checks whether a string is a palindrome.\r\n"
+  },
+  {
+    "id": "micro_line_wrap_0288",
+    "category": "micro_line_wrap",
+    "prompt_a": "Explain why regression tests are useful after refactoring code.",
+    "prompt_b": "Explain\nwhy regression tests are useful after refactoring code."
+  },
+  {
+    "id": "micro_tab_indent_0289",
+    "category": "micro_tab_indent",
+    "prompt_a": "Describe how a background job queue should handle retries.",
+    "prompt_b": "\tDescribe how a background job queue should handle retries."
+  },
+  {
+    "id": "micro_duplicate_punctuation_0290",
+    "category": "micro_duplicate_punctuation",
+    "prompt_a": "Explain why database migrations should be reviewed carefully.",
+    "prompt_b": "Explain why database migrations should be reviewed carefully.."
+  },
+  {
+    "id": "micro_duplicate_small_word_0291",
+    "category": "micro_duplicate_small_word",
+    "prompt_a": "Describe how feature flags reduce deployment risk.",
+    "prompt_b": "Describe how feature flags reduce deployment risk. "
+  },
+  {
+    "id": "micro_parenthesize_word_0292",
+    "category": "micro_parenthesize_word",
+    "prompt_a": "Explain why retry logic should use exponential backoff.",
+    "prompt_b": "Explain why retry (logic) should use exponential backoff."
+  },
+  {
+    "id": "micro_space_after_punctuation_0293",
+    "category": "micro_space_after_punctuation",
+    "prompt_a": "List the tradeoffs of using a monorepo for many services.",
+    "prompt_b": "List the tradeoffs of using a monorepo for many services. "
+  },
+  {
+    "id": "micro_blank_line_wrap_0294",
+    "category": "micro_blank_line_wrap",
+    "prompt_a": "Explain why observability matters in distributed systems.",
+    "prompt_b": "Explain why\n\nobservability matters in distributed systems."
+  },
+  {
+    "id": "micro_tab_after_space_0295",
+    "category": "micro_tab_after_space",
+    "prompt_a": "Describe how an idempotency key prevents duplicate work.",
+    "prompt_b": "Describe how an idempotency key prevents \tduplicate work."
+  },
+  {
+    "id": "micro_trailing_space_0296",
+    "category": "micro_trailing_space",
+    "prompt_a": "Explain why user input should be validated at service boundaries.",
+    "prompt_b": "Explain why user input should be validated at service boundaries.   "
+  },
+  {
+    "id": "micro_space_before_punctuation_0297",
+    "category": "micro_space_before_punctuation",
+    "prompt_a": "List the main benefits of type checking in a large codebase.",
+    "prompt_b": "List the main benefits of type checking in a large codebase ."
+  },
+  {
+    "id": "micro_leading_space_0298",
+    "category": "micro_leading_space",
+    "prompt_a": "Describe how a circuit breaker protects a downstream dependency.",
+    "prompt_b": " Describe how a circuit breaker protects a downstream dependency."
+  },
+  {
+    "id": "micro_double_internal_space_0299",
+    "category": "micro_double_internal_space",
+    "prompt_a": "Explain why small changes can have large effects in complex systems.",
+    "prompt_b": "Explain why small  changes can have large effects in complex systems."
+  },
+  {
+    "id": "micro_trailing_newline_0300",
+    "category": "micro_trailing_newline",
+    "prompt_a": "Explain why weather forecasts become unreliable after enough time, in one concise paragraph.",
+    "prompt_b": "Explain why weather forecasts become unreliable after enough time, in one concise paragraph.\n"
+  },
+  {
+    "id": "micro_triple_internal_space_0301",
+    "category": "micro_triple_internal_space",
+    "prompt_a": "Describe when a cache should be invalidated in a web application.",
+    "prompt_b": "Describe when   a cache should be invalidated in a web application."
+  },
+  {
+    "id": "micro_leading_newline_0302",
+    "category": "micro_leading_newline",
+    "prompt_a": "List the main risks of depending on an external API in production.",
+    "prompt_b": "\nList the main risks of depending on an external API in production."
+  },
+  {
+    "id": "micro_line_wrap_0303",
+    "category": "micro_line_wrap",
+    "prompt_a": "Explain why JSON schemas are useful for service interfaces.",
+    "prompt_b": "Explain why JSON schemas are useful for\nservice interfaces."
+  },
+  {
+    "id": "micro_crlf_suffix_0304",
+    "category": "micro_crlf_suffix",
+    "prompt_a": "Give three reasons production services need monitoring.",
+    "prompt_b": "Give three reasons production services need monitoring.\r\n"
+  },
+  {
+    "id": "micro_tab_indent_0305",
+    "category": "micro_tab_indent",
+    "prompt_a": "Explain how rate limits should influence background job design.",
+    "prompt_b": "\tExplain how rate limits should influence background job design."
+  },
+  {
+    "id": "micro_leading_space_0306",
+    "category": "micro_leading_space",
+    "prompt_a": "List the main reasons secrets should not be committed to a repository.",
+    "prompt_b": "    List the main reasons secrets should not be committed to a repository."
+  },
+  {
+    "id": "micro_trailing_newline_0307",
+    "category": "micro_trailing_newline",
+    "prompt_a": "Write a concise Python function that checks whether a string is a palindrome.",
+    "prompt_b": "Write a concise Python function that checks whether a string is a palindrome.\n\n\n"
+  },
+  {
+    "id": "micro_space_after_punctuation_0308",
+    "category": "micro_space_after_punctuation",
+    "prompt_a": "Explain why regression tests are useful after refactoring code.",
+    "prompt_b": "Explain why regression tests are useful after refactoring code. "
+  },
+  {
+    "id": "micro_tab_after_space_0309",
+    "category": "micro_tab_after_space",
+    "prompt_a": "Describe how a background job queue should handle retries.",
+    "prompt_b": "Describe \thow a background job queue should handle retries."
+  },
+  {
+    "id": "micro_space_before_punctuation_0310",
+    "category": "micro_space_before_punctuation",
+    "prompt_a": "Explain why database migrations should be reviewed carefully.",
+    "prompt_b": "Explain why database migrations should be reviewed carefully ."
+  },
+  {
+    "id": "micro_trailing_space_0311",
+    "category": "micro_trailing_space",
+    "prompt_a": "Describe how feature flags reduce deployment risk.",
+    "prompt_b": "Describe how feature flags reduce deployment risk. "
+  },
+  {
+    "id": "micro_crlf_suffix_0312",
+    "category": "micro_crlf_suffix",
+    "prompt_a": "Explain why retry logic should use exponential backoff.",
+    "prompt_b": "Explain why retry logic should use exponential backoff.\r\n"
+  },
+  {
+    "id": "micro_blank_line_wrap_0313",
+    "category": "micro_blank_line_wrap",
+    "prompt_a": "List the tradeoffs of using a monorepo for many services.",
+    "prompt_b": "List the tradeoffs of using a monorepo for\n\nmany services."
+  },
+  {
+    "id": "micro_double_internal_space_0314",
+    "category": "micro_double_internal_space",
+    "prompt_a": "Explain why observability matters in distributed systems.",
+    "prompt_b": "Explain why observability  matters in distributed systems."
+  },
+  {
+    "id": "micro_duplicate_small_word_0315",
+    "category": "micro_duplicate_small_word",
+    "prompt_a": "Describe how an idempotency key prevents duplicate work.",
+    "prompt_b": "Describe how an an idempotency key prevents duplicate work."
+  },
+  {
+    "id": "micro_triple_internal_space_0316",
+    "category": "micro_triple_internal_space",
+    "prompt_a": "Explain why user input should be validated at service boundaries.",
+    "prompt_b": "Explain why user input   should be validated at service boundaries."
+  },
+  {
+    "id": "micro_line_wrap_0317",
+    "category": "micro_line_wrap",
+    "prompt_a": "List the main benefits of type checking in a large codebase.",
+    "prompt_b": "List the main\nbenefits of type checking in a large codebase."
+  },
+  {
+    "id": "micro_leading_newline_0318",
+    "category": "micro_leading_newline",
+    "prompt_a": "Describe how a circuit breaker protects a downstream dependency.",
+    "prompt_b": "\n\nDescribe how a circuit breaker protects a downstream dependency."
+  },
+  {
+    "id": "micro_parenthesize_word_0319",
+    "category": "micro_parenthesize_word",
+    "prompt_a": "Explain why small changes can have large effects in complex systems.",
+    "prompt_b": "Explain why small changes (can) have large effects in complex systems."
+  },
+  {
+    "id": "micro_duplicate_punctuation_0320",
+    "category": "micro_duplicate_punctuation",
+    "prompt_a": "Explain why weather forecasts become unreliable after enough time, in one concise paragraph.",
+    "prompt_b": "Explain why weather forecasts become unreliable after enough time, in one concise paragraph.."
+  },
+  {
+    "id": "micro_double_internal_space_0321",
+    "category": "micro_double_internal_space",
+    "prompt_a": "Describe when a cache should be invalidated in a web application.",
+    "prompt_b": "Describe when a cache should  be invalidated in a web application."
+  },
+  {
+    "id": "micro_blank_line_wrap_0322",
+    "category": "micro_blank_line_wrap",
+    "prompt_a": "List the main risks of depending on an external API in production.",
+    "prompt_b": "List the main risks of depending\n\non an external API in production."
+  },
+  {
+    "id": "micro_leading_newline_0323",
+    "category": "micro_leading_newline",
+    "prompt_a": "Explain why JSON schemas are useful for service interfaces.",
+    "prompt_b": "\n\nExplain why JSON schemas are useful for service interfaces."
+  },
+  {
+    "id": "micro_triple_internal_space_0324",
+    "category": "micro_triple_internal_space",
+    "prompt_a": "Give three reasons production services need monitoring.",
+    "prompt_b": "Give three   reasons production services need monitoring."
+  },
+  {
+    "id": "micro_leading_space_0325",
+    "category": "micro_leading_space",
+    "prompt_a": "Explain how rate limits should influence background job design.",
+    "prompt_b": " Explain how rate limits should influence background job design."
+  },
+  {
+    "id": "micro_trailing_space_0326",
+    "category": "micro_trailing_space",
+    "prompt_a": "List the main reasons secrets should not be committed to a repository.",
+    "prompt_b": "List the main reasons secrets should not be committed to a repository. "
+  },
+  {
+    "id": "micro_duplicate_punctuation_0327",
+    "category": "micro_duplicate_punctuation",
+    "prompt_a": "Write a concise Python function that checks whether a string is a palindrome.",
+    "prompt_b": "Write a concise Python function that checks whether a string is a palindrome.."
+  },
+  {
+    "id": "micro_trailing_newline_0328",
+    "category": "micro_trailing_newline",
+    "prompt_a": "Explain why regression tests are useful after refactoring code.",
+    "prompt_b": "Explain why regression tests are useful after refactoring code.\n\n"
+  },
+  {
+    "id": "micro_crlf_suffix_0329",
+    "category": "micro_crlf_suffix",
+    "prompt_a": "Describe how a background job queue should handle retries.",
+    "prompt_b": "Describe how a background job queue should handle retries.\r\n"
+  },
+  {
+    "id": "micro_duplicate_small_word_0330",
+    "category": "micro_duplicate_small_word",
+    "prompt_a": "Explain why database migrations should be reviewed carefully.",
+    "prompt_b": "Explain why database migrations should be be reviewed carefully."
+  },
+  {
+    "id": "micro_line_wrap_0331",
+    "category": "micro_line_wrap",
+    "prompt_a": "Describe how feature flags reduce deployment risk.",
+    "prompt_b": "Describe how feature flags\nreduce deployment risk."
+  },
+  {
+    "id": "micro_space_before_punctuation_0332",
+    "category": "micro_space_before_punctuation",
+    "prompt_a": "Explain why retry logic should use exponential backoff.",
+    "prompt_b": "Explain why retry logic should use exponential backoff ."
+  },
+  {
+    "id": "micro_tab_after_space_0333",
+    "category": "micro_tab_after_space",
+    "prompt_a": "List the tradeoffs of using a monorepo for many services.",
+    "prompt_b": "List the tradeoffs of \tusing a monorepo for many services."
+  },
+  {
+    "id": "micro_parenthesize_word_0334",
+    "category": "micro_parenthesize_word",
+    "prompt_a": "Explain why observability matters in distributed systems.",
+    "prompt_b": "Explain why observability matters in (distributed) systems."
+  },
+  {
+    "id": "micro_tab_indent_0335",
+    "category": "micro_tab_indent",
+    "prompt_a": "Describe how an idempotency key prevents duplicate work.",
+    "prompt_b": "\tDescribe how an idempotency key prevents duplicate work."
+  },
+  {
+    "id": "micro_space_after_punctuation_0336",
+    "category": "micro_space_after_punctuation",
+    "prompt_a": "Explain why user input should be validated at service boundaries.",
+    "prompt_b": "Explain why user input should be validated at service boundaries. "
+  },
+  {
+    "id": "micro_duplicate_punctuation_0337",
+    "category": "micro_duplicate_punctuation",
+    "prompt_a": "List the main benefits of type checking in a large codebase.",
+    "prompt_b": "List the main benefits of type checking in a large codebase.."
+  },
+  {
+    "id": "micro_trailing_newline_0338",
+    "category": "micro_trailing_newline",
+    "prompt_a": "Describe how a circuit breaker protects a downstream dependency.",
+    "prompt_b": "Describe how a circuit breaker protects a downstream dependency.\n\n\n"
+  },
+  {
+    "id": "micro_blank_line_wrap_0339",
+    "category": "micro_blank_line_wrap",
+    "prompt_a": "Explain why small changes can have large effects in complex systems.",
+    "prompt_b": "Explain why small changes can have large effects in complex\n\nsystems."
+  },
+  {
+    "id": "micro_triple_internal_space_0340",
+    "category": "micro_triple_internal_space",
+    "prompt_a": "Explain why weather forecasts become unreliable after enough time, in one concise paragraph.",
+    "prompt_b": "Explain why weather forecasts become unreliable after enough time, in one concise   paragraph."
+  },
+  {
+    "id": "micro_leading_newline_0341",
+    "category": "micro_leading_newline",
+    "prompt_a": "Describe when a cache should be invalidated in a web application.",
+    "prompt_b": "\nDescribe when a cache should be invalidated in a web application."
+  },
+  {
+    "id": "micro_double_internal_space_0342",
+    "category": "micro_double_internal_space",
+    "prompt_a": "List the main risks of depending on an external API in production.",
+    "prompt_b": "List the  main risks of depending on an external API in production."
+  },
+  {
+    "id": "micro_line_wrap_0343",
+    "category": "micro_line_wrap",
+    "prompt_a": "Explain why JSON schemas are useful for service interfaces.",
+    "prompt_b": "Explain why\nJSON schemas are useful for service interfaces."
+  },
+  {
+    "id": "micro_space_after_punctuation_0344",
+    "category": "micro_space_after_punctuation",
+    "prompt_a": "Give three reasons production services need monitoring.",
+    "prompt_b": "Give three reasons production services need monitoring. "
+  },
+  {
+    "id": "micro_tab_indent_0345",
+    "category": "micro_tab_indent",
+    "prompt_a": "Explain how rate limits should influence background job design.",
+    "prompt_b": "\tExplain how rate limits should influence background job design."
+  },
+  {
+    "id": "micro_tab_after_space_0346",
+    "category": "micro_tab_after_space",
+    "prompt_a": "List the main reasons secrets should not be committed to a repository.",
+    "prompt_b": "List the main reasons secrets should not \tbe committed to a repository."
+  },
+  {
+    "id": "micro_parenthesize_word_0347",
+    "category": "micro_parenthesize_word",
+    "prompt_a": "Write a concise Python function that checks whether a string is a palindrome.",
+    "prompt_b": "Write a concise Python function that checks whether a (string) is a palindrome."
+  },
+  {
+    "id": "micro_duplicate_small_word_0348",
+    "category": "micro_duplicate_small_word",
+    "prompt_a": "Explain why regression tests are useful after refactoring code.",
+    "prompt_b": "Explain why regression tests are useful after refactoring code. "
+  },
+  {
+    "id": "micro_leading_space_0349",
+    "category": "micro_leading_space",
+    "prompt_a": "Describe how a background job queue should handle retries.",
+    "prompt_b": "   Describe how a background job queue should handle retries."
+  },
+  {
+    "id": "micro_trailing_space_0350",
+    "category": "micro_trailing_space",
+    "prompt_a": "Explain why database migrations should be reviewed carefully.",
+    "prompt_b": "Explain why database migrations should be reviewed carefully.    "
+  },
+  {
+    "id": "micro_space_before_punctuation_0351",
+    "category": "micro_space_before_punctuation",
+    "prompt_a": "Describe how feature flags reduce deployment risk.",
+    "prompt_b": "Describe how feature flags reduce deployment risk ."
+  },
+  {
+    "id": "micro_crlf_suffix_0352",
+    "category": "micro_crlf_suffix",
+    "prompt_a": "Explain why retry logic should use exponential backoff.",
+    "prompt_b": "Explain why retry logic should use exponential backoff.\r\n"
+  },
+  {
+    "id": "micro_tab_indent_0353",
+    "category": "micro_tab_indent",
+    "prompt_a": "List the tradeoffs of using a monorepo for many services.",
+    "prompt_b": "\tList the tradeoffs of using a monorepo for many services."
+  },
+  {
+    "id": "micro_crlf_suffix_0354",
+    "category": "micro_crlf_suffix",
+    "prompt_a": "Explain why observability matters in distributed systems.",
+    "prompt_b": "Explain why observability matters in distributed systems.\r\n"
+  },
+  {
+    "id": "micro_line_wrap_0355",
+    "category": "micro_line_wrap",
+    "prompt_a": "Describe how an idempotency key prevents duplicate work.",
+    "prompt_b": "Describe how an idempotency key prevents\nduplicate work."
+  },
+  {
+    "id": "micro_trailing_newline_0356",
+    "category": "micro_trailing_newline",
+    "prompt_a": "Explain why user input should be validated at service boundaries.",
+    "prompt_b": "Explain why user input should be validated at service boundaries.\n"
+  },
+  {
+    "id": "micro_triple_internal_space_0357",
+    "category": "micro_triple_internal_space",
+    "prompt_a": "List the main benefits of type checking in a large codebase.",
+    "prompt_b": "List the main benefits   of type checking in a large codebase."
+  },
+  {
+    "id": "micro_duplicate_punctuation_0358",
+    "category": "micro_duplicate_punctuation",
+    "prompt_a": "Describe how a circuit breaker protects a downstream dependency.",
+    "prompt_b": "Describe how a circuit breaker protects a downstream dependency.."
+  },
+  {
+    "id": "micro_double_internal_space_0359",
+    "category": "micro_double_internal_space",
+    "prompt_a": "Explain why small changes can have large effects in complex systems.",
+    "prompt_b": "Explain why small changes can have large effects  in complex systems."
+  },
+  {
+    "id": "micro_space_before_punctuation_0360",
+    "category": "micro_space_before_punctuation",
+    "prompt_a": "Explain why weather forecasts become unreliable after enough time, in one concise paragraph.",
+    "prompt_b": "Explain why weather forecasts become unreliable after enough time , in one concise paragraph."
+  },
+  {
+    "id": "micro_tab_after_space_0361",
+    "category": "micro_tab_after_space",
+    "prompt_a": "Describe when a cache should be invalidated in a web application.",
+    "prompt_b": "Describe when a \tcache should be invalidated in a web application."
+  },
+  {
+    "id": "micro_parenthesize_word_0362",
+    "category": "micro_parenthesize_word",
+    "prompt_a": "List the main risks of depending on an external API in production.",
+    "prompt_b": "List the main risks of depending on an external API in (production)."
+  },
+  {
+    "id": "micro_space_after_punctuation_0363",
+    "category": "micro_space_after_punctuation",
+    "prompt_a": "Explain why JSON schemas are useful for service interfaces.",
+    "prompt_b": "Explain why JSON schemas are useful for service interfaces. "
+  },
+  {
+    "id": "micro_duplicate_small_word_0364",
+    "category": "micro_duplicate_small_word",
+    "prompt_a": "Give three reasons production services need monitoring.",
+    "prompt_b": "Give three reasons production services need monitoring. "
+  },
+  {
+    "id": "micro_blank_line_wrap_0365",
+    "category": "micro_blank_line_wrap",
+    "prompt_a": "Explain how rate limits should influence background job design.",
+    "prompt_b": "Explain how rate limits should influence\n\nbackground job design."
+  },
+  {
+    "id": "micro_leading_newline_0366",
+    "category": "micro_leading_newline",
+    "prompt_a": "List the main reasons secrets should not be committed to a repository.",
+    "prompt_b": "\n\nList the main reasons secrets should not be committed to a repository."
+  },
+  {
+    "id": "micro_trailing_space_0367",
+    "category": "micro_trailing_space",
+    "prompt_a": "Write a concise Python function that checks whether a string is a palindrome.",
+    "prompt_b": "Write a concise Python function that checks whether a string is a palindrome.    "
+  },
+  {
+    "id": "micro_leading_space_0368",
+    "category": "micro_leading_space",
+    "prompt_a": "Explain why regression tests are useful after refactoring code.",
+    "prompt_b": "  Explain why regression tests are useful after refactoring code."
+  },
+  {
+    "id": "micro_double_internal_space_0369",
+    "category": "micro_double_internal_space",
+    "prompt_a": "Describe how a background job queue should handle retries.",
+    "prompt_b": "Describe how a background job  queue should handle retries."
+  },
+  {
+    "id": "micro_duplicate_small_word_0370",
+    "category": "micro_duplicate_small_word",
+    "prompt_a": "Explain why database migrations should be reviewed carefully.",
+    "prompt_b": "Explain why database migrations should be be reviewed carefully."
+  },
+  {
+    "id": "micro_space_before_punctuation_0371",
+    "category": "micro_space_before_punctuation",
+    "prompt_a": "Describe how feature flags reduce deployment risk.",
+    "prompt_b": "Describe how feature flags reduce deployment risk ."
+  },
+  {
+    "id": "micro_leading_newline_0372",
+    "category": "micro_leading_newline",
+    "prompt_a": "Explain why retry logic should use exponential backoff.",
+    "prompt_b": "\nExplain why retry logic should use exponential backoff."
+  },
+  {
+    "id": "micro_crlf_suffix_0373",
+    "category": "micro_crlf_suffix",
+    "prompt_a": "List the tradeoffs of using a monorepo for many services.",
+    "prompt_b": "List the tradeoffs of using a monorepo for many services.\r\n"
+  },
+  {
+    "id": "micro_leading_space_0374",
+    "category": "micro_leading_space",
+    "prompt_a": "Explain why observability matters in distributed systems.",
+    "prompt_b": "   Explain why observability matters in distributed systems."
+  },
+  {
+    "id": "micro_space_after_punctuation_0375",
+    "category": "micro_space_after_punctuation",
+    "prompt_a": "Describe how an idempotency key prevents duplicate work.",
+    "prompt_b": "Describe how an idempotency key prevents duplicate work. "
+  },
+  {
+    "id": "micro_trailing_space_0376",
+    "category": "micro_trailing_space",
+    "prompt_a": "Explain why user input should be validated at service boundaries.",
+    "prompt_b": "Explain why user input should be validated at service boundaries.   "
+  },
+  {
+    "id": "micro_line_wrap_0377",
+    "category": "micro_line_wrap",
+    "prompt_a": "List the main benefits of type checking in a large codebase.",
+    "prompt_b": "List the main\nbenefits of type checking in a large codebase."
+  },
+  {
+    "id": "micro_triple_internal_space_0378",
+    "category": "micro_triple_internal_space",
+    "prompt_a": "Describe how a circuit breaker protects a downstream dependency.",
+    "prompt_b": "Describe how   a circuit breaker protects a downstream dependency."
+  },
+  {
+    "id": "micro_blank_line_wrap_0379",
+    "category": "micro_blank_line_wrap",
+    "prompt_a": "Explain why small changes can have large effects in complex systems.",
+    "prompt_b": "Explain why small changes can have large effects\n\nin complex systems."
+  },
+  {
+    "id": "micro_duplicate_punctuation_0380",
+    "category": "micro_duplicate_punctuation",
+    "prompt_a": "Explain why weather forecasts become unreliable after enough time, in one concise paragraph.",
+    "prompt_b": "Explain why weather forecasts become unreliable after enough time,, in one concise paragraph."
+  },
+  {
+    "id": "micro_trailing_newline_0381",
+    "category": "micro_trailing_newline",
+    "prompt_a": "Describe when a cache should be invalidated in a web application.",
+    "prompt_b": "Describe when a cache should be invalidated in a web application.\n"
+  },
+  {
+    "id": "micro_tab_after_space_0382",
+    "category": "micro_tab_after_space",
+    "prompt_a": "List the main risks of depending on an external API in production.",
+    "prompt_b": "List the main risks \tof depending on an external API in production."
+  },
+  {
+    "id": "micro_tab_indent_0383",
+    "category": "micro_tab_indent",
+    "prompt_a": "Explain why JSON schemas are useful for service interfaces.",
+    "prompt_b": "\tExplain why JSON schemas are useful for service interfaces."
+  },
+  {
+    "id": "micro_parenthesize_word_0384",
+    "category": "micro_parenthesize_word",
+    "prompt_a": "Give three reasons production services need monitoring.",
+    "prompt_b": "(Give) three reasons production services need monitoring."
+  },
+  {
+    "id": "micro_duplicate_punctuation_0385",
+    "category": "micro_duplicate_punctuation",
+    "prompt_a": "Explain how rate limits should influence background job design.",
+    "prompt_b": "Explain how rate limits should influence background job design.."
+  },
+  {
+    "id": "micro_duplicate_small_word_0386",
+    "category": "micro_duplicate_small_word",
+    "prompt_a": "List the main reasons secrets should not be committed to a repository.",
+    "prompt_b": "List the main reasons secrets should not be be committed to a repository."
+  },
+  {
+    "id": "micro_blank_line_wrap_0387",
+    "category": "micro_blank_line_wrap",
+    "prompt_a": "Write a concise Python function that checks whether a string is a palindrome.",
+    "prompt_b": "Write a concise Python function that checks whether a string\n\nis a palindrome."
+  },
+  {
+    "id": "micro_double_internal_space_0388",
+    "category": "micro_double_internal_space",
+    "prompt_a": "Explain why regression tests are useful after refactoring code.",
+    "prompt_b": "Explain why  regression tests are useful after refactoring code."
+  },
+  {
+    "id": "micro_trailing_space_0389",
+    "category": "micro_trailing_space",
+    "prompt_a": "Describe how a background job queue should handle retries.",
+    "prompt_b": "Describe how a background job queue should handle retries.   "
+  },
+  {
+    "id": "micro_leading_newline_0390",
+    "category": "micro_leading_newline",
+    "prompt_a": "Explain why database migrations should be reviewed carefully.",
+    "prompt_b": "\n\nExplain why database migrations should be reviewed carefully."
+  },
+  {
+    "id": "micro_leading_space_0391",
+    "category": "micro_leading_space",
+    "prompt_a": "Describe how feature flags reduce deployment risk.",
+    "prompt_b": "   Describe how feature flags reduce deployment risk."
+  },
+  {
+    "id": "micro_space_after_punctuation_0392",
+    "category": "micro_space_after_punctuation",
+    "prompt_a": "Explain why retry logic should use exponential backoff.",
+    "prompt_b": "Explain why retry logic should use exponential backoff. "
+  },
+  {
+    "id": "micro_crlf_suffix_0393",
+    "category": "micro_crlf_suffix",
+    "prompt_a": "List the tradeoffs of using a monorepo for many services.",
+    "prompt_b": "List the tradeoffs of using a monorepo for many services.\r\n"
+  },
+  {
+    "id": "micro_triple_internal_space_0394",
+    "category": "micro_triple_internal_space",
+    "prompt_a": "Explain why observability matters in distributed systems.",
+    "prompt_b": "Explain why observability matters in   distributed systems."
+  },
+  {
+    "id": "micro_tab_after_space_0395",
+    "category": "micro_tab_after_space",
+    "prompt_a": "Describe how an idempotency key prevents duplicate work.",
+    "prompt_b": "Describe how \tan idempotency key prevents duplicate work."
+  },
+  {
+    "id": "micro_parenthesize_word_0396",
+    "category": "micro_parenthesize_word",
+    "prompt_a": "Explain why user input should be validated at service boundaries.",
+    "prompt_b": "Explain why user input should be validated at (service) boundaries."
+  },
+  {
+    "id": "micro_trailing_newline_0397",
+    "category": "micro_trailing_newline",
+    "prompt_a": "List the main benefits of type checking in a large codebase.",
+    "prompt_b": "List the main benefits of type checking in a large codebase.\n\n\n"
+  },
+  {
+    "id": "micro_space_before_punctuation_0398",
+    "category": "micro_space_before_punctuation",
+    "prompt_a": "Describe how a circuit breaker protects a downstream dependency.",
+    "prompt_b": "Describe how a circuit breaker protects a downstream dependency ."
+  },
+  {
+    "id": "micro_line_wrap_0399",
+    "category": "micro_line_wrap",
+    "prompt_a": "Explain why small changes can have large effects in complex systems.",
+    "prompt_b": "Explain why small changes can have\nlarge effects in complex systems."
+  },
+  {
+    "id": "micro_tab_indent_0400",
+    "category": "micro_tab_indent",
+    "prompt_a": "Explain why weather forecasts become unreliable after enough time, in one concise paragraph.",
+    "prompt_b": "\tExplain why weather forecasts become unreliable after enough time, in one concise paragraph."
+  },
+  {
+    "id": "micro_duplicate_small_word_0401",
+    "category": "micro_duplicate_small_word",
+    "prompt_a": "Describe when a cache should be invalidated in a web application.",
+    "prompt_b": "Describe when a a cache should be invalidated in a web application."
+  },
+  {
+    "id": "micro_tab_after_space_0402",
+    "category": "micro_tab_after_space",
+    "prompt_a": "List the main risks of depending on an external API in production.",
+    "prompt_b": "List the main risks of depending on an external API \tin production."
+  },
+  {
+    "id": "micro_leading_space_0403",
+    "category": "micro_leading_space",
+    "prompt_a": "Explain why JSON schemas are useful for service interfaces.",
+    "prompt_b": "    Explain why JSON schemas are useful for service interfaces."
+  },
+  {
+    "id": "micro_space_before_punctuation_0404",
+    "category": "micro_space_before_punctuation",
+    "prompt_a": "Give three reasons production services need monitoring.",
+    "prompt_b": "Give three reasons production services need monitoring ."
+  },
+  {
+    "id": "micro_space_after_punctuation_0405",
+    "category": "micro_space_after_punctuation",
+    "prompt_a": "Explain how rate limits should influence background job design.",
+    "prompt_b": "Explain how rate limits should influence background job design. "
+  },
+  {
+    "id": "micro_line_wrap_0406",
+    "category": "micro_line_wrap",
+    "prompt_a": "List the main reasons secrets should not be committed to a repository.",
+    "prompt_b": "List the main reasons\nsecrets should not be committed to a repository."
+  },
+  {
+    "id": "micro_double_internal_space_0407",
+    "category": "micro_double_internal_space",
+    "prompt_a": "Write a concise Python function that checks whether a string is a palindrome.",
+    "prompt_b": "Write a concise Python function that checks whether a  string is a palindrome."
+  },
+  {
+    "id": "micro_trailing_newline_0408",
+    "category": "micro_trailing_newline",
+    "prompt_a": "Explain why regression tests are useful after refactoring code.",
+    "prompt_b": "Explain why regression tests are useful after refactoring code.\n\n"
+  },
+  {
+    "id": "micro_blank_line_wrap_0409",
+    "category": "micro_blank_line_wrap",
+    "prompt_a": "Describe how a background job queue should handle retries.",
+    "prompt_b": "Describe how a\n\nbackground job queue should handle retries."
+  },
+  {
+    "id": "micro_tab_indent_0410",
+    "category": "micro_tab_indent",
+    "prompt_a": "Explain why database migrations should be reviewed carefully.",
+    "prompt_b": "\tExplain why database migrations should be reviewed carefully."
+  },
+  {
+    "id": "micro_leading_newline_0411",
+    "category": "micro_leading_newline",
+    "prompt_a": "Describe how feature flags reduce deployment risk.",
+    "prompt_b": "\n\nDescribe how feature flags reduce deployment risk."
+  },
+  {
+    "id": "micro_duplicate_punctuation_0412",
+    "category": "micro_duplicate_punctuation",
+    "prompt_a": "Explain why retry logic should use exponential backoff.",
+    "prompt_b": "Explain why retry logic should use exponential backoff.."
+  },
+  {
+    "id": "micro_crlf_suffix_0413",
+    "category": "micro_crlf_suffix",
+    "prompt_a": "List the tradeoffs of using a monorepo for many services.",
+    "prompt_b": "List the tradeoffs of using a monorepo for many services.\r\n"
+  },
+  {
+    "id": "micro_trailing_space_0414",
+    "category": "micro_trailing_space",
+    "prompt_a": "Explain why observability matters in distributed systems.",
+    "prompt_b": "Explain why observability matters in distributed systems.   "
+  },
+  {
+    "id": "micro_parenthesize_word_0415",
+    "category": "micro_parenthesize_word",
+    "prompt_a": "Describe how an idempotency key prevents duplicate work.",
+    "prompt_b": "Describe how an idempotency key prevents duplicate (work)."
+  },
+  {
+    "id": "micro_triple_internal_space_0416",
+    "category": "micro_triple_internal_space",
+    "prompt_a": "Explain why user input should be validated at service boundaries.",
+    "prompt_b": "Explain why user input should be validated at service   boundaries."
+  },
+  {
+    "id": "micro_leading_newline_0417",
+    "category": "micro_leading_newline",
+    "prompt_a": "List the main benefits of type checking in a large codebase.",
+    "prompt_b": "\n\nList the main benefits of type checking in a large codebase."
+  },
+  {
+    "id": "micro_tab_indent_0418",
+    "category": "micro_tab_indent",
+    "prompt_a": "Describe how a circuit breaker protects a downstream dependency.",
+    "prompt_b": "\tDescribe how a circuit breaker protects a downstream dependency."
+  },
+  {
+    "id": "micro_line_wrap_0419",
+    "category": "micro_line_wrap",
+    "prompt_a": "Explain why small changes can have large effects in complex systems.",
+    "prompt_b": "Explain why small\nchanges can have large effects in complex systems."
+  },
+  {
+    "id": "micro_duplicate_small_word_0420",
+    "category": "micro_duplicate_small_word",
+    "prompt_a": "Explain why weather forecasts become unreliable after enough time, in one concise paragraph.",
+    "prompt_b": "Explain why weather forecasts become unreliable after enough time, in in one concise paragraph."
+  },
+  {
+    "id": "micro_crlf_suffix_0421",
+    "category": "micro_crlf_suffix",
+    "prompt_a": "Describe when a cache should be invalidated in a web application.",
+    "prompt_b": "Describe when a cache should be invalidated in a web application.\r\n"
+  },
+  {
+    "id": "micro_trailing_space_0422",
+    "category": "micro_trailing_space",
+    "prompt_a": "List the main risks of depending on an external API in production.",
+    "prompt_b": "List the main risks of depending on an external API in production.    "
+  },
+  {
+    "id": "micro_space_before_punctuation_0423",
+    "category": "micro_space_before_punctuation",
+    "prompt_a": "Explain why JSON schemas are useful for service interfaces.",
+    "prompt_b": "Explain why JSON schemas are useful for service interfaces ."
+  },
+  {
+    "id": "micro_double_internal_space_0424",
+    "category": "micro_double_internal_space",
+    "prompt_a": "Give three reasons production services need monitoring.",
+    "prompt_b": "Give three reasons production services need  monitoring."
+  },
+  {
+    "id": "micro_triple_internal_space_0425",
+    "category": "micro_triple_internal_space",
+    "prompt_a": "Explain how rate limits should influence background job design.",
+    "prompt_b": "Explain how rate limits should influence background   job design."
+  },
+  {
+    "id": "micro_parenthesize_word_0426",
+    "category": "micro_parenthesize_word",
+    "prompt_a": "List the main reasons secrets should not be committed to a repository.",
+    "prompt_b": "List the main reasons secrets (should) not be committed to a repository."
+  },
+  {
+    "id": "micro_leading_space_0427",
+    "category": "micro_leading_space",
+    "prompt_a": "Write a concise Python function that checks whether a string is a palindrome.",
+    "prompt_b": " Write a concise Python function that checks whether a string is a palindrome."
+  },
+  {
+    "id": "micro_trailing_newline_0428",
+    "category": "micro_trailing_newline",
+    "prompt_a": "Explain why regression tests are useful after refactoring code.",
+    "prompt_b": "Explain why regression tests are useful after refactoring code.\n"
+  },
+  {
+    "id": "micro_space_after_punctuation_0429",
+    "category": "micro_space_after_punctuation",
+    "prompt_a": "Describe how a background job queue should handle retries.",
+    "prompt_b": "Describe how a background job queue should handle retries. "
+  },
+  {
+    "id": "micro_tab_after_space_0430",
+    "category": "micro_tab_after_space",
+    "prompt_a": "Explain why database migrations should be reviewed carefully.",
+    "prompt_b": "Explain why \tdatabase migrations should be reviewed carefully."
+  },
+  {
+    "id": "micro_blank_line_wrap_0431",
+    "category": "micro_blank_line_wrap",
+    "prompt_a": "Describe how feature flags reduce deployment risk.",
+    "prompt_b": "Describe\n\nhow feature flags reduce deployment risk."
+  },
+  {
+    "id": "micro_duplicate_punctuation_0432",
+    "category": "micro_duplicate_punctuation",
+    "prompt_a": "Explain why retry logic should use exponential backoff.",
+    "prompt_b": "Explain why retry logic should use exponential backoff.."
+  },
+  {
+    "id": "micro_space_before_punctuation_0433",
+    "category": "micro_space_before_punctuation",
+    "prompt_a": "List the tradeoffs of using a monorepo for many services.",
+    "prompt_b": "List the tradeoffs of using a monorepo for many services ."
+  },
+  {
+    "id": "micro_parenthesize_word_0434",
+    "category": "micro_parenthesize_word",
+    "prompt_a": "Explain why observability matters in distributed systems.",
+    "prompt_b": "Explain why observability matters (in) distributed systems."
+  },
+  {
+    "id": "micro_duplicate_punctuation_0435",
+    "category": "micro_duplicate_punctuation",
+    "prompt_a": "Describe how an idempotency key prevents duplicate work.",
+    "prompt_b": "Describe how an idempotency key prevents duplicate work.."
+  },
+  {
+    "id": "micro_trailing_space_0436",
+    "category": "micro_trailing_space",
+    "prompt_a": "Explain why user input should be validated at service boundaries.",
+    "prompt_b": "Explain why user input should be validated at service boundaries.  "
+  },
+  {
+    "id": "micro_double_internal_space_0437",
+    "category": "micro_double_internal_space",
+    "prompt_a": "List the main benefits of type checking in a large codebase.",
+    "prompt_b": "List the main  benefits of type checking in a large codebase."
+  },
+  {
+    "id": "micro_blank_line_wrap_0438",
+    "category": "micro_blank_line_wrap",
+    "prompt_a": "Describe how a circuit breaker protects a downstream dependency.",
+    "prompt_b": "Describe how a circuit breaker protects a downstream\n\ndependency."
+  },
+  {
+    "id": "micro_tab_after_space_0439",
+    "category": "micro_tab_after_space",
+    "prompt_a": "Explain why small changes can have large effects in complex systems.",
+    "prompt_b": "Explain why small changes can \thave large effects in complex systems."
+  },
+  {
+    "id": "micro_tab_indent_0440",
+    "category": "micro_tab_indent",
+    "prompt_a": "Explain why weather forecasts become unreliable after enough time, in one concise paragraph.",
+    "prompt_b": "\tExplain why weather forecasts become unreliable after enough time, in one concise paragraph."
+  },
+  {
+    "id": "micro_leading_space_0441",
+    "category": "micro_leading_space",
+    "prompt_a": "Describe when a cache should be invalidated in a web application.",
+    "prompt_b": "   Describe when a cache should be invalidated in a web application."
+  },
+  {
+    "id": "micro_crlf_suffix_0442",
+    "category": "micro_crlf_suffix",
+    "prompt_a": "List the main risks of depending on an external API in production.",
+    "prompt_b": "List the main risks of depending on an external API in production.\r\n"
+  },
+  {
+    "id": "micro_triple_internal_space_0443",
+    "category": "micro_triple_internal_space",
+    "prompt_a": "Explain why JSON schemas are useful for service interfaces.",
+    "prompt_b": "Explain   why JSON schemas are useful for service interfaces."
+  },
+  {
+    "id": "micro_duplicate_small_word_0444",
+    "category": "micro_duplicate_small_word",
+    "prompt_a": "Give three reasons production services need monitoring.",
+    "prompt_b": "Give three reasons production services need monitoring. "
+  },
+  {
+    "id": "micro_space_after_punctuation_0445",
+    "category": "micro_space_after_punctuation",
+    "prompt_a": "Explain how rate limits should influence background job design.",
+    "prompt_b": "Explain how rate limits should influence background job design. "
+  },
+  {
+    "id": "micro_leading_newline_0446",
+    "category": "micro_leading_newline",
+    "prompt_a": "List the main reasons secrets should not be committed to a repository.",
+    "prompt_b": "\n\nList the main reasons secrets should not be committed to a repository."
+  },
+  {
+    "id": "micro_line_wrap_0447",
+    "category": "micro_line_wrap",
+    "prompt_a": "Write a concise Python function that checks whether a string is a palindrome.",
+    "prompt_b": "Write a concise\nPython function that checks whether a string is a palindrome."
+  },
+  {
+    "id": "micro_trailing_newline_0448",
+    "category": "micro_trailing_newline",
+    "prompt_a": "Explain why regression tests are useful after refactoring code.",
+    "prompt_b": "Explain why regression tests are useful after refactoring code.\n"
+  },
+  {
+    "id": "micro_leading_space_0449",
+    "category": "micro_leading_space",
+    "prompt_a": "Describe how a background job queue should handle retries.",
+    "prompt_b": "   Describe how a background job queue should handle retries."
+  },
+  {
+    "id": "micro_crlf_suffix_0450",
+    "category": "micro_crlf_suffix",
+    "prompt_a": "Explain why database migrations should be reviewed carefully.",
+    "prompt_b": "Explain why database migrations should be reviewed carefully.\r\n"
+  },
+  {
+    "id": "micro_line_wrap_0451",
+    "category": "micro_line_wrap",
+    "prompt_a": "Describe how feature flags reduce deployment risk.",
+    "prompt_b": "Describe how\nfeature flags reduce deployment risk."
+  },
+  {
+    "id": "micro_space_before_punctuation_0452",
+    "category": "micro_space_before_punctuation",
+    "prompt_a": "Explain why retry logic should use exponential backoff.",
+    "prompt_b": "Explain why retry logic should use exponential backoff ."
+  },
+  {
+    "id": "micro_trailing_space_0453",
+    "category": "micro_trailing_space",
+    "prompt_a": "List the tradeoffs of using a monorepo for many services.",
+    "prompt_b": "List the tradeoffs of using a monorepo for many services.    "
+  },
+  {
+    "id": "micro_leading_newline_0454",
+    "category": "micro_leading_newline",
+    "prompt_a": "Explain why observability matters in distributed systems.",
+    "prompt_b": "\n\nExplain why observability matters in distributed systems."
+  },
+  {
+    "id": "micro_duplicate_small_word_0455",
+    "category": "micro_duplicate_small_word",
+    "prompt_a": "Describe how an idempotency key prevents duplicate work.",
+    "prompt_b": "Describe how an an idempotency key prevents duplicate work."
+  },
+  {
+    "id": "micro_tab_after_space_0456",
+    "category": "micro_tab_after_space",
+    "prompt_a": "Explain why user input should be validated at service boundaries.",
+    "prompt_b": "Explain \twhy user input should be validated at service boundaries."
+  },
+  {
+    "id": "micro_space_after_punctuation_0457",
+    "category": "micro_space_after_punctuation",
+    "prompt_a": "List the main benefits of type checking in a large codebase.",
+    "prompt_b": "List the main benefits of type checking in a large codebase. "
+  },
+  {
+    "id": "micro_tab_indent_0458",
+    "category": "micro_tab_indent",
+    "prompt_a": "Describe how a circuit breaker protects a downstream dependency.",
+    "prompt_b": "\tDescribe how a circuit breaker protects a downstream dependency."
+  },
+  {
+    "id": "micro_trailing_newline_0459",
+    "category": "micro_trailing_newline",
+    "prompt_a": "Explain why small changes can have large effects in complex systems.",
+    "prompt_b": "Explain why small changes can have large effects in complex systems.\n\n\n"
+  },
+  {
+    "id": "micro_blank_line_wrap_0460",
+    "category": "micro_blank_line_wrap",
+    "prompt_a": "Explain why weather forecasts become unreliable after enough time, in one concise paragraph.",
+    "prompt_b": "Explain why\n\nweather forecasts become unreliable after enough time, in one concise paragraph."
+  },
+  {
+    "id": "micro_double_internal_space_0461",
+    "category": "micro_double_internal_space",
+    "prompt_a": "Describe when a cache should be invalidated in a web application.",
+    "prompt_b": "Describe when  a cache should be invalidated in a web application."
+  },
+  {
+    "id": "micro_duplicate_punctuation_0462",
+    "category": "micro_duplicate_punctuation",
+    "prompt_a": "List the main risks of depending on an external API in production.",
+    "prompt_b": "List the main risks of depending on an external API in production.."
+  },
+  {
+    "id": "micro_triple_internal_space_0463",
+    "category": "micro_triple_internal_space",
+    "prompt_a": "Explain why JSON schemas are useful for service interfaces.",
+    "prompt_b": "Explain why JSON   schemas are useful for service interfaces."
+  },
+  {
+    "id": "micro_parenthesize_word_0464",
+    "category": "micro_parenthesize_word",
+    "prompt_a": "Give three reasons production services need monitoring.",
+    "prompt_b": "Give three reasons production services need (monitoring)."
+  },
+  {
+    "id": "micro_space_after_punctuation_0465",
+    "category": "micro_space_after_punctuation",
+    "prompt_a": "Explain how rate limits should influence background job design.",
+    "prompt_b": "Explain how rate limits should influence background job design. "
+  },
+  {
+    "id": "micro_double_internal_space_0466",
+    "category": "micro_double_internal_space",
+    "prompt_a": "List the main reasons secrets should not be committed to a repository.",
+    "prompt_b": "List the  main reasons secrets should not be committed to a repository."
+  },
+  {
+    "id": "micro_leading_newline_0467",
+    "category": "micro_leading_newline",
+    "prompt_a": "Write a concise Python function that checks whether a string is a palindrome.",
+    "prompt_b": "\n\nWrite a concise Python function that checks whether a string is a palindrome."
+  },
+  {
+    "id": "micro_trailing_space_0468",
+    "category": "micro_trailing_space",
+    "prompt_a": "Explain why regression tests are useful after refactoring code.",
+    "prompt_b": "Explain why regression tests are useful after refactoring code.    "
+  },
+  {
+    "id": "micro_tab_indent_0469",
+    "category": "micro_tab_indent",
+    "prompt_a": "Describe how a background job queue should handle retries.",
+    "prompt_b": "\tDescribe how a background job queue should handle retries."
+  },
+  {
+    "id": "micro_tab_after_space_0470",
+    "category": "micro_tab_after_space",
+    "prompt_a": "Explain why database migrations should be reviewed carefully.",
+    "prompt_b": "Explain why database migrations should \tbe reviewed carefully."
+  },
+  {
+    "id": "micro_trailing_newline_0471",
+    "category": "micro_trailing_newline",
+    "prompt_a": "Describe how feature flags reduce deployment risk.",
+    "prompt_b": "Describe how feature flags reduce deployment risk.\n\n\n"
+  },
+  {
+    "id": "micro_parenthesize_word_0472",
+    "category": "micro_parenthesize_word",
+    "prompt_a": "Explain why retry logic should use exponential backoff.",
+    "prompt_b": "Explain why retry logic should use (exponential) backoff."
+  },
+  {
+    "id": "micro_line_wrap_0473",
+    "category": "micro_line_wrap",
+    "prompt_a": "List the tradeoffs of using a monorepo for many services.",
+    "prompt_b": "List the\ntradeoffs of using a monorepo for many services."
+  },
+  {
+    "id": "micro_crlf_suffix_0474",
+    "category": "micro_crlf_suffix",
+    "prompt_a": "Explain why observability matters in distributed systems.",
+    "prompt_b": "Explain why observability matters in distributed systems.\r\n"
+  },
+  {
+    "id": "micro_leading_space_0475",
+    "category": "micro_leading_space",
+    "prompt_a": "Describe how an idempotency key prevents duplicate work.",
+    "prompt_b": "   Describe how an idempotency key prevents duplicate work."
+  },
+  {
+    "id": "micro_duplicate_punctuation_0476",
+    "category": "micro_duplicate_punctuation",
+    "prompt_a": "Explain why user input should be validated at service boundaries.",
+    "prompt_b": "Explain why user input should be validated at service boundaries.."
+  },
+  {
+    "id": "micro_triple_internal_space_0477",
+    "category": "micro_triple_internal_space",
+    "prompt_a": "List the main benefits of type checking in a large codebase.",
+    "prompt_b": "List the main benefits of type   checking in a large codebase."
+  },
+  {
+    "id": "micro_space_before_punctuation_0478",
+    "category": "micro_space_before_punctuation",
+    "prompt_a": "Describe how a circuit breaker protects a downstream dependency.",
+    "prompt_b": "Describe how a circuit breaker protects a downstream dependency ."
+  },
+  {
+    "id": "micro_duplicate_small_word_0479",
+    "category": "micro_duplicate_small_word",
+    "prompt_a": "Explain why small changes can have large effects in complex systems.",
+    "prompt_b": "Explain why small changes can have large effects in in complex systems."
+  },
+  {
+    "id": "micro_blank_line_wrap_0480",
+    "category": "micro_blank_line_wrap",
+    "prompt_a": "Explain why weather forecasts become unreliable after enough time, in one concise paragraph.",
+    "prompt_b": "Explain why weather forecasts become unreliable\n\nafter enough time, in one concise paragraph."
+  },
+  {
+    "id": "micro_triple_internal_space_0481",
+    "category": "micro_triple_internal_space",
+    "prompt_a": "Describe when a cache should be invalidated in a web application.",
+    "prompt_b": "Describe when a   cache should be invalidated in a web application."
+  },
+  {
+    "id": "micro_blank_line_wrap_0482",
+    "category": "micro_blank_line_wrap",
+    "prompt_a": "List the main risks of depending on an external API in production.",
+    "prompt_b": "List the main risks of depending\n\non an external API in production."
+  },
+  {
+    "id": "micro_crlf_suffix_0483",
+    "category": "micro_crlf_suffix",
+    "prompt_a": "Explain why JSON schemas are useful for service interfaces.",
+    "prompt_b": "Explain why JSON schemas are useful for service interfaces.\r\n"
+  },
+  {
+    "id": "micro_double_internal_space_0484",
+    "category": "micro_double_internal_space",
+    "prompt_a": "Give three reasons production services need monitoring.",
+    "prompt_b": "Give three  reasons production services need monitoring."
+  },
+  {
+    "id": "micro_trailing_space_0485",
+    "category": "micro_trailing_space",
+    "prompt_a": "Explain how rate limits should influence background job design.",
+    "prompt_b": "Explain how rate limits should influence background job design.   "
+  },
+  {
+    "id": "micro_trailing_newline_0486",
+    "category": "micro_trailing_newline",
+    "prompt_a": "List the main reasons secrets should not be committed to a repository.",
+    "prompt_b": "List the main reasons secrets should not be committed to a repository.\n"
+  },
+  {
+    "id": "micro_line_wrap_0487",
+    "category": "micro_line_wrap",
+    "prompt_a": "Write a concise Python function that checks whether a string is a palindrome.",
+    "prompt_b": "Write a concise Python function that checks whether a string\nis a palindrome."
+  },
+  {
+    "id": "micro_space_before_punctuation_0488",
+    "category": "micro_space_before_punctuation",
+    "prompt_a": "Explain why regression tests are useful after refactoring code.",
+    "prompt_b": "Explain why regression tests are useful after refactoring code ."
+  },
+  {
+    "id": "micro_leading_newline_0489",
+    "category": "micro_leading_newline",
+    "prompt_a": "Describe how a background job queue should handle retries.",
+    "prompt_b": "\nDescribe how a background job queue should handle retries."
+  },
+  {
+    "id": "micro_duplicate_small_word_0490",
+    "category": "micro_duplicate_small_word",
+    "prompt_a": "Explain why database migrations should be reviewed carefully.",
+    "prompt_b": "Explain why database migrations should be be reviewed carefully."
+  },
+  {
+    "id": "micro_tab_indent_0491",
+    "category": "micro_tab_indent",
+    "prompt_a": "Describe how feature flags reduce deployment risk.",
+    "prompt_b": "\tDescribe how feature flags reduce deployment risk."
+  },
+  {
+    "id": "micro_duplicate_punctuation_0492",
+    "category": "micro_duplicate_punctuation",
+    "prompt_a": "Explain why retry logic should use exponential backoff.",
+    "prompt_b": "Explain why retry logic should use exponential backoff.."
+  },
+  {
+    "id": "micro_leading_space_0493",
+    "category": "micro_leading_space",
+    "prompt_a": "List the tradeoffs of using a monorepo for many services.",
+    "prompt_b": " List the tradeoffs of using a monorepo for many services."
+  },
+  {
+    "id": "micro_tab_after_space_0494",
+    "category": "micro_tab_after_space",
+    "prompt_a": "Explain why observability matters in distributed systems.",
+    "prompt_b": "Explain why \tobservability matters in distributed systems."
+  },
+  {
+    "id": "micro_space_after_punctuation_0495",
+    "category": "micro_space_after_punctuation",
+    "prompt_a": "Describe how an idempotency key prevents duplicate work.",
+    "prompt_b": "Describe how an idempotency key prevents duplicate work. "
+  },
+  {
+    "id": "micro_parenthesize_word_0496",
+    "category": "micro_parenthesize_word",
+    "prompt_a": "Explain why user input should be validated at service boundaries.",
+    "prompt_b": "Explain why user input (should) be validated at service boundaries."
+  },
+  {
+    "id": "micro_line_wrap_0497",
+    "category": "micro_line_wrap",
+    "prompt_a": "List the main benefits of type checking in a large codebase.",
+    "prompt_b": "List the main benefits of type checking in a\nlarge codebase."
+  },
+  {
+    "id": "micro_space_before_punctuation_0498",
+    "category": "micro_space_before_punctuation",
+    "prompt_a": "Describe how a circuit breaker protects a downstream dependency.",
+    "prompt_b": "Describe how a circuit breaker protects a downstream dependency ."
+  },
+  {
+    "id": "micro_leading_newline_0499",
+    "category": "micro_leading_newline",
+    "prompt_a": "Explain why small changes can have large effects in complex systems.",
+    "prompt_b": "\nExplain why small changes can have large effects in complex systems."
+  }
+]

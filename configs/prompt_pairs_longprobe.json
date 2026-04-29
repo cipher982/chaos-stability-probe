@@ -1,0 +1,26 @@
+[
+  {
+    "id": "noop_stability_newline",
+    "category": "noop_format",
+    "prompt_a": "Give three practical reasons a software team might care about model output stability.",
+    "prompt_b": "\nGive three practical reasons a software team might care about model output stability."
+  },
+  {
+    "id": "punctuation_complex_system",
+    "category": "punctuation",
+    "prompt_a": "Explain how small changes can affect a complex system over time.",
+    "prompt_b": "Explain how small changes can affect a complex system, over time."
+  },
+  {
+    "id": "synonym_small_tiny",
+    "category": "synonym",
+    "prompt_a": "Explain how a small perturbation can grow in a chaotic system.",
+    "prompt_b": "Explain how a tiny perturbation can grow in a chaotic system."
+  },
+  {
+    "id": "semantic_weather_markets",
+    "category": "semantic_small",
+    "prompt_a": "Explain why weather forecasts become unreliable after enough time, in one concise paragraph.",
+    "prompt_b": "Explain why stock market forecasts become unreliable after enough time, in one concise paragraph."
+  }
+]

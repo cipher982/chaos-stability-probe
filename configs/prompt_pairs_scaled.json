@@ -1,0 +1,680 @@
+[
+  {
+    "id": "control_weather",
+    "category": "control_identical",
+    "prompt_a": "Explain why weather forecasts become unreliable after enough time.",
+    "prompt_b": "Explain why weather forecasts become unreliable after enough time."
+  },
+  {
+    "id": "control_regression_tests",
+    "category": "control_identical",
+    "prompt_a": "Explain why regression tests are useful after refactoring code.",
+    "prompt_b": "Explain why regression tests are useful after refactoring code."
+  },
+  {
+    "id": "control_job_queue",
+    "category": "control_identical",
+    "prompt_a": "Describe how a background job queue should handle retries.",
+    "prompt_b": "Describe how a background job queue should handle retries."
+  },
+  {
+    "id": "control_cache",
+    "category": "control_identical",
+    "prompt_a": "Describe when a cache should be invalidated in a web application.",
+    "prompt_b": "Describe when a cache should be invalidated in a web application."
+  },
+  {
+    "id": "control_palindrome",
+    "category": "control_identical",
+    "prompt_a": "Write a concise Python function that checks whether a string is a palindrome.",
+    "prompt_b": "Write a concise Python function that checks whether a string is a palindrome."
+  },
+  {
+    "id": "control_external_api",
+    "category": "control_identical",
+    "prompt_a": "List the main risks of depending on an external API in production.",
+    "prompt_b": "List the main risks of depending on an external API in production."
+  },
+  {
+    "id": "control_json_schema",
+    "category": "control_identical",
+    "prompt_a": "Explain why JSON schemas are useful for service interfaces.",
+    "prompt_b": "Explain why JSON schemas are useful for service interfaces."
+  },
+  {
+    "id": "control_monitoring",
+    "category": "control_identical",
+    "prompt_a": "Give three reasons production services need monitoring.",
+    "prompt_b": "Give three reasons production services need monitoring."
+  },
+  {
+    "id": "control_rate_limits",
+    "category": "control_identical",
+    "prompt_a": "Explain how rate limits should influence background job design.",
+    "prompt_b": "Explain how rate limits should influence background job design."
+  },
+  {
+    "id": "control_database_migrations",
+    "category": "control_identical",
+    "prompt_a": "Explain why database migrations should be reviewed carefully.",
+    "prompt_b": "Explain why database migrations should be reviewed carefully."
+  },
+  {
+    "id": "noop_weather_trailing_space",
+    "category": "noop_format",
+    "prompt_a": "Explain why weather forecasts become unreliable after enough time.",
+    "prompt_b": "Explain why weather forecasts become unreliable after enough time. "
+  },
+  {
+    "id": "noop_weather_newline",
+    "category": "noop_format",
+    "prompt_a": "Explain why weather forecasts become unreliable after enough time.",
+    "prompt_b": "Explain why weather forecasts become unreliable after enough time.\n"
+  },
+  {
+    "id": "noop_regression_tests_trailing_space",
+    "category": "noop_format",
+    "prompt_a": "Explain why regression tests are useful after refactoring code.",
+    "prompt_b": "Explain why regression tests are useful after refactoring code. "
+  },
+  {
+    "id": "noop_regression_tests_newline",
+    "category": "noop_format",
+    "prompt_a": "Explain why regression tests are useful after refactoring code.",
+    "prompt_b": "Explain why regression tests are useful after refactoring code.\n"
+  },
+  {
+    "id": "noop_job_queue_trailing_space",
+    "category": "noop_format",
+    "prompt_a": "Describe how a background job queue should handle retries.",
+    "prompt_b": "Describe how a background job queue should handle retries. "
+  },
+  {
+    "id": "noop_job_queue_newline",
+    "category": "noop_format",
+    "prompt_a": "Describe how a background job queue should handle retries.",
+    "prompt_b": "Describe how a background job queue should handle retries.\n"
+  },
+  {
+    "id": "noop_cache_trailing_space",
+    "category": "noop_format",
+    "prompt_a": "Describe when a cache should be invalidated in a web application.",
+    "prompt_b": "Describe when a cache should be invalidated in a web application. "
+  },
+  {
+    "id": "noop_cache_newline",
+    "category": "noop_format",
+    "prompt_a": "Describe when a cache should be invalidated in a web application.",
+    "prompt_b": "Describe when a cache should be invalidated in a web application.\n"
+  },
+  {
+    "id": "noop_palindrome_trailing_space",
+    "category": "noop_format",
+    "prompt_a": "Write a concise Python function that checks whether a string is a palindrome.",
+    "prompt_b": "Write a concise Python function that checks whether a string is a palindrome. "
+  },
+  {
+    "id": "noop_palindrome_newline",
+    "category": "noop_format",
+    "prompt_a": "Write a concise Python function that checks whether a string is a palindrome.",
+    "prompt_b": "Write a concise Python function that checks whether a string is a palindrome.\n"
+  },
+  {
+    "id": "noop_external_api_trailing_space",
+    "category": "noop_format",
+    "prompt_a": "List the main risks of depending on an external API in production.",
+    "prompt_b": "List the main risks of depending on an external API in production. "
+  },
+  {
+    "id": "noop_external_api_newline",
+    "category": "noop_format",
+    "prompt_a": "List the main risks of depending on an external API in production.",
+    "prompt_b": "List the main risks of depending on an external API in production.\n"
+  },
+  {
+    "id": "noop_json_schema_trailing_space",
+    "category": "noop_format",
+    "prompt_a": "Explain why JSON schemas are useful for service interfaces.",
+    "prompt_b": "Explain why JSON schemas are useful for service interfaces. "
+  },
+  {
+    "id": "noop_json_schema_newline",
+    "category": "noop_format",
+    "prompt_a": "Explain why JSON schemas are useful for service interfaces.",
+    "prompt_b": "Explain why JSON schemas are useful for service interfaces.\n"
+  },
+  {
+    "id": "noop_monitoring_trailing_space",
+    "category": "noop_format",
+    "prompt_a": "Give three reasons production services need monitoring.",
+    "prompt_b": "Give three reasons production services need monitoring. "
+  },
+  {
+    "id": "noop_monitoring_newline",
+    "category": "noop_format",
+    "prompt_a": "Give three reasons production services need monitoring.",
+    "prompt_b": "Give three reasons production services need monitoring.\n"
+  },
+  {
+    "id": "noop_rate_limits_trailing_space",
+    "category": "noop_format",
+    "prompt_a": "Explain how rate limits should influence background job design.",
+    "prompt_b": "Explain how rate limits should influence background job design. "
+  },
+  {
+    "id": "noop_rate_limits_newline",
+    "category": "noop_format",
+    "prompt_a": "Explain how rate limits should influence background job design.",
+    "prompt_b": "Explain how rate limits should influence background job design.\n"
+  },
+  {
+    "id": "noop_database_migrations_trailing_space",
+    "category": "noop_format",
+    "prompt_a": "Explain why database migrations should be reviewed carefully.",
+    "prompt_b": "Explain why database migrations should be reviewed carefully. "
+  },
+  {
+    "id": "noop_database_migrations_newline",
+    "category": "noop_format",
+    "prompt_a": "Explain why database migrations should be reviewed carefully.",
+    "prompt_b": "Explain why database migrations should be reviewed carefully.\n"
+  },
+  {
+    "id": "noop_secrets_trailing_space",
+    "category": "noop_format",
+    "prompt_a": "List the main reasons secrets should not be committed to a repository.",
+    "prompt_b": "List the main reasons secrets should not be committed to a repository. "
+  },
+  {
+    "id": "noop_secrets_newline",
+    "category": "noop_format",
+    "prompt_a": "List the main reasons secrets should not be committed to a repository.",
+    "prompt_b": "List the main reasons secrets should not be committed to a repository.\n"
+  },
+  {
+    "id": "noop_incident_review_trailing_space",
+    "category": "noop_format",
+    "prompt_a": "Describe how an incident review should help a software team improve.",
+    "prompt_b": "Describe how an incident review should help a software team improve. "
+  },
+  {
+    "id": "noop_incident_review_newline",
+    "category": "noop_format",
+    "prompt_a": "Describe how an incident review should help a software team improve.",
+    "prompt_b": "Describe how an incident review should help a software team improve.\n"
+  },
+  {
+    "id": "noop_chaos_system_trailing_space",
+    "category": "noop_format",
+    "prompt_a": "Explain how small changes can affect a complex system over time.",
+    "prompt_b": "Explain how small changes can affect a complex system over time. "
+  },
+  {
+    "id": "noop_chaos_system_newline",
+    "category": "noop_format",
+    "prompt_a": "Explain how small changes can affect a complex system over time.",
+    "prompt_b": "Explain how small changes can affect a complex system over time.\n"
+  },
+  {
+    "id": "noop_feedback_loops_trailing_space",
+    "category": "noop_format",
+    "prompt_a": "Explain why fast feedback loops improve software development.",
+    "prompt_b": "Explain why fast feedback loops improve software development. "
+  },
+  {
+    "id": "noop_feedback_loops_newline",
+    "category": "noop_format",
+    "prompt_a": "Explain why fast feedback loops improve software development.",
+    "prompt_b": "Explain why fast feedback loops improve software development.\n"
+  },
+  {
+    "id": "noop_deployment_trailing_space",
+    "category": "noop_format",
+    "prompt_a": "Explain why deployment rollbacks should be tested before an incident.",
+    "prompt_b": "Explain why deployment rollbacks should be tested before an incident. "
+  },
+  {
+    "id": "noop_deployment_newline",
+    "category": "noop_format",
+    "prompt_a": "Explain why deployment rollbacks should be tested before an incident.",
+    "prompt_b": "Explain why deployment rollbacks should be tested before an incident.\n"
+  },
+  {
+    "id": "noop_observability_trailing_space",
+    "category": "noop_format",
+    "prompt_a": "Describe how logs, metrics, and traces help debug production systems.",
+    "prompt_b": "Describe how logs, metrics, and traces help debug production systems. "
+  },
+  {
+    "id": "noop_observability_newline",
+    "category": "noop_format",
+    "prompt_a": "Describe how logs, metrics, and traces help debug production systems.",
+    "prompt_b": "Describe how logs, metrics, and traces help debug production systems.\n"
+  },
+  {
+    "id": "noop_idempotency_trailing_space",
+    "category": "noop_format",
+    "prompt_a": "Explain why idempotency matters for retryable API requests.",
+    "prompt_b": "Explain why idempotency matters for retryable API requests. "
+  },
+  {
+    "id": "noop_idempotency_newline",
+    "category": "noop_format",
+    "prompt_a": "Explain why idempotency matters for retryable API requests.",
+    "prompt_b": "Explain why idempotency matters for retryable API requests.\n"
+  },
+  {
+    "id": "noop_schema_migration_trailing_space",
+    "category": "noop_format",
+    "prompt_a": "Describe how to safely roll out a database schema migration.",
+    "prompt_b": "Describe how to safely roll out a database schema migration. "
+  },
+  {
+    "id": "noop_schema_migration_newline",
+    "category": "noop_format",
+    "prompt_a": "Describe how to safely roll out a database schema migration.",
+    "prompt_b": "Describe how to safely roll out a database schema migration.\n"
+  },
+  {
+    "id": "noop_load_shedding_trailing_space",
+    "category": "noop_format",
+    "prompt_a": "Explain when a service should shed load instead of accepting every request.",
+    "prompt_b": "Explain when a service should shed load instead of accepting every request. "
+  },
+  {
+    "id": "noop_load_shedding_newline",
+    "category": "noop_format",
+    "prompt_a": "Explain when a service should shed load instead of accepting every request.",
+    "prompt_b": "Explain when a service should shed load instead of accepting every request.\n"
+  },
+  {
+    "id": "noop_feature_flags_trailing_space",
+    "category": "noop_format",
+    "prompt_a": "Explain how feature flags reduce release risk.",
+    "prompt_b": "Explain how feature flags reduce release risk. "
+  },
+  {
+    "id": "noop_feature_flags_newline",
+    "category": "noop_format",
+    "prompt_a": "Explain how feature flags reduce release risk.",
+    "prompt_b": "Explain how feature flags reduce release risk.\n"
+  },
+  {
+    "id": "punct_weather_question",
+    "category": "punctuation",
+    "prompt_a": "Explain why weather forecasts become unreliable after enough time.",
+    "prompt_b": "Explain why weather forecasts become unreliable after enough time?"
+  },
+  {
+    "id": "punct_weather_colon",
+    "category": "punctuation",
+    "prompt_a": "Explain why weather forecasts become unreliable after enough time.",
+    "prompt_b": "Explain why weather forecasts become unreliable after enough time:"
+  },
+  {
+    "id": "punct_regression_tests_question",
+    "category": "punctuation",
+    "prompt_a": "Explain why regression tests are useful after refactoring code.",
+    "prompt_b": "Explain why regression tests are useful after refactoring code?"
+  },
+  {
+    "id": "punct_regression_tests_colon",
+    "category": "punctuation",
+    "prompt_a": "Explain why regression tests are useful after refactoring code.",
+    "prompt_b": "Explain why regression tests are useful after refactoring code:"
+  },
+  {
+    "id": "punct_job_queue_question",
+    "category": "punctuation",
+    "prompt_a": "Describe how a background job queue should handle retries.",
+    "prompt_b": "Describe how a background job queue should handle retries?"
+  },
+  {
+    "id": "punct_job_queue_colon",
+    "category": "punctuation",
+    "prompt_a": "Describe how a background job queue should handle retries.",
+    "prompt_b": "Describe how a background job queue should handle retries:"
+  },
+  {
+    "id": "punct_cache_question",
+    "category": "punctuation",
+    "prompt_a": "Describe when a cache should be invalidated in a web application.",
+    "prompt_b": "Describe when a cache should be invalidated in a web application?"
+  },
+  {
+    "id": "punct_cache_colon",
+    "category": "punctuation",
+    "prompt_a": "Describe when a cache should be invalidated in a web application.",
+    "prompt_b": "Describe when a cache should be invalidated in a web application:"
+  },
+  {
+    "id": "punct_palindrome_question",
+    "category": "punctuation",
+    "prompt_a": "Write a concise Python function that checks whether a string is a palindrome.",
+    "prompt_b": "Write a concise Python function that checks whether a string is a palindrome?"
+  },
+  {
+    "id": "punct_palindrome_colon",
+    "category": "punctuation",
+    "prompt_a": "Write a concise Python function that checks whether a string is a palindrome.",
+    "prompt_b": "Write a concise Python function that checks whether a string is a palindrome:"
+  },
+  {
+    "id": "punct_external_api_question",
+    "category": "punctuation",
+    "prompt_a": "List the main risks of depending on an external API in production.",
+    "prompt_b": "List the main risks of depending on an external API in production?"
+  },
+  {
+    "id": "punct_external_api_colon",
+    "category": "punctuation",
+    "prompt_a": "List the main risks of depending on an external API in production.",
+    "prompt_b": "List the main risks of depending on an external API in production:"
+  },
+  {
+    "id": "punct_json_schema_question",
+    "category": "punctuation",
+    "prompt_a": "Explain why JSON schemas are useful for service interfaces.",
+    "prompt_b": "Explain why JSON schemas are useful for service interfaces?"
+  },
+  {
+    "id": "punct_json_schema_colon",
+    "category": "punctuation",
+    "prompt_a": "Explain why JSON schemas are useful for service interfaces.",
+    "prompt_b": "Explain why JSON schemas are useful for service interfaces:"
+  },
+  {
+    "id": "punct_monitoring_question",
+    "category": "punctuation",
+    "prompt_a": "Give three reasons production services need monitoring.",
+    "prompt_b": "Give three reasons production services need monitoring?"
+  },
+  {
+    "id": "punct_monitoring_colon",
+    "category": "punctuation",
+    "prompt_a": "Give three reasons production services need monitoring.",
+    "prompt_b": "Give three reasons production services need monitoring:"
+  },
+  {
+    "id": "punct_rate_limits_question",
+    "category": "punctuation",
+    "prompt_a": "Explain how rate limits should influence background job design.",
+    "prompt_b": "Explain how rate limits should influence background job design?"
+  },
+  {
+    "id": "punct_rate_limits_colon",
+    "category": "punctuation",
+    "prompt_a": "Explain how rate limits should influence background job design.",
+    "prompt_b": "Explain how rate limits should influence background job design:"
+  },
+  {
+    "id": "punct_database_migrations_question",
+    "category": "punctuation",
+    "prompt_a": "Explain why database migrations should be reviewed carefully.",
+    "prompt_b": "Explain why database migrations should be reviewed carefully?"
+  },
+  {
+    "id": "punct_database_migrations_colon",
+    "category": "punctuation",
+    "prompt_a": "Explain why database migrations should be reviewed carefully.",
+    "prompt_b": "Explain why database migrations should be reviewed carefully:"
+  },
+  {
+    "id": "punct_secrets_question",
+    "category": "punctuation",
+    "prompt_a": "List the main reasons secrets should not be committed to a repository.",
+    "prompt_b": "List the main reasons secrets should not be committed to a repository?"
+  },
+  {
+    "id": "punct_secrets_colon",
+    "category": "punctuation",
+    "prompt_a": "List the main reasons secrets should not be committed to a repository.",
+    "prompt_b": "List the main reasons secrets should not be committed to a repository:"
+  },
+  {
+    "id": "punct_incident_review_question",
+    "category": "punctuation",
+    "prompt_a": "Describe how an incident review should help a software team improve.",
+    "prompt_b": "Describe how an incident review should help a software team improve?"
+  },
+  {
+    "id": "punct_incident_review_colon",
+    "category": "punctuation",
+    "prompt_a": "Describe how an incident review should help a software team improve.",
+    "prompt_b": "Describe how an incident review should help a software team improve:"
+  },
+  {
+    "id": "punct_chaos_system_question",
+    "category": "punctuation",
+    "prompt_a": "Explain how small changes can affect a complex system over time.",
+    "prompt_b": "Explain how small changes can affect a complex system over time?"
+  },
+  {
+    "id": "punct_chaos_system_colon",
+    "category": "punctuation",
+    "prompt_a": "Explain how small changes can affect a complex system over time.",
+    "prompt_b": "Explain how small changes can affect a complex system over time:"
+  },
+  {
+    "id": "punct_feedback_loops_question",
+    "category": "punctuation",
+    "prompt_a": "Explain why fast feedback loops improve software development.",
+    "prompt_b": "Explain why fast feedback loops improve software development?"
+  },
+  {
+    "id": "punct_feedback_loops_colon",
+    "category": "punctuation",
+    "prompt_a": "Explain why fast feedback loops improve software development.",
+    "prompt_b": "Explain why fast feedback loops improve software development:"
+  },
+  {
+    "id": "punct_deployment_question",
+    "category": "punctuation",
+    "prompt_a": "Explain why deployment rollbacks should be tested before an incident.",
+    "prompt_b": "Explain why deployment rollbacks should be tested before an incident?"
+  },
+  {
+    "id": "punct_deployment_colon",
+    "category": "punctuation",
+    "prompt_a": "Explain why deployment rollbacks should be tested before an incident.",
+    "prompt_b": "Explain why deployment rollbacks should be tested before an incident:"
+  },
+  {
+    "id": "punct_observability_question",
+    "category": "punctuation",
+    "prompt_a": "Describe how logs, metrics, and traces help debug production systems.",
+    "prompt_b": "Describe how logs, metrics, and traces help debug production systems?"
+  },
+  {
+    "id": "punct_observability_colon",
+    "category": "punctuation",
+    "prompt_a": "Describe how logs, metrics, and traces help debug production systems.",
+    "prompt_b": "Describe how logs, metrics, and traces help debug production systems:"
+  },
+  {
+    "id": "punct_idempotency_question",
+    "category": "punctuation",
+    "prompt_a": "Explain why idempotency matters for retryable API requests.",
+    "prompt_b": "Explain why idempotency matters for retryable API requests?"
+  },
+  {
+    "id": "punct_idempotency_colon",
+    "category": "punctuation",
+    "prompt_a": "Explain why idempotency matters for retryable API requests.",
+    "prompt_b": "Explain why idempotency matters for retryable API requests:"
+  },
+  {
+    "id": "punct_schema_migration_question",
+    "category": "punctuation",
+    "prompt_a": "Describe how to safely roll out a database schema migration.",
+    "prompt_b": "Describe how to safely roll out a database schema migration?"
+  },
+  {
+    "id": "punct_schema_migration_colon",
+    "category": "punctuation",
+    "prompt_a": "Describe how to safely roll out a database schema migration.",
+    "prompt_b": "Describe how to safely roll out a database schema migration:"
+  },
+  {
+    "id": "punct_load_shedding_question",
+    "category": "punctuation",
+    "prompt_a": "Explain when a service should shed load instead of accepting every request.",
+    "prompt_b": "Explain when a service should shed load instead of accepting every request?"
+  },
+  {
+    "id": "punct_load_shedding_colon",
+    "category": "punctuation",
+    "prompt_a": "Explain when a service should shed load instead of accepting every request.",
+    "prompt_b": "Explain when a service should shed load instead of accepting every request:"
+  },
+  {
+    "id": "punct_feature_flags_question",
+    "category": "punctuation",
+    "prompt_a": "Explain how feature flags reduce release risk.",
+    "prompt_b": "Explain how feature flags reduce release risk?"
+  },
+  {
+    "id": "punct_feature_flags_colon",
+    "category": "punctuation",
+    "prompt_a": "Explain how feature flags reduce release risk.",
+    "prompt_b": "Explain how feature flags reduce release risk:"
+  },
+  {
+    "id": "synonym_fast_quick",
+    "category": "synonym",
+    "prompt_a": "Explain why fast feedback loops improve software development.",
+    "prompt_b": "Explain why quick feedback loops improve software development."
+  },
+  {
+    "id": "synonym_small_tiny",
+    "category": "synonym",
+    "prompt_a": "Explain how a small perturbation can grow in a chaotic system.",
+    "prompt_b": "Explain how a tiny perturbation can grow in a chaotic system."
+  },
+  {
+    "id": "synonym_useful_valuable",
+    "category": "synonym",
+    "prompt_a": "Explain why regression tests are useful after refactoring code.",
+    "prompt_b": "Explain why regression tests are valuable after refactoring code."
+  },
+  {
+    "id": "synonym_risks_dangers",
+    "category": "synonym",
+    "prompt_a": "List the main risks of depending on an external API in production.",
+    "prompt_b": "List the main dangers of depending on an external API in production."
+  },
+  {
+    "id": "synonym_unreliable_inaccurate",
+    "category": "synonym",
+    "prompt_a": "Explain why weather forecasts become unreliable after enough time.",
+    "prompt_b": "Explain why weather forecasts become inaccurate after enough time."
+  },
+  {
+    "id": "synonym_carefully_thoroughly",
+    "category": "synonym",
+    "prompt_a": "Explain why database migrations should be reviewed carefully.",
+    "prompt_b": "Explain why database migrations should be reviewed thoroughly."
+  },
+  {
+    "id": "synonym_reduce_lower",
+    "category": "synonym",
+    "prompt_a": "Explain how feature flags reduce release risk.",
+    "prompt_b": "Explain how feature flags lower release risk."
+  },
+  {
+    "id": "synonym_debug_diagnose",
+    "category": "synonym",
+    "prompt_a": "Describe how logs, metrics, and traces help debug production systems.",
+    "prompt_b": "Describe how logs, metrics, and traces help diagnose production systems."
+  },
+  {
+    "id": "synonym_accepting_processing",
+    "category": "synonym",
+    "prompt_a": "Explain when a service should shed load instead of accepting every request.",
+    "prompt_b": "Explain when a service should shed load instead of processing every request."
+  },
+  {
+    "id": "synonym_safe_reliable",
+    "category": "synonym",
+    "prompt_a": "Describe how to safely roll out a database schema migration.",
+    "prompt_b": "Describe how to reliablely roll out a database schema migration."
+  },
+  {
+    "id": "semantic_palindrome",
+    "category": "semantic_small",
+    "prompt_a": "Write a concise Python function that checks whether a string is a palindrome.",
+    "prompt_b": "Write a concise Python function that checks whether a list is sorted."
+  },
+  {
+    "id": "semantic_cache_queue",
+    "category": "semantic_small",
+    "prompt_a": "Describe when a cache should be invalidated in a web application.",
+    "prompt_b": "Describe when a background job should be retried in a web application."
+  },
+  {
+    "id": "semantic_logs_metrics",
+    "category": "semantic_small",
+    "prompt_a": "Describe how logs help debug production systems.",
+    "prompt_b": "Describe how metrics help debug production systems."
+  },
+  {
+    "id": "semantic_rate_limits_backpressure",
+    "category": "semantic_small",
+    "prompt_a": "Explain how rate limits should influence background job design.",
+    "prompt_b": "Explain how backpressure should influence background job design."
+  },
+  {
+    "id": "semantic_schema_api",
+    "category": "semantic_small",
+    "prompt_a": "Explain why JSON schemas are useful for service interfaces.",
+    "prompt_b": "Explain why OpenAPI specs are useful for service interfaces."
+  },
+  {
+    "id": "semantic_secrets_tokens",
+    "category": "semantic_small",
+    "prompt_a": "List the main reasons secrets should not be committed to a repository.",
+    "prompt_b": "List the main reasons API tokens should be rotated regularly."
+  },
+  {
+    "id": "semantic_rollback_flags",
+    "category": "semantic_small",
+    "prompt_a": "Explain why deployment rollbacks should be tested before an incident.",
+    "prompt_b": "Explain why feature flags should be tested before a release."
+  },
+  {
+    "id": "semantic_monitoring_alerting",
+    "category": "semantic_small",
+    "prompt_a": "Give three reasons production services need monitoring.",
+    "prompt_b": "Give three reasons production services need alerting."
+  },
+  {
+    "id": "positive_weather_palindrome",
+    "category": "positive_control",
+    "prompt_a": "Explain why weather forecasts become unreliable after enough time.",
+    "prompt_b": "Write a concise Python function that checks whether a string is a palindrome."
+  },
+  {
+    "id": "positive_cache_secrets",
+    "category": "positive_control",
+    "prompt_a": "Describe when a cache should be invalidated in a web application.",
+    "prompt_b": "List the main reasons secrets should not be committed to a repository."
+  },
+  {
+    "id": "positive_json_incident",
+    "category": "positive_control",
+    "prompt_a": "Explain why JSON schemas are useful for service interfaces.",
+    "prompt_b": "Describe how an incident review should help a software team improve."
+  },
+  {
+    "id": "positive_queue_observability",
+    "category": "positive_control",
+    "prompt_a": "Describe how a background job queue should handle retries.",
+    "prompt_b": "Describe how logs, metrics, and traces help debug production systems."
+  },
+  {
+    "id": "positive_flags_weather",
+    "category": "positive_control",
+    "prompt_a": "Explain how feature flags reduce release risk.",
+    "prompt_b": "Explain why weather forecasts become unreliable after enough time."
+  }
+]

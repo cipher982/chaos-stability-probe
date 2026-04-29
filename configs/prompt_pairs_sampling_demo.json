@@ -1,0 +1,20 @@
+[
+  {
+    "id": "noop_palindrome_trailing_space",
+    "category": "noop_format",
+    "prompt_a": "Write a concise Python function that checks whether a string is a palindrome.",
+    "prompt_b": "Write a concise Python function that checks whether a string is a palindrome. "
+  },
+  {
+    "id": "punctuation_complex_system",
+    "category": "punctuation",
+    "prompt_a": "Explain how small changes can affect a complex system over time.",
+    "prompt_b": "Explain how small changes can affect a complex system, over time."
+  },
+  {
+    "id": "synonym_small_tiny",
+    "category": "synonym",
+    "prompt_a": "Explain how a small perturbation can grow in a chaotic system.",
+    "prompt_b": "Explain how a tiny perturbation can grow in a chaotic system."
+  }
+]
