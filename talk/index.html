@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Chaos talk — visualizations</title>
+<style>
+  :root {
+    --bg: #0b0d10; --ink: #e8e8e8; --muted: #8a8f98;
+    --accent: #ff7a59; --border: #1c2026;
+  }
+  html,body { margin:0; background:var(--bg); color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Inter",system-ui,sans-serif;
+    height:100%; overflow:hidden; }
+  .app { display:flex; flex-direction:column; height:100vh; }
+  nav {
+    display:flex; align-items:center; gap:2px;
+    background:#0e1116; border-bottom:1px solid var(--border);
+    padding:8px 14px;
+  }
+  .brand {
+    font-size:13px; font-weight:500; color:var(--muted);
+    margin-right:18px; letter-spacing:0.3px;
+  }
+  .brand b { color:var(--ink); font-weight:500; }
+  .tab {
+    background:transparent; color:var(--muted); border:1px solid transparent;
+    padding:7px 14px; border-radius:6px; font-size:13px; cursor:pointer;
+    font-family:inherit; transition:all 0.15s;
+  }
+  .tab:hover { color:var(--ink); background:#151921; }
+  .tab.active {
+    background:#1c2026; color:var(--ink); border-color:#2e343d;
+    font-weight:500;
+  }
+  .tab .hint { color:var(--muted); opacity:0.6; margin-right:6px; font-variant-numeric:tabular-nums; }
+  .tab.active .hint { color:var(--accent); opacity:1; }
+  .spacer { flex:1; }
+  .hint-right { color:var(--muted); font-size:11px; }
+  .hint-right kbd {
+    background:#1c2026; border:1px solid #2e343d; border-radius:3px;
+    padding:1px 6px; font-size:10px; font-family:"SF Mono",Menlo,monospace;
+    color:var(--ink); margin:0 2px;
+  }
+  main { flex:1; min-height:0; position:relative; }
+  iframe { width:100%; height:100%; border:0; display:block; background:var(--bg); }
+</style>
+</head>
+<body>
+<div class="app">
+  <nav>
+    <div class="brand"><b>chaos</b> · talk visualizations</div>
+    <button class="tab active" data-src="family_fork.html"><span class="hint">1</span>family fork</button>
+    <button class="tab" data-src="scrubber.html"><span class="hint">2</span>Qwen ladder scrubber</button>
+    <button class="tab" data-src="branching.html"><span class="hint">3</span>branching streams</button>
+    <button class="tab" data-src="butterfly.html"><span class="hint">4</span>butterfly (probability)</button>
+    <button class="tab" data-src="ripple.html"><span class="hint">5</span>ripple (internal)</button>
+    <button class="tab" data-src="activation_ripple.html"><span class="hint">6</span>ripple (activation)</button>
+    <button class="tab" data-src="pond.html"><span class="hint">7</span>pond (ripple)</button>
+    <button class="tab" data-src="family_aligned.html"><span class="hint">8</span>answer-aligned ⚠wip</button>
+    <div class="spacer"></div>
+    <div class="hint-right">press <kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd> <kbd>4</kbd> <kbd>5</kbd> <kbd>6</kbd> <kbd>7</kbd> <kbd>8</kbd> to switch</div>
+  </nav>
+  <main><iframe id="frame" src="family_fork.html"></iframe></main>
+</div>
+
+<script>
+  const tabs = document.querySelectorAll('.tab');
+  const frame = document.getElementById('frame');
+
+  function activate(tab) {
+    tabs.forEach(t => t.classList.toggle('active', t === tab));
+    const src = tab.dataset.src;
+    if (frame.getAttribute('src') !== src) frame.setAttribute('src', src);
+  }
+
+  tabs.forEach(tab => tab.addEventListener('click', () => activate(tab)));
+
+  window.addEventListener('keydown', (e) => {
+    // Ignore if typing in an input
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+    const idx = ['1','2','3','4','5','6','7','8'].indexOf(e.key);
+    if (idx >= 0 && tabs[idx]) activate(tabs[idx]);
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,348 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Chaos Talk Image Canvas</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #101114;
+      --panel: #181a1f;
+      --ink: #f2f2f2;
+      --muted: #a9adb7;
+      --line: #30343d;
+      --accent: #c8402c;
+      --cyan: #4fa7c8;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+    }
+
+    main {
+      width: min(1500px, calc(100vw - 48px));
+      margin: 0 auto;
+      padding: 28px 0 48px;
+    }
+
+    header {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 24px;
+      padding: 0 0 18px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 30px;
+      line-height: 1.1;
+      letter-spacing: 0;
+    }
+
+    .meta {
+      margin: 8px 0 0;
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    .controls {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    button {
+      border: 1px solid var(--line);
+      background: #20232a;
+      color: var(--ink);
+      border-radius: 6px;
+      padding: 8px 11px;
+      font: inherit;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    button[aria-pressed="true"] {
+      border-color: var(--accent);
+      box-shadow: inset 0 0 0 1px var(--accent);
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1.25fr 0.75fr;
+      gap: 18px;
+      margin: 24px 0;
+    }
+
+    .stage,
+    figure {
+      margin: 0;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .stage {
+      position: relative;
+      min-height: 410px;
+    }
+
+    .stage img,
+    figure img {
+      display: block;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      object-fit: cover;
+      background: #08090b;
+    }
+
+    .slide-copy {
+      position: absolute;
+      left: 44px;
+      top: 50%;
+      transform: translateY(-50%);
+      max-width: 45%;
+      text-shadow: 0 2px 18px rgba(0, 0, 0, 0.8);
+    }
+
+    .slide-copy h2 {
+      margin: 0 0 14px;
+      font-size: 46px;
+      line-height: 1.06;
+      letter-spacing: 0;
+    }
+
+    .slide-copy p {
+      margin: 0;
+      color: #d4d7dd;
+      font-size: 21px;
+      line-height: 1.35;
+    }
+
+    .notes {
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 16px;
+    }
+
+    .notes h2 {
+      margin: 0;
+      color: var(--accent);
+      font-size: 20px;
+      letter-spacing: 0;
+    }
+
+    .notes p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 16px;
+      line-height: 1.45;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    figcaption {
+      min-height: 112px;
+      padding: 14px 16px 16px;
+      border-top: 1px solid var(--line);
+    }
+
+    figcaption h2 {
+      margin: 0 0 7px;
+      font-size: 18px;
+      line-height: 1.2;
+      letter-spacing: 0;
+    }
+
+    figcaption p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.4;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 10px;
+      color: #d7dde7;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .tag::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent);
+    }
+
+    body.safe-zones figure,
+    body.safe-zones .stage {
+      position: relative;
+    }
+
+    body.safe-zones figure::after,
+    body.safe-zones .stage::after {
+      content: "";
+      position: absolute;
+      inset: 0 auto 0 0;
+      width: 33.333%;
+      border-right: 2px dashed rgba(255, 255, 255, 0.45);
+      background: rgba(200, 64, 44, 0.12);
+      pointer-events: none;
+    }
+
+    body.light-test {
+      --bg: #f4f4f2;
+      --panel: #fafafa;
+      --ink: #151515;
+      --muted: #565b64;
+      --line: #d7d9de;
+      color-scheme: light;
+    }
+
+    body.light-test button {
+      background: #ffffff;
+    }
+
+    body.light-test .slide-copy {
+      color: #f2f2f2;
+    }
+
+    @media (max-width: 960px) {
+      main { width: min(100vw - 24px, 720px); }
+      header,
+      .hero {
+        grid-template-columns: 1fr;
+        display: grid;
+      }
+      .controls { justify-content: start; }
+      .grid { grid-template-columns: 1fr; }
+      .slide-copy {
+        left: 24px;
+        max-width: 58%;
+      }
+      .slide-copy h2 { font-size: 30px; }
+      .slide-copy p { font-size: 16px; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <div>
+        <h1>Chaos Talk Image Canvas</h1>
+        <p class="meta">Generated 16:9 bitmap directions for the LLM sensitivity deck.</p>
+      </div>
+      <div class="controls" aria-label="Canvas controls">
+        <button type="button" id="safeToggle" aria-pressed="false">Safe Zone</button>
+        <button type="button" id="lightToggle" aria-pressed="false">Light Deck Test</button>
+      </div>
+    </header>
+
+    <section class="hero" aria-label="Recommended direction">
+      <div class="stage">
+        <img src="concept_images/lorenz-state-space.png" alt="Luminous Lorenz-like trajectories diverging in dark state space">
+        <div class="slide-copy">
+          <h2>Nearby Prompts, Distant Trajectories</h2>
+          <p>Dynamical sensitivity in LLMs, visualized as state-space divergence.</p>
+        </div>
+      </div>
+      <aside class="notes">
+        <div>
+          <h2>Best general hero</h2>
+          <p>The Lorenz/state-space direction is the cleanest fit for the current deck: strong silhouette, useful left-side negative space, and an obvious chaos metaphor without needing labels.</p>
+        </div>
+        <div>
+          <h2>Strong secondary</h2>
+          <p>The collapse-attractor image is narrower, but it maps well to the “stable is not responsive” and quantization-collapse slides.</p>
+        </div>
+      </aside>
+    </section>
+
+    <section class="grid" aria-label="Generated image candidates">
+      <figure>
+        <img src="concept_images/lorenz-state-space.png" alt="Lorenz-like state-space attractor with two diverging paths">
+        <figcaption>
+          <span class="tag">Rank 1</span>
+          <h2>Lorenz State Space</h2>
+          <p>Best title/section-break candidate. Reads immediately as chaos and leaves room for slide text.</p>
+        </figcaption>
+      </figure>
+
+      <figure>
+        <img src="concept_images/collapse-attractor-basin.png" alt="Many colored trajectories collapsing into one narrow attractor basin">
+        <figcaption>
+          <span class="tag">Rank 2</span>
+          <h2>Collapse Attractor Basin</h2>
+          <p>Good for the collapse confound: low divergence can mean a narrow, unresponsive basin.</p>
+        </figcaption>
+      </figure>
+
+      <figure>
+        <img src="concept_images/token-decision-boundary.png" alt="Probability streams crossing a decision boundary and splitting into token paths">
+        <figcaption>
+          <span class="tag">Rank 3</span>
+          <h2>Token Decision Boundary</h2>
+          <p>Useful for the “continuous machinery, discrete decisions” slide, though busier than the hero.</p>
+        </figcaption>
+      </figure>
+
+      <figure>
+        <img src="concept_images/branching-continuations.png" alt="Fine branching continuation trajectories spreading across a light background">
+        <figcaption>
+          <span class="tag">Rank 4</span>
+          <h2>Branching Continuations</h2>
+          <p>Matches the existing light deck; better as a full-slide visual than a text background.</p>
+        </figcaption>
+      </figure>
+
+      <figure>
+        <img src="concept_images/probability-weather-field.png" alt="Abstract probability-weather field with diverging storm-like tracks">
+        <figcaption>
+          <span class="tag">Rank 5</span>
+          <h2>Probability Weather Field</h2>
+          <p>Eye-catching weather metaphor, but it leans more literal and map-like than the rest.</p>
+        </figcaption>
+      </figure>
+    </section>
+  </main>
+
+  <script>
+    const safeToggle = document.querySelector("#safeToggle");
+    const lightToggle = document.querySelector("#lightToggle");
+
+    safeToggle.addEventListener("click", () => {
+      const pressed = safeToggle.getAttribute("aria-pressed") === "true";
+      safeToggle.setAttribute("aria-pressed", String(!pressed));
+      document.body.classList.toggle("safe-zones", !pressed);
+    });
+
+    lightToggle.addEventListener("click", () => {
+      const pressed = lightToggle.getAttribute("aria-pressed") === "true";
+      lightToggle.setAttribute("aria-pressed", String(!pressed));
+      document.body.classList.toggle("light-test", !pressed);
+    });
+  </script>
+</body>
+</html>
