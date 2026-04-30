@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 from pathlib import Path
 
+import numpy as np
 import pandas as pd
 
 
@@ -16,6 +17,7 @@ FEATURES = {
     "max_entropy": "higher",
     "min_margin_logit": "lower",
 }
+BOOTSTRAP_KEY_COLS = ["model_name", "pair_id", "repeat"]
 
 
 def target_specs(df: pd.DataFrame) -> list[tuple[str, str, int | None]]:
@@ -48,10 +50,61 @@ def auroc(labels: pd.Series, scores: pd.Series) -> float | None:
     return (pos_rank_sum - n_pos * (n_pos + 1) / 2.0) / (n_pos * n_neg)
 
 
+def score_feature(group: pd.DataFrame, target: str, feature: str, direction: str) -> float | None:
+    scores = group[feature]
+    if direction == "lower":
+        scores = -scores
+    return auroc(group[target], scores)
+
+
+def bootstrap_auroc(
+    group: pd.DataFrame,
+    target: str,
+    feature: str,
+    direction: str,
+    samples: int,
+    seed: int,
+) -> dict[str, float | None]:
+    key_cols = [col for col in BOOTSTRAP_KEY_COLS if col in group.columns]
+    if not key_cols or samples <= 0:
+        return {"auroc_boot_mean": None, "auroc_ci_low": None, "auroc_ci_high": None}
+    usable = group[key_cols + [target, feature]].dropna(subset=[target, feature])
+    if usable.empty:
+        return {"auroc_boot_mean": None, "auroc_ci_low": None, "auroc_ci_high": None}
+    grouped = [item for _, item in usable.groupby(key_cols, dropna=False, sort=False)]
+    if len(grouped) < 2:
+        return {"auroc_boot_mean": None, "auroc_ci_low": None, "auroc_ci_high": None}
+
+    rng = np.random.default_rng(seed)
+    values = []
+    for _ in range(samples):
+        sampled = [grouped[int(idx)] for idx in rng.integers(0, len(grouped), size=len(grouped))]
+        boot = pd.concat(sampled, ignore_index=True)
+        value = score_feature(boot, target, feature, direction)
+        if value is not None:
+            values.append(value)
+    if not values:
+        return {"auroc_boot_mean": None, "auroc_ci_low": None, "auroc_ci_high": None}
+    arr = np.array(values, dtype=float)
+    return {
+        "auroc_boot_mean": float(arr.mean()),
+        "auroc_ci_low": float(np.quantile(arr, 0.025)),
+        "auroc_ci_high": float(np.quantile(arr, 0.975)),
+    }
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("prediction_windows", type=Path)
     parser.add_argument("--out-dir", type=Path, default=None)
+    parser.add_argument("--bootstrap-samples", type=int, default=0)
+    parser.add_argument("--bootstrap-seed", type=int, default=12345)
+    parser.add_argument(
+        "--bootstrap-scope",
+        choices=["all", "groups"],
+        default="all",
+        help="Bootstrap only the aggregate panel by default; use groups for per-model CIs.",
+    )
     args = parser.parse_args()
 
     out_dir = args.out_dir or args.prediction_windows.parent
@@ -72,23 +125,26 @@ def main() -> None:
             for feature, direction in FEATURES.items():
                 if feature not in group:
                     continue
-                scores = group[feature]
-                if direction == "lower":
-                    scores = -scores
-                value = auroc(labels, scores)
-                rows.append(
-                    {
-                        "group": group_name,
-                        "target": target,
-                        "target_kind": target_kind,
-                        "horizon": horizon,
-                        "feature": feature,
-                        "direction": direction,
-                        "auroc": value,
-                        "n_rows": int(group[[target, feature]].dropna().shape[0]),
-                        "positive_rate": float(labels.mean()),
-                    }
+                value = score_feature(group, target, feature, direction)
+                row = {
+                    "group": group_name,
+                    "target": target,
+                    "target_kind": target_kind,
+                    "horizon": horizon,
+                    "feature": feature,
+                    "direction": direction,
+                    "auroc": value,
+                    "n_rows": int(group[[target, feature]].dropna().shape[0]),
+                    "n_prompt_pairs": int(group[[col for col in BOOTSTRAP_KEY_COLS if col in group.columns]].drop_duplicates().shape[0]),
+                    "positive_rate": float(labels.mean()),
+                }
+                should_bootstrap = args.bootstrap_samples and (
+                    args.bootstrap_scope == "groups" or group_name == "all"
                 )
+                if should_bootstrap:
+                    seed = args.bootstrap_seed + len(rows) * 9973
+                    row.update(bootstrap_auroc(group, target, feature, direction, args.bootstrap_samples, seed))
+                rows.append(row)
 
     out = pd.DataFrame(rows)
     out.to_csv(out_dir / "branch_prediction_auc.csv", index=False)
