@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 import csv
 import json
+import math
 import subprocess
 from pathlib import Path
 from typing import Any
@@ -115,6 +116,10 @@ def read_logit_rows(path: Path, job: dict[str, Any]) -> pd.DataFrame:
 
 def summarize_logits(group: pd.DataFrame) -> dict[str, Any]:
     top1_same = group["top1_same"].astype(bool)
+    if "effective_branching_factor_a" in group and "effective_branching_factor_b" in group:
+        branching = pd.concat([group["effective_branching_factor_a"], group["effective_branching_factor_b"]])
+    else:
+        branching = pd.concat([group["entropy_a"].map(math.exp), group["entropy_b"].map(math.exp)])
     return {
         "n_rows": int(len(group)),
         "js_mean": float(group["js_divergence"].mean()),
@@ -127,6 +132,8 @@ def summarize_logits(group: pd.DataFrame) -> dict[str, Any]:
         ),
         "a_top1_prob": float(group["a_top1_prob"].mean()),
         "b_top1_prob": float(group["b_top1_prob"].mean()),
+        "mean_effective_branching_factor": float(branching.mean()),
+        "median_effective_branching_factor": float(branching.median()),
     }
 
 
@@ -177,7 +184,14 @@ def main() -> None:
     joined.to_csv(args.out_dir / "semantic_vs_prompt_end_logits.csv", index=False)
 
     corr_rows = []
-    for col in ["js_mean", "top1_flip_rate", "mean_top1_margin_logit", "a_top1_prob", "centered_logit_l2"]:
+    for col in [
+        "js_mean",
+        "top1_flip_rate",
+        "mean_top1_margin_logit",
+        "a_top1_prob",
+        "centered_logit_l2",
+        "mean_effective_branching_factor",
+    ]:
         if col in joined and len(joined) >= 3:
             corr_rows.append(
                 {

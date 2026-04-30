@@ -441,6 +441,15 @@ Experiment implications:
   - Compute BF at prompt end, pre-branch windows, branch token, and post-branch
     persistence windows.
 
+Applied in repo:
+
+- Added full-vocab effective branching factor (`exp(entropy)`) to logit capture
+  rows and downstream E09/E10 summaries.
+- Added E09 branch/window BF fields so cases can be separated into low-margin
+  cliffs versus high-confidence/low-BF basin switches.
+- Existing logit artifacts can be reprocessed because E09 derives BF from
+  entropy when explicit BF columns are absent.
+
 Potential dead end:
 
 - Do not make BF the whole thesis. It may duplicate entropy/top-k metrics
@@ -1075,4 +1084,3 @@ attractor selection:
   https://huggingface.co/Qwen/SAE-Res-Qwen3.5-2B-Base-W32K-L0_100
 - Qwen-Scope larger SAE example.
   https://huggingface.co/Qwen/SAE-Res-Qwen3.5-35B-A3B-Base-W128K-L0_100
-

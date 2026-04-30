@@ -14,6 +14,7 @@ KEY_COLS = ["model_name", "pair_id", "repeat"]
 ARCHETYPE_ORDER = [
     "strict_pre_branch_warning",
     "low_margin_branch_cliff",
+    "low_bf_basin_switch",
     "top1_flip_branch",
     "long_shared_prefix_branch",
     "high_confidence_basin_switch",
@@ -59,12 +60,24 @@ def captured_branch_features(windows: pd.DataFrame) -> pd.DataFrame:
                 "at_branch_js": branch_rows["js_divergence"].iloc[0] if not branch_rows.empty else None,
                 "at_branch_l2": branch_rows["centered_logit_normalized_l2"].iloc[0] if not branch_rows.empty else None,
                 "at_branch_margin": branch_rows["min_margin_logit"].iloc[0] if not branch_rows.empty else None,
+                "at_branch_bf": branch_rows["max_effective_branching_factor"].iloc[0]
+                if not branch_rows.empty and "max_effective_branching_factor" in branch_rows
+                else None,
                 "pre1_js": pre1_rows["js_divergence"].iloc[-1] if not pre1_rows.empty else None,
                 "pre1_l2": pre1_rows["centered_logit_normalized_l2"].iloc[-1] if not pre1_rows.empty else None,
                 "pre1_margin": pre1_rows["min_margin_logit"].iloc[-1] if not pre1_rows.empty else None,
+                "pre1_bf": pre1_rows["max_effective_branching_factor"].iloc[-1]
+                if not pre1_rows.empty and "max_effective_branching_factor" in pre1_rows
+                else None,
                 "max_window_js": group["js_divergence"].max(),
                 "max_window_l2": group["centered_logit_normalized_l2"].max(),
                 "min_window_margin": group["min_margin_logit"].min(),
+                "max_window_bf": group["max_effective_branching_factor"].max()
+                if "max_effective_branching_factor" in group
+                else None,
+                "min_window_bf": group["min_effective_branching_factor"].min()
+                if "min_effective_branching_factor" in group
+                else None,
             }
         )
         rows.append(row)
@@ -101,11 +114,14 @@ def label_archetypes(row: pd.Series) -> list[str]:
     captured = bool_value(row.get("captured_branch"))
     branch_t = safe_float(row.get("branch_t"), -1)
     margin = safe_float(row.get("branch_min_margin_logit"), 999)
+    bf = safe_float(row.get("branch_max_effective_branching_factor"), 999)
     semantic = safe_float(row.get("semantic_cosine_distance"))
     if row.get("event_kind") == "silent_logit_divergence" and captured and bool_value(row.get("captured_pre1")):
         labels.append("strict_pre_branch_warning")
     if captured and margin <= 0.25:
         labels.append("low_margin_branch_cliff")
+    if captured and bf <= 3.0 and margin >= 2.0 and semantic >= 0.04:
+        labels.append("low_bf_basin_switch")
     if captured and bool_value(row.get("branch_top1_flip")):
         labels.append("top1_flip_branch")
     if captured and branch_t >= 16:
@@ -127,6 +143,7 @@ def score_case(row: pd.Series) -> float:
     score += min(safe_float(row.get("semantic_cosine_distance")) * 40.0, 6.0)
     score += min(safe_float(row.get("silent_logit_lead")) / 8.0, 5.0)
     score += min(safe_float(row.get("branch_js")) * 8.0, 4.0)
+    score += 2.0 if safe_float(row.get("branch_max_effective_branching_factor"), 999) <= 3.0 else 0.0
     score += 3.0 if bool_value(row.get("e10_available")) else 0.0
     score += min(safe_float(row.get("e10_branch_t_span")) / 6.0, 3.0)
     if bool_value(row.get("is_control")):

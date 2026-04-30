@@ -86,12 +86,20 @@ def read_model(model_dir: Path) -> tuple[pd.DataFrame, pd.DataFrame, dict[str, A
 
 
 def build_readout(summary: pd.DataFrame) -> pd.DataFrame:
+    summary = summary.copy()
+    if "effective_branching_factor_a" in summary and "effective_branching_factor_b" in summary:
+        summary["max_effective_branching_factor"] = summary[
+            ["effective_branching_factor_a", "effective_branching_factor_b"]
+        ].max(axis=1)
+    else:
+        summary["max_effective_branching_factor"] = pd.NA
     return (
         summary.groupby(["model_name", "pair_id"], dropna=False)
         .agg(
             branch_t=("branch_t", "first"),
             rows=("t", "count"),
             max_js=("js_divergence", "max"),
+            max_effective_branching_factor=("max_effective_branching_factor", "max"),
             max_final_hidden=("final_layer_cosine_distance", "max"),
             max_any_hidden=("max_layer_cosine_distance", "max"),
             runtime_metadata_status=("runtime_metadata_status", "first"),

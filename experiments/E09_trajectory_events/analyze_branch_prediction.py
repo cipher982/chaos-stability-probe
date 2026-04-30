@@ -15,7 +15,9 @@ FEATURES = {
     "centered_logit_normalized_l2": "higher",
     "top1_flip": "higher",
     "max_entropy": "higher",
+    "max_effective_branching_factor": "higher",
     "min_margin_logit": "lower",
+    "min_effective_branching_factor": "lower",
 }
 BOOTSTRAP_KEY_COLS = ["model_name", "pair_id", "repeat"]
 

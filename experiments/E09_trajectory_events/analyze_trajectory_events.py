@@ -87,6 +87,31 @@ def max_entropy(row: pd.Series) -> float | None:
     return max(vals) if vals else None
 
 
+def effective_branching_factor(row: pd.Series, side: str) -> float | None:
+    field = f"effective_branching_factor_{side}"
+    value = row_metric(row, field)
+    if value is not None:
+        return value
+    entropy = row_metric(row, f"entropy_{side}")
+    if entropy is None:
+        return None
+    return math.exp(entropy)
+
+
+def max_branching_factor(row: pd.Series) -> float | None:
+    a = effective_branching_factor(row, "a")
+    b = effective_branching_factor(row, "b")
+    vals = [v for v in [a, b] if v is not None]
+    return max(vals) if vals else None
+
+
+def min_branching_factor(row: pd.Series) -> float | None:
+    a = effective_branching_factor(row, "a")
+    b = effective_branching_factor(row, "b")
+    vals = [v for v in [a, b] if v is not None]
+    return min(vals) if vals else None
+
+
 def first_warning_t(window: pd.DataFrame, js_threshold: float, l2_threshold: float) -> int | None:
     if window.empty:
         return None
@@ -104,6 +129,7 @@ def event_kind(
     warning_t: int | None,
     branch_top1_flip: bool | None,
     branch_margin: float | None,
+    branch_bf: float | None,
 ) -> str:
     if branch_t is None:
         return "no_visible_branch"
@@ -111,6 +137,8 @@ def event_kind(
         return "immediate_visible_branch"
     if warning_t is not None and warning_t < branch_t:
         return "silent_logit_divergence"
+    if branch_margin is not None and branch_margin >= 2.0 and branch_bf is not None and branch_bf <= 3.0:
+        return "high_confidence_basin_switch"
     if branch_top1_flip:
         return "branch_top1_flip"
     if branch_margin is not None and branch_margin <= 0.75:
@@ -164,12 +192,14 @@ def analyze_run(run_dir: Path, js_threshold: float | None, l2_threshold: float |
         branch_l2 = None
         branch_margin = None
         branch_entropy = None
+        branch_bf = None
         if branch_row is not None:
             branch_top1_flip = not bool(branch_row.get("top1_same", True))
             branch_js = row_metric(branch_row, "js_divergence")
             branch_l2 = row_metric(branch_row, "centered_logit_normalized_l2")
             branch_margin = min_margin(branch_row)
             branch_entropy = max_entropy(branch_row)
+            branch_bf = max_branching_factor(branch_row)
 
         semantic = srow.get("semantic_cosine_distance")
         token_edit_norm = srow.get("token_edit_distance_norm")
@@ -186,10 +216,16 @@ def analyze_run(run_dir: Path, js_threshold: float | None, l2_threshold: float |
             else None
         )
         min_pre_margin = None
+        max_pre_bf = None
+        min_pre_bf = None
         if not pre_visible.empty:
             margins = [min_margin(row) for _, row in pre_visible.iterrows()]
             margins = [m for m in margins if m is not None]
             min_pre_margin = min(margins) if margins else None
+            bfs = [max_branching_factor(row) for _, row in pre_visible.iterrows()]
+            bfs = [bf for bf in bfs if bf is not None]
+            max_pre_bf = max(bfs) if bfs else None
+            min_pre_bf = min(bfs) if bfs else None
 
         events.append(
             {
@@ -205,15 +241,18 @@ def analyze_run(run_dir: Path, js_threshold: float | None, l2_threshold: float |
                 "silent_logit_lead": None
                 if branch_t is None or warning_t is None or warning_t >= branch_t
                 else branch_t - warning_t,
-                "event_kind": event_kind(branch_t, warning_t, branch_top1_flip, branch_margin),
+                "event_kind": event_kind(branch_t, warning_t, branch_top1_flip, branch_margin, branch_bf),
                 "branch_top1_flip": branch_top1_flip,
                 "branch_js": branch_js,
                 "branch_centered_l2": branch_l2,
                 "branch_min_margin_logit": branch_margin,
                 "branch_max_entropy": branch_entropy,
+                "branch_max_effective_branching_factor": branch_bf,
                 "max_pre_branch_js": max_pre_js,
                 "max_pre_branch_centered_l2": max_pre_l2,
                 "min_pre_branch_margin_logit": min_pre_margin,
+                "max_pre_branch_effective_branching_factor": max_pre_bf,
+                "min_pre_branch_effective_branching_factor": min_pre_bf,
                 "persistent_branch": persistent,
                 "semantic_cosine_distance": semantic,
                 "token_edit_distance_norm": token_edit_norm,
@@ -241,6 +280,8 @@ def analyze_run(run_dir: Path, js_threshold: float | None, l2_threshold: float |
                 "top1_flip": not bool(lrow.get("top1_same", True)),
                 "min_margin_logit": min_margin(lrow),
                 "max_entropy": max_entropy(lrow),
+                "max_effective_branching_factor": max_branching_factor(lrow),
+                "min_effective_branching_factor": min_branching_factor(lrow),
                 "persistent_branch": persistent,
             }
             for horizon in HORIZONS:
@@ -290,6 +331,7 @@ def main() -> None:
             mean_silent_logit_lead=("silent_logit_lead", "mean"),
             mean_branch_js=("branch_js", "mean"),
             mean_branch_margin=("branch_min_margin_logit", "mean"),
+            mean_branch_bf=("branch_max_effective_branching_factor", "mean"),
             mean_semantic=("semantic_cosine_distance", "mean"),
         )
         .reset_index()

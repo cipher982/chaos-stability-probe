@@ -251,6 +251,8 @@ def trajectory_rows_for_pair(
                 "top1_same": logit_metrics["top1_same"],
                 "entropy_a": logit_metrics["entropy_a"],
                 "entropy_b": logit_metrics["entropy_b"],
+                "effective_branching_factor_a": logit_metrics["effective_branching_factor_a"],
+                "effective_branching_factor_b": logit_metrics["effective_branching_factor_b"],
                 "a_top1_margin_logit": logit_metrics["a_top1_margin_logit"],
                 "b_top1_margin_logit": logit_metrics["b_top1_margin_logit"],
                 "final_layer_cosine_distance": final_layer[1],

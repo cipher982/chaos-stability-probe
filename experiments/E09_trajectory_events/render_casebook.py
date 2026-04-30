@@ -22,6 +22,7 @@ EVENT_SORT_COLS = [
     "semantic_cosine_distance",
     "branch_js",
     "max_pre_branch_js",
+    "branch_max_effective_branching_factor",
 ]
 TIMELINE_COLS = [
     "t",
@@ -33,6 +34,7 @@ TIMELINE_COLS = [
     "centered_logit_normalized_l2",
     "min_margin_logit",
     "max_entropy",
+    "max_effective_branching_factor",
     "top1_flip",
 ]
 
@@ -205,6 +207,7 @@ def metric_cards(event: pd.Series) -> str:
         ("branch JS", "branch_js"),
         ("pre JS", "max_pre_branch_js"),
         ("margin", "branch_min_margin_logit"),
+        ("branch BF", "branch_max_effective_branching_factor"),
     ]
     cards = []
     for label, field in fields:
@@ -294,6 +297,7 @@ def silent_divergence_table(summary: pd.DataFrame | None, pair_id: str) -> str:
         "branch_t",
         "rows",
         "max_js",
+        "max_effective_branching_factor",
         "max_final_hidden",
         "max_any_hidden",
         "runtime_git_sha",

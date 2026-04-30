@@ -180,6 +180,12 @@ def main() -> None:
 
     summary = pd.concat(summary_frames, ignore_index=True)
     layers = pd.concat(layer_frames, ignore_index=True)
+    if "effective_branching_factor_a" in summary and "effective_branching_factor_b" in summary:
+        summary["max_effective_branching_factor"] = summary[
+            ["effective_branching_factor_a", "effective_branching_factor_b"]
+        ].max(axis=1)
+    else:
+        summary["max_effective_branching_factor"] = pd.NA
     summary.to_csv(args.out_dir / "merged_silent_divergence_summary.csv", index=False)
     layers.to_csv(args.out_dir / "merged_silent_divergence_layers.csv", index=False)
 
@@ -189,6 +195,7 @@ def main() -> None:
             branch_t=("branch_t", "first"),
             rows=("t", "count"),
             max_js=("js_divergence", "max"),
+            max_effective_branching_factor=("max_effective_branching_factor", "max"),
             max_final_hidden=("final_layer_cosine_distance", "max"),
             max_any_hidden=("max_layer_cosine_distance", "max"),
             runtime_metadata_status=("runtime_metadata_status", "first"),

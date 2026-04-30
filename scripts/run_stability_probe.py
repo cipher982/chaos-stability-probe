@@ -280,6 +280,8 @@ def logit_distribution_metrics(logits_a: torch.Tensor, logits_b: torch.Tensor) -
     b_top1 = int(top2_b.indices[0])
     centered_a = a - a.mean()
     centered_b = b - b.mean()
+    entropy_a = float(-(p_a * logp_a).sum())
+    entropy_b = float(-(p_b * logp_b).sum())
 
     return {
         "kl_a_to_b": float((p_a * (logp_a - logp_b)).sum()),
@@ -287,8 +289,10 @@ def logit_distribution_metrics(logits_a: torch.Tensor, logits_b: torch.Tensor) -
         "js_divergence": float(
             0.5 * (p_a * (logp_a - log_m)).sum() + 0.5 * (p_b * (logp_b - log_m)).sum()
         ),
-        "entropy_a": float(-(p_a * logp_a).sum()),
-        "entropy_b": float(-(p_b * logp_b).sum()),
+        "entropy_a": entropy_a,
+        "entropy_b": entropy_b,
+        "effective_branching_factor_a": float(math.exp(entropy_a)),
+        "effective_branching_factor_b": float(math.exp(entropy_b)),
         "top1_same": a_top1 == b_top1,
         "a_top1_token_id": a_top1,
         "b_top1_token_id": b_top1,

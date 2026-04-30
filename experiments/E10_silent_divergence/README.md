@@ -17,6 +17,8 @@ Commands:
 
 Outputs:
 - per-model capture CSVs under `runs/silent_divergence_pilot/`
+- new captures include effective branching factor columns for both prompt sides
+  at each shared-prefix step
 - `run_metadata.json` beside new captures, recording resolved backend/device/
   dtype, model ID, torch/transformers versions, git SHA, and dirty-worktree
   state
@@ -38,6 +40,8 @@ vs SageMaker mean absolute branch-t delta is `4.25` for Qwen2B and `8.80` for
 Qwen4B, so branch timing claims need backend/dtype caveats. Under SageMaker
 CUDA/bfloat16, mean visible branch-t on the five selected cases is `9.0` for
 Qwen2B over four visible-branch cases, `7.8` for Qwen4B, and `1.8` for Qwen9.
+Older captures will show blank/NaN effective branching factor in readouts
+because the raw capture rows predate that field.
 
 Next: use these cases as intervention targets, not as a general Qwen scaling
 claim. Keep the original queue in `configs/`; the copy here records the

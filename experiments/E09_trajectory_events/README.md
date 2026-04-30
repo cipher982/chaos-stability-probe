@@ -19,9 +19,11 @@ Commands:
 Outputs:
 - `run_metadata.json` with input hashes, build arguments, git commit, and dirty
   state
-- `trajectory_events.csv`
+- `trajectory_events.csv`, including branch/pre-branch effective branching
+  factor fields derived as `exp(entropy)` when explicit BF columns are absent
 - `trajectory_event_summary.csv`
-- `branch_prediction_windows.csv`
+- `branch_prediction_windows.csv`, including per-window max/min effective
+  branching factor
 - `branch_prediction/branch_prediction_auc.csv`
 - `branch_prediction_long_prefix/branch_prediction_auc.csv` for visible-branch
   cases whose branch timestep is at least the configured long-prefix minimum
@@ -57,6 +59,9 @@ Status:
 - On the long-prefix subset (`branch_t >= 5`), pure pre-branch-within-1 warning
   weakens further: centered-logit-L2 AUROC `0.568` (`0.554-0.579`), JS AUROC
   `0.558` (`0.545-0.570`).
+- Effective branching factor is now tracked as a prior-art-driven diagnostic:
+  use low BF plus high margin to identify concentrated basin switches, and high
+  BF plus low margin to identify genuine local choice cliffs.
 - Paired Qwen ladder branch timing is not monotonic: only `10.4%` of shared
   non-control cases are monotonic earlier with size, and only `10.4%` are
   monotonic later with size.
