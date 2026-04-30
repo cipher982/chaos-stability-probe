@@ -228,6 +228,34 @@ Token-certified v3 reinforcement wave:
     Qwen3.5 9B `0.0786`, Gemma4 E4B instruct `0.0684`, Gemma4 E2B instruct
     `0.0591`.
 
+Paper-grade follow-up wave launched 2026-04-30:
+
+- Added `configs/sagemaker_queue_paper_repairs_v1.json` for incomplete
+  token-micro rows:
+  - `chaos-token-micro-gemma-e2b-base-token-cert-20260430-004`
+  - `chaos-token-micro-olmo3-7b-20260430-004`
+  - `chaos-token-micro-opt-6p7b-20260430-004`
+- Added `configs/sagemaker_queue_logit_token_cert_v1.json` and
+  `scripts/process_logit_queue.py` for the mechanism wave: token-certified
+  prompt neighborhoods plus prompt-end and teacher-forced logit diagnostics.
+- Launched immediately:
+  - Qwen3.5 0.8B thinking-off logit probe on QA `g5.2xlarge`
+  - Qwen3.5 2B thinking-off logit probe on ML prod `g5.2xlarge`
+  - Qwen3.5 9B thinking-off logit probe on preprod `g6e.2xlarge`
+  - Gemma4 E2B instruct logit probe on preprod `g6e.2xlarge`
+- Queued behind full lanes:
+  - Qwen3.5 4B thinking-off logit probe
+  - Gemma4 E2B base, E4B instruct, E4B base logit probes
+- Next step when lanes free: rerun
+  `uv run python scripts/sagemaker_queue_supervisor.py --queue configs/sagemaker_queue_logit_token_cert_v1.json --passes 1`.
+- Process completed logit jobs with:
+
+```bash
+uv run python scripts/process_logit_queue.py \
+  --queue configs/sagemaker_queue_logit_token_cert_v1.json \
+  --out-dir runs/rankings/logit_token_cert_v1
+```
+
 Micro-perturbation work started:
 
 - Added `configs/prompt_pairs_micro_500.json` with 525 prompt pairs:

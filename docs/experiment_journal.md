@@ -1645,3 +1645,25 @@ Near-zero categories included leading/trailing spaces, leading/trailing
 newlines, CRLF suffixes, tab indentation, and spaces after punctuation. The
 slide-grade chart is
 `runs/rankings/micro_qwen35_08b_500/micro_category_semantic_bar.png`.
+
+## 2026-04-30 Post-Talk Paper Direction
+
+The next paper-shaped question is mechanism, not leaderboard expansion. The
+current data suggests several separable axes:
+
+- prompt-token perturbations, not raw character edits;
+- recipe/post-training effects, especially Gemma base vs instruct;
+- scaffold/deliberation attractors vs answer-first behavior;
+- logit decision-boundary fragility vs bulk full-vocab distribution movement;
+- stability vs responsiveness/fidelity, so collapse is not mistaken for
+  robustness.
+
+Actions launched:
+
+- Repair queue for partial token-micro jobs with 12-hour per-model timeouts:
+  Gemma4 E2B base token-certified v3, OLMo3 v2, and OPT v2.
+- Token-certified logit queue for Qwen3.5 thinking-off and Gemma base/instruct
+  models. This captures prompt-end logit metrics plus teacher-forced logit
+  divergence over the first 64 generated tokens.
+- Added `scripts/process_logit_queue.py` so the logit wave has a reusable
+  processing path rather than a one-off notebook/script.
