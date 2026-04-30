@@ -16,6 +16,8 @@ Commands:
 Outputs:
 - per-model capture CSVs under `runs/silent_divergence_pilot/`
 - merged SageMaker readouts under `runs/rankings/silent_divergence_pilot_v1/`
+- local Qwen ladder readout under
+  `runs/rankings/silent_divergence_local_qwen_ladder/`
 - raw SageMaker artifacts under `runs/sagemaker_artifacts/`
 
 Status:
@@ -26,12 +28,13 @@ Status:
 - Qwen4B local capture completed under
   `runs/silent_divergence_panel/local_qwen4b_20260430/`.
 
-Current readout: Qwen2B and Qwen9 differ on the same five selected branch
-cases. Qwen2B branches later or not at all on several cases where Qwen9
-branches immediately or by token 3. This makes branch timing itself a
-model-dependent observable.
+Current readout: Qwen2B, Qwen4B, and Qwen9 differ on the same five selected
+branch cases. Qwen9 branches earlier on several cases; Qwen2B has one
+no-visible-branch case in the 64-step logged window, while Qwen4B usually sits
+between Qwen2B and Qwen9. This makes branch timing itself a model-dependent
+observable.
 
-Next: merge the Qwen4B local readout, then decide whether launching the
-SageMaker Qwen4B E10 job adds anything beyond the local capture. Keep the
-original queue in `configs/`; the copy here records the experiment-owned config
+Next: decide whether launching the SageMaker Qwen4B E10 job adds anything
+beyond the local capture after the Qwen4B logit job lands. Keep the original
+queue in `configs/`; the copy here records the experiment-owned config
 snapshot.

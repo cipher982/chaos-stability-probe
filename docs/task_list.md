@@ -262,9 +262,10 @@ Paper-grade follow-up wave launched 2026-04-30:
 
 Live operations at 2026-04-30 17:45 -0300:
 
-- E06/E09 processed jobs: Qwen3.5 2B, Qwen3.5 9B, Gemma4 E2B instruct.
-- E06/E09 still running: Qwen3.5 0.8B on QA, Qwen3.5 4B on marketing prod,
-  Gemma4 E2B base/E4B instruct/E4B base on preprod.
+- E06/E09 processed jobs: Qwen3.5 0.8B, Qwen3.5 2B, Qwen3.5 9B, Gemma4 E2B
+  instruct.
+- E06/E09 still running: Qwen3.5 4B on marketing prod, Gemma4 E2B base/E4B
+  instruct/E4B base on preprod.
 - E10 local captures completed: Qwen3.5 2B and Qwen3.5 4B.
 - E10 SageMaker Qwen4B was not launched because its account lane is occupied
   by the Qwen4B logit-token job.

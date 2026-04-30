@@ -75,17 +75,18 @@ The completed logit probe records full-vocab KL/JS divergence, top-token
 margins, winner-rank shifts, and teacher-forced logit divergence along the same
 continuation.
 
-The first higher-N E9 logit-token readout now has three completed models:
-Qwen3.5 2B/9B thinking-off and Gemma4 E2B instruct, each with 525
+The first higher-N E9 logit-token readout now has four completed models:
+Qwen3.5 0.8B/2B/9B thinking-off and Gemma4 E2B instruct, each with 525
 token-certified pairs. Identical controls are effectively zero. Non-control
-semantic means are `0.0872` for Qwen2B, `0.0787` for Qwen9, and `0.0589` for
-Gemma E2B IT. Prompt-end JS is almost tied (`0.00606`, `0.00630`, `0.00637`),
-but the internal confidence story differs: Qwen2B has the highest top-1 flip
-rate (`0.0438`) and lowest mean margin (`2.85`), Qwen9 is intermediate, and
-Gemma has the lowest flip rate (`0.0114`) with the widest margin (`10.32`). On
-common-prefix branch windows, simple logit features predict visible branching
-above chance: one-token-ahead AUROC is `0.772` overall from JS divergence,
-`0.753` from low top-1 margin, and `0.702` from entropy. This supports the
+semantic means are `0.0873` for Qwen0.8B, `0.0872` for Qwen2B, `0.0787` for
+Qwen9, and `0.0589` for Gemma E2B IT. Prompt-end JS is similar for Qwen2B,
+Qwen9, and Gemma (`0.00606`, `0.00630`, `0.00637`) but higher for Qwen0.8B
+(`0.00877`). The internal confidence story differs: Qwen0.8B has the lowest
+mean margin (`2.09`), Qwen2B has the highest top-1 flip rate (`0.0438`), Qwen9
+is intermediate, and Gemma has the lowest flip rate (`0.0114`) with the widest
+margin (`10.32`). On common-prefix branch windows, simple logit features
+predict visible branching above chance: one-token-ahead AUROC is `0.759`
+overall from JS divergence and `0.739` from low top-1 margin. This supports the
 decision-boundary version of the story more than a generic "formatting changes
 outputs" version.
 
@@ -131,13 +132,12 @@ parenthesized `(a)` looks like a sharp edit-boundary representation shift;
 tab-after-space looks more distributed by the time the branch token is chosen.
 
 The E10 hidden/logit capture now has an early size-contrast result on the same
-five branch cases. Qwen3.5 9B branches immediately or by token 3 on all five
-selected cases. A local Qwen3.5 2B run does not simply reproduce that pattern:
-one blank-line case branches at token 35, blank-line/tab cases branch at token
-9, and `token_cert_line_wrap_0406` has no visible branch in the 64-step logged
-window. The parenthesized-word case remains immediate on both. This is useful
-because branch timing itself becomes a model-dependent observable, not just a
-downstream text-distance score.
+five branch cases. Qwen3.5 2B, 4B, and 9B do not simply reproduce the same
+branch timing. Qwen9 branches immediately or by token 3 on all five selected
+cases. Qwen2B branches later or not at all on several cases, and Qwen4B usually
+sits between Qwen2B and Qwen9. The parenthesized-word case remains immediate
+across the ladder. This is useful because branch timing itself becomes a
+model-dependent observable, not just a downstream text-distance score.
 
 ## Trajectory-Branching Research Frame
 
