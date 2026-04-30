@@ -1,13 +1,13 @@
 # Results Digest
 
-Last updated: 2026-04-30 after post-talk cleanup, token-certified v3 partial
-processing, and the trajectory-branching research pivot.
+Last updated: 2026-04-30 after E9 logit-token processing, token-certified v3
+partial processing, and the trajectory-branching research pivot.
 
 This is the compact, talk-oriented current-state readout. The talk is a
 chaos/dynamical-systems teaching talk first; the stability probe is supporting
 evidence, not the subject. If older planning docs disagree with this file,
-prefer this file. The raw lab chronology lives in
-[experiment_journal.md](experiment_journal.md).
+prefer this file for interpretation and `experiment_index.md` for experiment
+state.
 
 ## Talk Pitch (Three Paragraphs) — teaching-lens reframe, 2026-04-29
 
@@ -75,6 +75,20 @@ The completed logit probe records full-vocab KL/JS divergence, top-token
 margins, winner-rank shifts, and teacher-forced logit divergence along the same
 continuation.
 
+The first higher-N E9 logit-token readout now has three completed models:
+Qwen3.5 2B/9B thinking-off and Gemma4 E2B instruct, each with 525
+token-certified pairs. Identical controls are effectively zero. Non-control
+semantic means are `0.0872` for Qwen2B, `0.0787` for Qwen9, and `0.0589` for
+Gemma E2B IT. Prompt-end JS is almost tied (`0.00606`, `0.00630`, `0.00637`),
+but the internal confidence story differs: Qwen2B has the highest top-1 flip
+rate (`0.0438`) and lowest mean margin (`2.85`), Qwen9 is intermediate, and
+Gemma has the lowest flip rate (`0.0114`) with the widest margin (`10.32`). On
+common-prefix branch windows, simple logit features predict visible branching
+above chance: one-token-ahead AUROC is `0.772` overall from JS divergence,
+`0.753` from low top-1 margin, and `0.702` from entropy. This supports the
+decision-boundary version of the story more than a generic "formatting changes
+outputs" version.
+
 The expanded scaffold-long logit pass adds the most promising mechanistic
 thread so far. Across the 20-model 512-token panel, prompt-end top-1 probability
 is strongly anti-correlated with 512-token semantic divergence (`r ~= -0.84`),
@@ -115,6 +129,15 @@ parenthesized `(a)` has strong prompt-boundary rescue at layer 0
 shared generated-prefix/final context. This matches the patching story:
 parenthesized `(a)` looks like a sharp edit-boundary representation shift;
 tab-after-space looks more distributed by the time the branch token is chosen.
+
+The E10 hidden/logit capture now has an early size-contrast result on the same
+five branch cases. Qwen3.5 9B branches immediately or by token 3 on all five
+selected cases. A local Qwen3.5 2B run does not simply reproduce that pattern:
+one blank-line case branches at token 35, blank-line/tab cases branch at token
+9, and `token_cert_line_wrap_0406` has no visible branch in the 64-step logged
+window. The parenthesized-word case remains immediate on both. This is useful
+because branch timing itself becomes a model-dependent observable, not just a
+downstream text-distance score.
 
 ## Trajectory-Branching Research Frame
 
@@ -622,9 +645,9 @@ The talk is ready enough for the Learning Club framing. Further work should
 move from point-estimate stability rankings to event-level trajectory
 cartography.
 
-Going forward, every new thread should start as a structured experiment entry
-in `docs/experiment_journal.md`: question, design, commands/artifacts, results,
-interpretation, caveats, and decision. The main research direction is now
+Going forward, every new thread should have one compact row in
+`docs/experiment_index.md`, with restart details in the relevant
+`experiments/E##_*/README.md`. The main research direction is now
 mechanism-typed replication, not broad leaderboard expansion.
 
 1. Mine structured divergence events from every completed logit run: visible
@@ -659,5 +682,5 @@ mechanism-typed replication, not broad leaderboard expansion.
 
 Historical pre-result hypotheses have been superseded by the completed
 scaffold-long, Qwen thinking-off, quantization, and logit-correlation readouts.
-For chronology, use `docs/experiment_journal.md`; for the current talk readout,
-use this digest and `talk/companion_notes.md`.
+Use `docs/experiment_index.md` for experiment state, this digest for current
+interpretation, and `talk/companion_notes.md` for delivery notes.

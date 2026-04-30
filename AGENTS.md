@@ -46,11 +46,14 @@ Read in this order:
 1. `AGENTS.md` - stable agent entry point and boundaries.
 2. `README.md` - command overview and repo layout.
 3. `docs/results_digest.md` - current talk readout and safest claims.
-4. `docs/task_list.md` - operational next actions.
-5. `docs/experiment_journal.md` - chronological lab notebook and historical context.
+4. `docs/experiment_index.md` - one-row-per-experiment tracker.
+5. `docs/task_list.md` - operational next actions.
+6. `experiments/E##_*/README.md` - experiment-specific restart notes.
 
-Do not encode live experiment status in `AGENTS.md`. Put dynamic state in
-`docs/task_list.md` or append-only notes in `docs/experiment_journal.md`.
+Do not encode live experiment status in `AGENTS.md`. Put dynamic queue/current
+work state in `docs/task_list.md`, compact experiment state in
+`docs/experiment_index.md`, and restart details in the relevant
+`experiments/E##_*/README.md`.
 
 ## Current-State Config
 
@@ -113,20 +116,14 @@ longer continuations, hidden states, logits, and raw token/text artifacts.
 
 ## Experiment Design Protocol
 
-Every new experiment thread must be recorded in `docs/experiment_journal.md`
-using the repo's experiment-entry format:
+Every experiment thread must have exactly one compact row in
+`docs/experiment_index.md`. Keep that table high signal: question, status,
+primary artifacts, current readout, and next decision.
 
-- **Question / hypothesis:** the uncertainty being reduced.
-- **Design:** models, prompt set, controls, decoding mode, token budget, and
-  statistical unit.
-- **Commands / artifacts:** exact commands or queue names plus raw run
-  directories and derived summaries.
-- **Results:** compact numbers and concrete examples.
-- **Interpretation:** what changed in the story, including failed hypotheses.
-- **Caveats / guardrails:** confounds, replay failures, heuristic boundaries,
-  tokenization issues, partial runs, or scaffold/content uncertainty.
-- **Decision / next test:** expand, pivot, stop, or promote to a slide/writeup
-  claim.
+Put experiment-specific restart notes in `experiments/E##_*/README.md`:
+question, inputs, commands, outputs, current readout, caveats, and next action.
+Do not append long chronology to `docs/archive/experiment_journal_legacy.md`;
+it is historical only.
 
 Before launching new compute, check whether the proposed run answers a current
 open question in `docs/results_digest.md` or `docs/task_list.md`. Prefer
@@ -148,16 +145,20 @@ derived CSVs and charts are summaries, not source of truth.
 - `AGENTS.md`: stable instructions only.
 - `README.md`: command and layout overview.
 - `docs/results_digest.md`: compact current interpretation.
+- `docs/experiment_index.md`: one-row-per-experiment tracker.
 - `docs/task_list.md`: current operational state.
-- `docs/experiment_journal.md`: append-only experiment history.
+- `experiments/E##_*/README.md`: experiment-specific restart notes.
+- `docs/archive/experiment_journal_legacy.md`: legacy archive only; do not
+  append.
 - `docs/rebuttals.md` and `docs/prior_art.md`: supporting reference artifacts,
   not living source-of-truth docs.
 
 Do not create new living docs for research direction, paper plans, or next
-steps. Put current interpretation in `results_digest.md`, active work in
-`task_list.md`, and chronological notes in `experiment_journal.md`. Extra docs
-must be clearly dated artifacts/snapshots, and should be avoided unless the
-existing files cannot reasonably hold the information.
+steps. Put current interpretation in `results_digest.md`, the experiment row in
+`experiment_index.md`, active work in `task_list.md`, and restart details in
+the relevant experiment README. Extra docs must be clearly dated
+artifacts/snapshots, and should be avoided unless the existing files cannot
+reasonably hold the information.
 
 ## Agent Boundaries
 

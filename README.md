@@ -93,7 +93,7 @@ Current-state docs:
   `uv run --with Pillow python talk/qa_slides.py`.
 - `talk/companion_notes.md`: per-slide reading notes and delivery reference.
 - `docs/results_digest.md`: canonical current talk readout.
-- `docs/experiment_journal.md`: chronological lab notebook.
+- `docs/experiment_index.md`: one-row-per-experiment tracker.
 - `docs/task_list.md`: operational next actions.
 
 Current-state config:
@@ -117,9 +117,12 @@ Supporting docs:
 - `docs/answer_alignment_detection.md` and
   `docs/chart_integrity_audit.md`: dated analysis snapshots, not living
   source-of-truth docs.
+- `docs/archive/experiment_journal_legacy.md`: old long-form chronology; do
+  not append or use as current state.
 
-If these conflict, trust `docs/results_digest.md` first, then the latest entry
-in `docs/experiment_journal.md`.
+If these conflict, trust `docs/results_digest.md` for interpretation,
+`docs/experiment_index.md` for experiment state, and the relevant
+`experiments/E##_*/README.md` for restart details.
 
 Slide assets:
 

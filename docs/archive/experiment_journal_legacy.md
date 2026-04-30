@@ -1,6 +1,10 @@
-# Experiment Journal
+# Experiment Journal Legacy Archive
 
-This is the live lab notebook for the LLM stability probe.
+This is a historical archive only. Do not append to it and do not treat it as
+source of truth for current experiment state.
+
+Use `docs/experiment_index.md` for the one-row-per-experiment tracker and
+`experiments/E##_*/README.md` for experiment-specific restart notes.
 
 ## Entry Format Going Forward
 
@@ -1038,7 +1042,7 @@ the "current truth" across many docs that can drift.
 Documentation policy from here:
 
 - `docs/results_digest.md` is the pinned current-state talk readout.
-- `docs/experiment_journal.md` is the chronological lab notebook.
+- `docs/experiment_journal.md` was the chronological lab notebook at the time.
 - `docs/task_list.md` is operational only.
 - Superseded planning docs should be folded into the digest or journal, then
   deleted rather than kept as additional living surfaces.

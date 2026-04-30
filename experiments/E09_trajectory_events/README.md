@@ -18,5 +18,15 @@ Outputs:
 - `branch_prediction_windows.csv`
 - `branch_prediction_auc.csv`
 
-Status: local seed check passed; promote only after the larger logit queue is
-processed. Generated artifacts stay under `runs/trajectory_events/`.
+Status:
+- Higher-N logit-token readout currently includes Qwen3.5 2B, Qwen3.5 9B, and
+  Gemma4 E2B instruct.
+- Current output is `runs/trajectory_events/logit_token_cert_v1/`.
+- Branch-within-1 prediction remains above chance after adding Qwen2B:
+  JS AUROC `0.772`, low-margin AUROC `0.753`, entropy AUROC `0.702`.
+
+Caveat: the warning threshold often fires at `t=0`, so use this as a branch
+risk detector, not yet a precise "silent lead time" claim.
+
+Next: rerun after Qwen0.8B, Qwen4B, and the newly launched Gemma logit jobs
+finish.

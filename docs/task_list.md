@@ -14,7 +14,7 @@
   - `unknown` means uninspected; do not use those models in
     reasoning/scaffold claims until raw-prefix inspection exists.
 - `docs/results_digest.md` is the canonical current talk readout.
-- `docs/experiment_journal.md` is the chronological lab notebook.
+- `docs/experiment_index.md` is the one-row-per-experiment tracker.
 - `docs/task_list.md` is operational state and next actions.
 
 ## Done
@@ -22,7 +22,8 @@
 - Read and consolidated `raw_initial_discussion.txt`.
 - Captured the initial talk framing, claims, caveats, and model panel in the
   journal/digest.
-- Wrote [experiment_journal.md](experiment_journal.md) as the live lab notebook.
+- Wrote the legacy lab notebook now archived at
+  [experiment_journal_legacy.md](archive/experiment_journal_legacy.md).
 - Built local Hugging Face/Transformers harness:
   - deterministic and sampled generation
   - prompt-pair perturbation ladder
@@ -258,6 +259,19 @@ Paper-grade follow-up wave launched 2026-04-30:
   - Gemma4 E2B instruct logit probe on preprod `g6e.2xlarge`
 - Queued behind full lanes:
   - Gemma4 E2B base, E4B instruct, E4B base logit probes
+
+Live operations at 2026-04-30 17:45 -0300:
+
+- E06/E09 processed jobs: Qwen3.5 2B, Qwen3.5 9B, Gemma4 E2B instruct.
+- E06/E09 still running: Qwen3.5 0.8B on QA, Qwen3.5 4B on marketing prod,
+  Gemma4 E2B base/E4B instruct/E4B base on preprod.
+- E10 local captures completed: Qwen3.5 2B and Qwen3.5 4B.
+- E10 SageMaker Qwen4B was not launched because its account lane is occupied
+  by the Qwen4B logit-token job.
+- Paper-repair note: OLMo3 `-004` remains unusable; the artifact has no
+  `summary.csv`.
+- Experiment readouts now belong in `docs/experiment_index.md` and
+  `experiments/E##_*/README.md`, not this operational list.
 - Next step when lanes free: rerun
   `uv run python scripts/sagemaker_queue_supervisor.py --queue configs/sagemaker_queue_logit_token_cert_v1.json --passes 1`.
 - Process completed logit jobs with:
@@ -987,9 +1001,8 @@ attempt preserved the container Torch/CUDA stack and installed Triton 3.4.0 with
 
 Current priority is structured mechanism work, not more broad model ranking.
 
-1. Keep the `docs/experiment_journal.md` experiment index current. Every new
-   experiment thread needs question/design/artifacts/results/interpretation/
-   caveats/decision.
+1. Keep `docs/experiment_index.md` current with one row per experiment. Put
+   restart details in the relevant `experiments/E##_*/README.md`.
 2. Mine structured divergence events from completed logit runs:
    - visible branch token;
    - first silent logit warning while output text is still identical;
