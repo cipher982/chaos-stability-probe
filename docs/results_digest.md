@@ -67,25 +67,23 @@ The experiment is there to make that lens concrete. It shows that nearby
 prompts can produce different generation trajectories, and that the amount of
 sensitivity varies by model and size even under deterministic decode.
 
-The next measurement layer is logit-level rather than text-only. Text distance
-is a lossy downstream symptom: argmax can flip because two next-token logits
-were already nearly tied, or text can look stable while the probability
-distribution underneath has moved. The active logit-probe wave therefore
-records full-vocab KL/JS divergence, top-token margins, winner-rank shifts,
-and teacher-forced logit divergence along the same continuation. This lets the
-talk say: "the branch is visible before sampling or text decoding collapses
-the distribution."
+The logit-level layer refines the text-only story. Text distance is a lossy
+downstream symptom: an argmax can flip because two next-token logits were nearly
+tied, or long text can diverge even when full-vocab prompt-end JS barely moves.
+The completed logit probe records full-vocab KL/JS divergence, top-token
+margins, winner-rank shifts, and teacher-forced logit divergence along the same
+continuation.
 
 The expanded scaffold-long logit pass adds the most promising mechanistic
-thread so far. Across the 17 currently ready 512-token models, prompt-end
-top-1 flip rate correlates with 512-token semantic divergence (`r ~= 0.75`),
-and prompt-end top-1 margin/probability is strongly anti-correlated
-(`margin r ~= -0.77`, top-1 probability `r ~= -0.93`). Plain JS divergence is
-not the useful scalar here; the better story is decision-boundary fragility:
-small prompt changes matter when they move the model across a low-margin
-argmax boundary into a different response attractor. This still carries the
-scaffold caveat: for reasoning/scaffold models, the high-confidence boundary
-may be "enter the scaffold" rather than "answer content is robust."
+thread so far. Across the 20-model 512-token panel, prompt-end top-1 probability
+is strongly anti-correlated with 512-token semantic divergence (`r ~= -0.84`),
+top-1 flip rate is positively correlated (`r ~= +0.57`), top-1 margin is weaker
+but directionally aligned (`r ~= -0.39`), and full-vocab JS is basically not the
+useful scalar (`r ~= -0.10`). The better story is decision-boundary fragility:
+small prompt changes matter when they move the model across a low-margin argmax
+boundary into a different response attractor. This still carries the scaffold
+caveat: for reasoning/scaffold models, the high-confidence boundary may be
+"enter the scaffold" rather than "answer content is robust."
 
 Quantization and compression are now supporting material, not the thesis. The
 main thesis is dynamical sensitivity: when the input changes a little, does the
@@ -104,6 +102,28 @@ The strongest slide pair is the Qwen3.5 size comparison:
 That gives a sober claim: stability appears to be a measurable model property,
 but it is not a simple monotonic function of parameter count from this tiny
 probe.
+
+Post-talk token-certified micro runs strengthen the measurement hygiene story.
+The earlier micro sweep found that many raw character edits never survived
+tokenization or chat-template formatting as real prompt-token deltas. The v3
+reinforcement wave now uses model-specific certified prompt files: 25 identical
+controls plus 500 effective prompt-token perturbations per selected model. As
+of 2026-04-30 13:45 -0300, processed v3 means are:
+
+| Model | Effective pairs | Mean 512-token semantic distance | P90 |
+| --- | ---: | ---: | ---: |
+| Gemma4 E4B base | 500 | 0.129 | 0.303 |
+| Qwen3.5 0.8B thinking-off | 500 | 0.093 | 0.165 |
+| Qwen3.5 2B thinking-off | 500 | 0.091 | 0.165 |
+| Qwen3.5 9B thinking-off | 500 | 0.079 | 0.141 |
+| Gemma4 E4B instruct | 500 | 0.068 | 0.165 |
+| Gemma4 E2B instruct | 500 | 0.059 | 0.112 |
+
+This is not yet the final v3 panel: Qwen3.5 4B thinking-off is still running,
+and Gemma4 E2B base timed out after producing partial raw rows but no
+`summary.csv`. The safe claim is already useful: token-aware filtering is not a
+pedantic detail; it changes which examples are admissible evidence, and the
+base-vs-instruct Gemma split remains a high-signal recipe contrast.
 
 The next important contrast is training era/post-training recipe, but it should
 not be reduced to either "modern equals stable" or "older equals stable." A
@@ -158,7 +178,8 @@ For the talk, the honest claim is:
 
 > Some apparent stability is format stability. Post-training can create a
 > strong attractor into a reasoning scaffold, delaying visible divergence. The
-> open question is whether content after the scaffold is also more stable.
+> Qwen thinking-off controls show the scaffold effect is real but small and
+> mixed, not a monotonic "reasoning makes models stable" result.
 
 Important correction after inspecting raw 512-token generations: for Qwen3.5
 4B/9B with default thinking enabled, the model usually does not produce a clean
@@ -171,22 +192,31 @@ non-reasoning answer-first models as "answer stability." They are still useful,
 but the label is different: they measure stability of the visible
 deliberation/scaffold process.
 
-The clean answer-first comparison should use:
-
-- Qwen thinking-off / empty-think-prefix runs for Qwen3.5 0.8B, 2B, 4B, and
-  9B.
-- Non-reasoning or direct-answer models whose generations begin with answer
-  content.
-- Reasoning-on runs shown separately as a "deliberation attractor" example,
-  not merged into answer trajectory charts.
-
-Qwen thinking-mode control is now in flight. The harness supports
+The Qwen thinking-mode control has now landed. The harness supports
 `--thinking-mode disabled`, which passes `enable_thinking=False` into the chat
 template. In the currently installed Qwen3.5 tokenizer this still renders an
 empty `<think>...</think>` block in the assistant prefix, so label it as
-"thinking-off / empty-think prefix" rather than "no scaffold." It should still
-remove the long generated reasoning scaffold and gives a direct same-weights,
-same-prompts comparison against the default Qwen runs.
+"thinking-off / empty-think prefix" rather than "no scaffold." It removes the
+long generated reasoning scaffold and gives a same-weights, same-prompts
+comparison against the default Qwen runs.
+
+512-token semantic distance, default thinking -> `enable_thinking=False`:
+
+| Model | Default | Thinking disabled | Readout |
+| --- | ---: | ---: | --- |
+| Qwen3.5 4B | 0.050 | 0.067 | scaffold helps slightly |
+| Qwen3.5 9B | 0.057 | 0.072 | scaffold helps slightly |
+| Qwen3.5 2B | 0.075 | 0.072 | wash |
+| Qwen3.5 0.8B | 0.103 | 0.079 | scaffold hurts / noisy |
+
+Therefore the current answer-first comparison should:
+
+- Show Qwen thinking-on and thinking-off as a paired control, not as a simple
+  proof that scaffolds cause stability.
+- Show non-reasoning or direct-answer models separately from deliberation-stream
+  models.
+- Treat reasoning-on runs as a "deliberation attractor" example, not merged
+  into answer trajectory charts without caveats.
 
 ## Talk Spine
 
@@ -257,7 +287,9 @@ The model ranking is useful as a first pass, but exact positions should not be
 treated as paper-grade. The small-perturbation score uses only 9 rows per
 model: 3 no-op, 3 punctuation, and 3 synonym prompt pairs.
 
-Final expanded readout including legacy/base controls:
+Historical short-output readout including legacy/base controls. This is useful
+for provenance, but the current deck uses the 512-token semantic panel for the
+era/recipe slide:
 
 | Model | Mean | 95% bootstrap interval |
 | --- | ---: | ---: |
@@ -433,7 +465,7 @@ Artifact:
 
 - `runs/quantization_fidelity/qwen_quantized_vs_bf16_small_semantic.png`
 
-## Wave 2: 13-Model Ranking
+## Wave 2: 13-Model Ranking (Historical Short-Output Panel)
 
 Wave 2 more than doubled the successful model set from 6 to 13 completed stability
 profiles.
@@ -502,70 +534,27 @@ Interpretation:
 
 ## Current Next Work
 
-The highest-leverage next work is scaffold/content separation, not simply
-adding more models.
+The talk is ready enough for the Learning Club framing. Further work should
+increase measurement cleanliness rather than add more point-estimate rankings.
 
-1. Finish the 512-token `chaos-scaffold-long-*` wave so reasoning models have
-   enough budget to reach answer content.
-2. Recompute raw vs boilerplate-stripped vs scaffold/content-only divergence.
-3. Keep the bootstrap ranking as a bucketed overview, not a leaderboard.
-4. Use raw text examples for no-op formatting failures and scaffold adherence.
-5. Treat sampling controls as the audience-facing baseline: sampling variance
-   and input sensitivity are different axes, but can be comparable in magnitude.
+1. Make scaffold/content boundary extraction auditable: preserve raw text,
+   boundary span, confidence label, and score-before/after for every generation.
+2. Expand prompt-pair count before ranking more models. Treat prompt pair as the
+   statistical unit.
+3. Separate sampling controls from input-sensitivity controls. They answer
+   different questions, even when the distances are similar in magnitude.
+4. Pair perturbation divergence with responsiveness/baseline drift so collapse
+   cannot masquerade as robustness.
+5. Use matched recipe comparisons where possible: base vs instruct within the
+   same family, scaffold on vs off for the same weights, quantized vs BF16 for
+   the same model.
+6. Finish the token-certified v3 panel and rerun any timed-out partials before
+   treating it as the publishable micro-perturbation table.
+7. Keep older short-output tables as provenance, but use the 512-token semantic
+   panel, token-certified micro runs, and logit-boundary analysis for new
+   claims.
 
-Quantization remains worth testing, but as a separate controlled axis:
-`qwen35_4b` vs `qwen35_4b_bnb8` vs `qwen35_4b_bnb4`.
-
-## Pre-Result Hypotheses for Today's Runs
-
-These are intentionally written before reading the Wave 4 results.
-
-Long-generation trajectory probes:
-
-- `Qwen3.5-4B` should show slower divergence and/or earlier reconvergence than
-  `Qwen3.5-0.8B` on the same long prompts.
-- `Qwen3.5-0.8B` should show earlier token-level separation and higher
-  sustained divergence.
-- `DeepSeek-R1-Distill-Qwen-7B` may show a different curve shape: more lexical
-  divergence early, but stronger semantic convergence on answer-like prompts.
-- The likely curve shape is not pure exponential forever; expect early growth
-  followed by saturation once generations have entered different textual
-  basins. If exponential-looking growth exists, it should be a rising-window
-  phenomenon, not the whole trajectory.
-
-Qwen3.5 size ladder:
-
-- Adding `Qwen3.5-2B` should land between `0.8B` and the `4B/9B` stable cluster,
-  but not necessarily linearly.
-- If `2B` is close to `0.8B`, the apparent stability transition may happen
-  between 2B and 4B.
-- If `2B` is close to `4B`, then `0.8B` is the special fragile endpoint.
-- We do not expect a clean monotonic size law from 0.8B -> 2B -> 4B -> 9B.
-
-Quantization controls:
-
-- 8-bit bitsandbytes on `Qwen3.5-4B` should be close to BF16 on both stability
-  and generated content.
-- 4-bit on `Qwen3.5-4B` may show a measurable change, but it may still be small
-  because Qwen 4B appears to have stability margin.
-- `Qwen3.5-0.8B` should be more sensitive to 4-bit quantization than `4B`.
-- If quantization makes outputs more similar to each other while moving both
-  away from BF16 outputs, that is not a win; that is stable degradation.
-- The key result is the interaction: whether smaller/brittle models lose more
-  stability per bit removed than larger/stable models.
-
-Gemma base vs instruction-tuned controls:
-
-- Instruction-tuned Gemma should probably be more semantically contractive than
-  base Gemma on assistant-like prompts.
-- Base Gemma may produce more style and content variance because it is less
-  pulled toward a fixed assistant response format.
-- Any Gemma result should be treated as secondary to the Qwen family story
-  unless it sharply contradicts the instruction-tuning hypothesis.
-
-No-op formatting and chat-template sensitivity:
-
-- The highest no-op failures should concentrate in models whose chat templates
-  or instruction tuning treat tiny formatting changes as response-style cues.
-- Running raw prompt formatting vs chat-template formatting may reduce some
-  no-op sensitivity, but may also make instruction-tuned models worse overall.
+Historical pre-result hypotheses have been superseded by the completed
+scaffold-long, Qwen thinking-off, quantization, and logit-correlation readouts.
+For chronology, use `docs/experiment_journal.md`; for the current talk readout,
+use this digest and `talk/companion_notes.md`.

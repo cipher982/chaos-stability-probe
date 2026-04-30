@@ -3,7 +3,7 @@
 > **⚠ Superseded (2026-04-29).** This file is an earlier draft from before
 > the teaching-lens pivot. It references slides that no longer exist and a
 > thesis I'm no longer defending. The **live companion** is
-> [`../talk/speaker_notes.md`](../talk/speaker_notes.md), and the live deck
+> [`../talk/companion_notes.md`](../talk/companion_notes.md), and the live deck
 > is [`../talk/slides.md`](../talk/slides.md). Kept here for git history only.
 
 ## One-Sentence Thesis

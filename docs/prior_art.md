@@ -27,7 +27,7 @@ citations.
   Small prompt alterations — including whitespace-level changes — flip
   classification answers. Very close in spirit to my OLMo trailing-space
   demo. Cite as the empirical precedent for the whole phenomenon.
-  https://aclanthology.org/2024.findings-acl.275.pdf
+  https://aclanthology.org/2024.findings-acl.275/
 - **Sclar et al. 2023, prompt formatting sensitivity** (arXiv:2310.11324).
   Up to 76 accuracy-point swings on LLaMA-2-13B from format-only prompt
   changes. Shows the scale of the effect.

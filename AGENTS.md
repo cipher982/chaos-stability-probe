@@ -6,6 +6,26 @@
 talk on LLM dynamical sensitivity, prompt perturbations, logit/hidden-state
 divergence, and chaos as a conceptual lens.
 
+## Audience & Tone
+
+This is **not** a research paper, symposium, thesis defense, or publication.
+The talk is a **lightweight casual presentation to the AI/ML team at work** —
+a mix of analysts, engineers, frontend folks, and data scientists who happen
+to work on AI projects. Friendly, exploratory, "look at this weird thing I
+found" energy. Some past team talks have been kinda goofy.
+
+Implications for agent behavior on this repo:
+
+- Bias toward **keeping interesting findings** even if weakly defensible,
+  with honest caveats ("n=6", "one prompt family", "didn't reproduce Li et
+  al. on my setup"). Don't strip 90% of the fun to eke out 5% more rigor.
+- Frame broken hypotheses as part of the story (the reveal is fun) rather
+  than quietly deleting them.
+- Favor visually striking / conceptually surprising vizzes over
+  publication-grade ones. If a synthetic viz is clearly labeled
+  illustrative, that's fine.
+- Be direct in writeups and docs, but don't assume a hostile reviewer.
+
 ## Build & Test
 
 | Action | Command |
@@ -50,7 +70,9 @@ Do not encode live experiment status in `AGENTS.md`. Put dynamic state in
   and `scripts/download_sagemaker_artifact.py` operate SageMaker GPU jobs.
 - `scripts/process_*.py` scripts pull artifacts and generate analysis outputs
   under `runs/rankings/`.
-- `talk/` contains slide and visualization artifacts.
+- `talk/` contains slide and visualization artifacts. `talk/slides.md` is the
+  Marp source of truth; present from `talk/browser.html`, which displays
+  high-resolution PNGs from `talk/slide_images/`.
 
 ## SageMaker
 

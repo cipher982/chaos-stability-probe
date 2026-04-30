@@ -64,18 +64,170 @@ Latest experimental framing:
 - Treat each model/checkpoint/quantization as its own dynamical system.
 - Primary question: within that fixed system, do nearby prompts stay nearby,
   branch, or reconverge?
-- For the talk, prioritize **micro-perturbations** that look identical or
-  nearly identical to a human: whitespace, line wraps, duplicated punctuation,
-  CRLF/newline suffixes, and tiny repeated words. These are more intuitive than
-  synonym/paraphrase edits for showing that the model sees a different token
-  stream where the human sees the same prompt.
+- For the talk, prioritize **effective token perturbations**, not raw character
+  edits. A prompt pair is valid only after the chat template/tokenizer produces
+  different prompt token IDs. Character-only categories that normalize away are
+  tokenizer/wrapper artifacts, not model stability evidence.
 - Cross-system fidelity, such as BF16 output vs 4-bit output on the exact same
   prompt, is not the main talk question. Keep it as a caveat for quantization,
   not as a load-bearing result.
 - "Stable" means insensitive to the tested prompt perturbation, not high
   quality, faithful, or useful.
 
-Current micro-perturbation work:
+Token-audited pivot:
+
+Success criteria for the overnight rerun:
+
+- Every processed run has `prompt_tokens.jsonl`.
+- Every non-control row in `summary.csv` has `prompt_token_edit_distance > 0`.
+- `skipped_pairs.jsonl` records token-identical raw edits when any were
+  skipped; absence means zero skipped pairs after validation.
+- Slides use only `runs/rankings/token_micro_v2/` or explicitly labeled
+  historical/audit artifacts for the tiny-edit claim.
+- Any chart label says prompt-token perturbation, not raw character edit.
+
+- Added prompt-token capture to `scripts/run_stability_probe.py`.
+  New runs write:
+  - `prompt_tokens.jsonl` with post-template prompt token IDs for A/B
+  - prompt-token delta columns in `summary.csv`
+  - `skipped_pairs.jsonl` for non-control pairs that are token-identical
+- Added `--skip-token-identical-non-controls`; all new token-micro jobs must
+  use it.
+- Added `scripts/audit_micro_token_deltas.py` to reclassify old micro runs.
+  Result: for the five completed micro sweeps, 229/500 non-control raw edits
+  were token-identical after formatting; 271/model remain as real prompt-token
+  perturbations.
+- Added `configs/sagemaker_queue_token_micro.json` with 19 token-enforced
+  reruns and `scripts/sagemaker_queue_supervisor.py` to keep profile-specific
+  lanes moving.
+- Added `scripts/process_token_micro_queue.py` to download/process completed
+  token-micro jobs into `runs/rankings/token_micro_v2/`.
+  - Processor now refuses artifacts missing `prompt_tokens.jsonl`,
+    or containing token-identical non-control rows; missing
+    `skipped_pairs.jsonl` is treated as zero skipped pairs.
+- Added `scripts/summarize_token_micro_v2.py`; the processor updates
+  `runs/rankings/token_micro_v2/combined_model_summary.csv` whenever it
+  processes new completions.
+- Added `scripts/plot_token_micro_v2.py`; the processor regenerates
+  `talk/micro_visuals/token_micro_v2_model_bar.png` and
+  `talk/micro_visuals/token_micro_v2_category_heatmap.png` after new
+  completions.
+- Bad launch note: initial `-001` token-micro jobs were stopped because
+  `run_panel.py` did not yet forward `--skip-token-identical-non-controls`.
+  Use `configs/sagemaker_queue_token_micro_v2.json` (`-002` names).
+- Launched corrected token-enforced jobs:
+  - `chaos-token-micro-qwen2b-thinkoff-20260430-002`
+  - `chaos-token-micro-qwen4b-thinkoff-20260430-002`
+  - `chaos-token-micro-qwen9b-thinkoff-20260430-002`
+  - `chaos-token-micro-gemma-e2b-it-20260430-002`
+  - `chaos-token-micro-gemma-e2b-base-20260430-002`
+  - `chaos-token-micro-qwen08-thinkoff-20260430-002`
+  - `chaos-token-micro-gemma-e4b-it-20260430-002`
+- First corrected processed result:
+  - `gemma4_e2b_it`: 296 processed pairs = 25 controls + 271 effective
+    prompt-token perturbations. `skipped_pairs.jsonl` contains 229
+    token-identical non-controls. Non-control semantic mean: `0.0559`;
+    p90: `0.1117`; controls: effectively zero.
+- Corrected processed results so far:
+  - `qwen35_08b`: 271 effective prompt-token perturbations. Mean `0.0914`;
+    p90 `0.1601`; max `0.4517`; controls effectively zero.
+  - `gemma4_e2b_it`: 271 effective prompt-token perturbations. Mean `0.0559`;
+    p90 `0.1117`; max `0.4861`; controls effectively zero.
+  - `qwen35_2b`: 271 effective prompt-token perturbations. Mean `0.0904`;
+    p90 `0.1740`; max `0.1998`; controls effectively zero.
+  - `qwen35_4b`: 271 effective prompt-token perturbations. Mean `0.0809`;
+    p90 `0.1396`; max `0.2933`; controls effectively zero.
+  - `qwen35_9b`: 271 effective prompt-token perturbations. Mean `0.0732`;
+    p90 `0.1307`; max `0.3280`; controls effectively zero.
+  - `olmo2_7b_instruct`: 500 effective prompt-token perturbations. Mean
+    `0.0715`; p90 `0.1799`; max `0.3468`; controls effectively zero. This
+    run had no skipped pairs because all non-control raw edits changed prompt
+    tokens.
+  - `gemma4_e4b_it`: 271 effective prompt-token perturbations. Mean `0.0652`;
+    p90 `0.1646`; max `0.3689`; controls effectively zero.
+  - `mistral7b_instruct_v03`: 500 effective prompt-token perturbations. Mean
+    `0.0637`; p90 `0.1495`; max `0.2206`; controls effectively zero.
+  - `granite33_8b_instruct`: 500 effective prompt-token perturbations. Mean
+    `0.0668`; p90 `0.1474`; max `0.4043`; controls effectively zero.
+  - `falcon3_10b_instruct`: 500 effective prompt-token perturbations. Mean
+    `0.0535`; p90 `0.1355`; max `0.2449`; controls effectively zero. This
+    run had no skipped pairs because all non-control raw edits changed prompt
+    tokens.
+- Newly launched after wider routing:
+  - `chaos-token-micro-mistral7b-v03-20260430-002` on the ML production
+    `g5.2xlarge` lane.
+  - `chaos-token-micro-falcon3-10b-20260430-002` on the preprod `g6e.2xlarge`
+    lane.
+  - `chaos-token-micro-olmo2-7b-20260430-002` on the preprod `g6e.2xlarge`
+    lane after rerouting from a blocked 24 GB lane.
+  - `chaos-token-micro-gpt2-xl-20260430-002` on the marketing production
+    `g5.2xlarge` lane after Qwen4B completed.
+  - `chaos-token-micro-olmo3-7b-20260430-002` on the QA `g5.2xlarge` lane
+    after Qwen0.8B completed.
+  - `chaos-token-micro-pythia-6p9b-20260430-002` on a freed preprod
+    `g6e.2xlarge` lane.
+  - `chaos-token-micro-granite33-8b-20260430-002` on a freed preprod
+    `g6e.2xlarge` lane.
+  - `chaos-token-micro-llama1-7b-20260430-002` on a freed preprod
+    `g6e.2xlarge` lane.
+  - `chaos-token-micro-gptj-6b-20260430-002` on a freed preprod
+    `g6e.2xlarge` lane.
+  - `chaos-token-micro-opt-6p7b-20260430-002` on the ML production
+    `g5.2xlarge` lane.
+- Live status at 2026-04-30 05:54 -0300:
+  - Processed/completed: 10 models.
+  - Active training: Gemma E2B base, Gemma E4B base, OLMo3, LLaMA-1 7B,
+    GPT-2 XL, GPT-J 6B, OPT 6.7B, Pythia 6.9B.
+  - Queued behind QA: Phi-4 mini.
+  - Failed: none.
+- Stopped stale pre-tokenization jobs that were still occupying preprod `g6e`
+  lanes:
+  - `chaos-micro-gemma-e2b-base-512-20260429-001`
+  - `chaos-micro-gemma-e4b-base-512-20260429-001`
+- Pending token-enforced queue includes Gemma E4B base, Mistral, OLMo2/3,
+  LLaMA-1, GPT-2 XL, GPT-J, OPT, Pythia, Granite, Falcon, Phi mini.
+- Queue routing was widened after the first valid completions:
+  - 7B-ish and smaller no-hidden runs are routed across idle 24 GB lanes
+    (`zh-ml-productionengineer`, `zh-marketing-productionengineer`,
+    `zh-qa-aiengineer`).
+  - Preprod `g6e` remains reserved for currently running Gemma jobs and the
+    largest stretch run (`Falcon3 10B`).
+- Running local loops:
+  - `scripts/sagemaker_queue_supervisor.py --queue configs/sagemaker_queue_token_micro_v2.json --passes 0 --sleep-s 600`
+  - `scripts/process_token_micro_queue.py --queue configs/sagemaker_queue_token_micro_v2.json --passes 0 --sleep-s 900`
+
+Token-certified v3 reinforcement wave:
+
+- Rationale: the corrected v2 run is valid, but Qwen/Gemma instruct models only
+  kept 271 effective non-control rows after tokenizer/template filtering. To
+  remove that sample-size weakness, v3 uses model-specific prompt-pair files
+  certified against each model's exact tokenizer and thinking mode before
+  launch.
+- Added `scripts/make_token_certified_micro_pairs.py`.
+- Added `configs/prompt_pairs_token_certified/*.json`:
+  25 identical controls + 500 effective non-control prompt-token
+  perturbations per selected model.
+- Added `configs/sagemaker_queue_token_certified_v3.json` with 8 follow-up
+  jobs:
+  - Qwen3.5 0.8B/2B/4B/9B, all `thinking_mode=disabled`
+  - Gemma4 E2B/E4B instruct and base
+- Running local v3 loops in tmux session `chaos-token-night`, window
+  `token-cert-v3`:
+  - `scripts/sagemaker_queue_supervisor.py --queue configs/sagemaker_queue_token_certified_v3.json --passes 0 --sleep-s 600`
+  - `scripts/process_token_micro_queue.py --queue configs/sagemaker_queue_token_certified_v3.json --rank-dir runs/rankings/token_micro_v3 --passes 0 --sleep-s 900`
+- Live status at 2026-04-30 13:45 -0300:
+  - Processed in `runs/rankings/token_micro_v3/`: Qwen3.5 0.8B, 2B, 9B
+    thinking-off; Gemma4 E2B/E4B instruct; Gemma4 E4B base.
+  - Still training: Qwen3.5 4B thinking-off.
+  - Completed but incomplete for this analysis: Gemma4 E2B base timed out at
+    six hours and produced partial raw rows but no `summary.csv`; do not use it
+    in v3 claims without rerunning or explicitly labeling it partial.
+  - Current v3 processed means, all with 500 effective token perturbations:
+    Gemma4 E4B base `0.1286`, Qwen3.5 0.8B `0.0930`, Qwen3.5 2B `0.0912`,
+    Qwen3.5 9B `0.0786`, Gemma4 E4B instruct `0.0684`, Gemma4 E2B instruct
+    `0.0591`.
+
+Micro-perturbation work started:
 
 - Added `configs/prompt_pairs_micro_500.json` with 525 prompt pairs:
   25 identical controls plus 500 tiny surface edits across whitespace,
@@ -87,23 +239,24 @@ Current micro-perturbation work:
   - chart: `runs/rankings/micro_qwen35_08b_500/micro_category_semantic_bar.png`
   - readout: internal layout/syntax edits branch; prefix/suffix whitespace
     mostly does not.
-- SageMaker 512-token micro sweeps launched on 24 GB lanes:
-  - `chaos-micro-qwen08-512-20260429-001` (`qwen35_08b`,
-    thinking disabled, QA account)
-  - `chaos-micro-qwen2b-512-20260429-001` (`qwen35_2b`,
-    thinking disabled, ML production account)
-  - `chaos-micro-gemma-e2b-it-512-20260429-001` (`gemma4_e2b_it`,
-    marketing production account)
-  - `chaos-micro-gemma-e2b-base-512-20260429-001` (`gemma4_e2b_base`,
-    preprod `g6e`)
-  - `chaos-micro-gemma-e4b-it-512-20260429-001` (`gemma4_e4b_it`,
-    preprod `g6e`)
-  - `chaos-micro-gemma-e4b-base-512-20260429-001` (`gemma4_e4b_base`,
-    queued for preprod `g6e`)
-  - `chaos-micro-qwen4b-thinkoff-512-20260429-001` (`qwen35_4b`,
-    thinking disabled, preprod `g6e`)
-  - `chaos-micro-qwen9b-thinkoff-512-20260429-001` (`qwen35_9b`,
-    thinking disabled, preprod `g6e`)
+- SageMaker 512-token micro sweeps:
+  - Completed + processed:
+    - `chaos-micro-qwen2b-512-20260429-001` -> `runs/rankings/micro_sweep/qwen35_2b`
+    - `chaos-micro-qwen4b-thinkoff-512-20260429-001` -> `runs/rankings/micro_sweep/qwen35_4b`
+    - `chaos-micro-qwen9b-thinkoff-512-20260429-001` -> `runs/rankings/micro_sweep/qwen35_9b`
+    - `chaos-micro-gemma-e2b-it-512-20260429-001` -> `runs/rankings/micro_sweep/gemma4_e2b_it`
+    - `chaos-micro-gemma-e4b-it-512-20260429-001` -> `runs/rankings/micro_sweep/gemma4_e4b_it`
+  - Still running as of live AWS check:
+    - `chaos-micro-qwen08-512-20260429-001` (`qwen35_08b`, thinking disabled, QA)
+    - `chaos-micro-gemma-e2b-base-512-20260429-001` (`gemma4_e2b_base`, preprod `g6e`)
+    - `chaos-micro-gemma-e4b-base-512-20260429-001` (`gemma4_e4b_base`, preprod `g6e`)
+- Current processed micro means, excluding identical controls:
+  - `gemma4_e2b_it`: mean 0.0276, p90 0.0886, max 0.4892
+  - `gemma4_e4b_it`: mean 0.0353, p90 0.1177, max 0.3689
+  - `qwen35_9b`: mean 0.0397, p90 0.1089, max 0.3280
+  - `qwen35_4b`: mean 0.0464, p90 0.1229, max 0.3603
+  - `qwen35_2b`: mean 0.0490, p90 0.1482, max 0.1998
+  - identical controls are effectively zero for all processed runs.
 - Reprocess with:
 
 ```bash
@@ -123,7 +276,7 @@ Next bounded talk-polish tasks:
   - mention BF16-fidelity only as a caveat against confusing stability with
     quality
 
-Current artifact state:
+Artifact state at scaffold-analysis pass:
 
 - Legacy lane is pulled and semantically processed through GPT-2 XL and Pythia.
 - Qwen quantization fidelity analysis is complete:
@@ -249,7 +402,7 @@ Queue/dispatch policy:
 uv run python scripts/dispatch_sagemaker_queue.py
 ```
 
-Currently queued/staged jobs cover:
+At queue creation time, queued/staged jobs covered:
 
 - sampling-vs-input-sensitivity demos on `OLMo 3` and `Qwen3.5 4B`
 - Gemma E4B base logit run for base-vs-instruct comparison
@@ -304,16 +457,16 @@ Reasoning/scaffold analysis:
   - `runs/inspection/generation_prefixes_final21.csv`
   - `runs/inspection/generation_prefix_summary_final21.csv`
   - This scans the first generated words/token IDs from every output in the
-    current 21-model readout and labels obvious prefix classes.
+    21-model readout and labels obvious prefix classes.
 - Observed reasoning scaffold is now a first-class candidate variable:
   - `thinking_process`: `Qwen3.5 4B`, `Qwen3.5 9B`
   - `think_tag`: `Phi-4 reasoning plus`, `SmolLM3 3B`
   - `visible_cot`: `DeepSeek R1 Qwen 7B`
   - `template_echo`: several older/base models; track separately from
     reasoning scaffolds
-- Current result: scaffolded models have much lower small-perturbation semantic
-  distance on the final 21-model readout (`0.033` vs `0.141`), but this may be
-  format adherence rather than content robustness.
+- Scaffold-analysis result: scaffolded models have much lower
+  small-perturbation semantic distance on the final 21-model readout (`0.033`
+  vs `0.141`), but this may be format adherence rather than content robustness.
 - Raw-prefix read confirms this is not subtle:
   - `Qwen3.5 4B` and `Qwen3.5 9B` are `Thinking Process:` on every checked row.
   - `Phi-4 reasoning plus` and `SmolLM3 3B` are `<think>` on every checked row.
@@ -323,7 +476,7 @@ Reasoning/scaffold analysis:
 - Existing 64/128-token outputs are often too short to reach post-scaffold
   answer content, so content-only analysis needs longer generations.
 
-Current active scaffold/content capture:
+Scaffold/content capture launched, now superseded by completed refresh below:
 
 - Queued a 512-token `chaos-scaffold-long-*` wave with logit probes
   (`logit_max_steps=256`) so scaffolded models have room to reach actual
@@ -348,7 +501,7 @@ Current active scaffold/content capture:
     `chaos-scaffold-long-opt-6p7b-qa-ai-g5-20260429-001`
   - marketing prod `ml.g5.2xlarge`:
     `chaos-scaffold-long-llama1-7b-prod-g5-20260429-001`
-- Remaining final-panel 512-token jobs are staged in
+- At that point, remaining final-panel 512-token jobs were staged in
   `configs/sagemaker_queue.json`:
   - `chaos-scaffold-long-phi4-reasoning-plus-20260429-001`
   - `chaos-scaffold-long-smollm3-3b-20260429-001`
@@ -374,13 +527,14 @@ Current active scaffold/content capture:
     - `runs/rankings/scaffold_long_wave/merged_summary.csv`
     - `runs/rankings/scaffold_long_wave/small_perturbation_bootstrap.csv`
     - `runs/rankings/scaffold_long_wave/token_budget_summary.csv`
-  - Current processed run has 17/21 models ready.
+  - Initial processed run had 17/21 models ready.
 - Added `scripts/process_scaffold_long_logits.py`.
   - Reads the ready `chaos-scaffold-long-*` `logit_probes.jsonl` artifacts.
   - Writes prompt-end logit margins/flip rates, teacher-forced trajectory
     summaries, branch-window rows, and semantic-vs-logit correlation artifacts
     under `runs/rankings/scaffold_long_logits/`.
-  - Current 17-model result: prompt-end top-1 flip rate correlates with
+  - Initial 17-model result, superseded below by the 20-model refresh:
+    prompt-end top-1 flip rate correlates with
     512-token semantic divergence (`r ~= 0.75`), while top-1 margin/probability
     is strongly anti-correlated (`margin r ~= -0.77`, top-1 probability
     `r ~= -0.93`). This supports the decision-boundary /
@@ -397,7 +551,7 @@ Current active scaffold/content capture:
     4B across extra `g5.2xlarge` lanes. Qwen3.5 9B thinking-off is staged in
     `configs/sagemaker_queue.json` for the next `g6e` slot.
 
-Latest live queue check, 2026-04-29:
+Earlier live queue check, 2026-04-29, superseded by the completed refresh below:
 
 - Processed scaffold-long wave now has 20/25 configured jobs ready.
 - Newly pulled/processed since prior status:
@@ -493,13 +647,12 @@ Talk asset triage after checking `talk/`:
   - logit mechanism slide if phrased conservatively: top-token confidence is
     the strongest current predictor; margin/flip are weaker after adding more
     models.
-- Needs revision before presenting:
-  - Qwen table using old robust-wave 4B/9B reasoning-on numbers as a "clean"
-    answer-stability contrast. Replace or relabel with Qwen thinking-off runs.
-  - scaffold slide language that says 512-token reasoning outputs expose
-    "content robustness"; raw outputs show many are still deliberation streams.
-  - Phi-4 language: say visible-thinking trajectory diverges, not that final
-    answer content is brittle.
+- Revised for current deck / notes:
+  - Qwen table is now caveated as scaffold-confounded, with thinking-off
+    controls in the following slide/notes.
+  - scaffold slide says "metric artifact / mixed bag," not content robustness.
+  - Phi-4 language is framed as prompt-end confidence vs 512-token trajectory,
+    not proof that final answer content is brittle.
 - Avoid unless rebuilt:
   - `talk/family_aligned.html` and `talk/data/family_aligned.json`; these assume
     answer alignment that is not supported for Qwen/Phi/DeepSeek reasoning-on.
@@ -511,7 +664,8 @@ Talk asset triage after checking `talk/`:
     answer-first panel.
   - `runs/trajectory_figures/longprobe_output_trajectory_divergence.png` as an
     answer-trajectory slide; it includes old reasoning-on trajectories and
-    should be replaced with think-off/direct-answer trajectories if used.
+    has been replaced in `talk/slides.md` by the Qwen thinking-off control
+    figure.
 
 Statistical robustness plan:
 
@@ -595,6 +749,7 @@ Completed and pulled:
 Generated trajectory/ranking figures:
 
 - `runs/trajectory_figures/longprobe_output_trajectory_divergence.png`
+- `runs/trajectory_figures/qwen_thinkoff_trajectory_and_semantic.png`
 - `runs/trajectory_figures/qwen_quantized_output_trajectory_divergence.png`
 - `runs/trajectory_figures/current_small_perturbation_semantic_ranking.png`
 
@@ -603,7 +758,9 @@ Launched and completed remaining legacy jobs:
 - `chaos-stability-pythia-6p9b-legacy-20260429-001`
 - `chaos-stability-gpt2-xl-legacy-20260429-001`
 
-Legacy/base readout after semantic processing:
+Legacy/base readout after semantic processing. This is the historical
+short-output/small-perturbation panel; the current talk's era/recipe slide uses
+the 512-token semantic panel and should not mix these point estimates:
 
 | Model | Small-perturbation semantic mean |
 | --- | ---: |
@@ -663,47 +820,36 @@ attempt preserved the container Torch/CUDA stack and installed Triton 3.4.0 with
 
 ### Reasoning-scaffold confound (surfaced 2026-04-29 while building talk viz)
 
-Qwen 3.5 4B/9B emit a deterministic "Thinking Process:" preamble; Qwen 0.8B
-does not. Current `common_prefix_tokens` metrics count scaffold-matching as
-stability. See the 2026-04-29 journal entry for full context.
+Qwen 3.5 4B/9B emit a deterministic "Thinking Process:" preamble. Current talk
+framing does not try to solve scaffold/content extraction before tomorrow; it
+presents scaffold as an evaluation confound and uses the Qwen thinking-off
+control as the same-weights sanity check.
 
-Before the talk (required):
+Before the talk:
 
-- [ ] Write `scripts/strip_scaffold.py` — detects end of reasoning preamble
-      (regex on "Thinking Process:" / numbered-list opener / first content
-      line) and returns scaffold-free token offsets per generation.
-- [ ] Recompute `common_prefix` and `token_edit_distance_norm` on aligned
-      content-only tokens for Qwen 2B/4B/9B and DeepSeek-R1-Qwen-7B.
-      Write to `runs/rankings/scaffold_aligned_summary.csv`.
-- [ ] Rebuild `talk/branching.html` with a "show scaffold / hide scaffold"
-      toggle. Audience sees "coupled: 25 → 4" when toggle flips — the
-      animation demonstrates the methodology correction itself.
-- [ ] Decide whether to match the side-by-side panels to the same family
-      (both reasoning or both non-reasoning) for clarity.
+- [ ] Do one read-through of `talk/companion_notes.md` against `talk/slides.md`.
+- [ ] Keep the scaffold slide phrased as "metric artifact / mixed bag," not
+      "reasoning causes stability."
+- [ ] Do not add new scaffold-stripping charts tonight unless there is time to
+      visually QA them. The current deck is defensible without them.
 
-Refinements from 2026-04-29 critique (see journal entry for detail):
+Research follow-up:
 
-- [ ] Boundary-detection rules are scaffold-kind specific:
+- [ ] Write `scripts/strip_scaffold.py` with scaffold-kind-specific boundary
+      confidence:
       - `<think>...</think>` (Phi-4, SmolLM3): clean regex.
       - `Thinking Process:` (Qwen): heuristic close, flag as `heuristic`.
       - `visible_cot` (DeepSeek-R1): model-specific; may be `failed`.
       - Emit per-generation boundary confidence (`clean` / `heuristic` /
         `failed`) so downstream analyses can filter.
-- [ ] **Truncate all models to first 32 post-scaffold tokens** before
-      comparison. Otherwise scaffold models are compared on a ~14-token
-      content budget vs ~64-token budget for non-scaffold models.
-- [ ] MVP visual for the talk: two-bar chart per model — "full output" vs
-      "content-only" semantic divergence. The gap is the scaffold effect.
-      Single chart, honest either way.
-- [ ] Note the collinearity caveat in the slide: scaffold presence in our
-      panel is almost perfectly collinear with modern 2025-era
-      post-training. Cannot yet separate scaffold-vs-post-training.
-      Template-echo models (GPT-2 XL, OPT, Pythia, LLaMA1, GPT-J) are
-      brittle, so format-adherence *per se* does not produce stability —
-      effect is specific to modern reasoning scaffolds.
-- [ ] Three-tier decomposition is the right long-term split
-      (boilerplate prefix / scaffold content / answer content) but too
-      ambitious for tonight. Two-tier (stripped vs not) is the MVP.
+- [ ] Recompute raw vs content-only metrics with a fixed post-scaffold token
+      budget so scaffolded and non-scaffolded models are compared on the same
+      content window.
+- [ ] Build a two-bar chart per model: "full output" vs "content-only"
+      semantic divergence. The gap is the scaffold effect.
+- [ ] Keep the collinearity caveat: scaffold presence in this panel is tied to
+      modern post-training, so scaffold-vs-recipe causality is not identified.
+- [ ] Longer-term split: boilerplate prefix / scaffold content / answer content.
 
 After the talk (research follow-up):
 
@@ -722,16 +868,18 @@ After the talk (research follow-up):
 ### Talk polish
 
 1. Use [results_digest.md](results_digest.md) as the compact talk readout.
-2. Prefer these presentation artifacts:
-   - `runs/trajectory_figures/longprobe_output_trajectory_divergence.png`
+2. Use [../talk/companion_notes.md](../talk/companion_notes.md) as the live
+   delivery reference; it now matches all 27 current slides.
+3. Prefer these presentation artifacts:
+   - `runs/trajectory_figures/qwen_thinkoff_trajectory_and_semantic.png`
    - `runs/trajectory_figures/current_small_perturbation_semantic_ranking.png`
    - `runs/quantization_fidelity/qwen_quantized_vs_bf16_small_semantic.png`
    - `runs/rankings/wave2_13model_bootstrap/small_perturbation_bootstrap_buckets.png`
-3. Pull 2-3 concrete text examples for the slide narrative:
+4. Pull 2-3 concrete text examples for the slide narrative:
    - no-op formatting failure
    - Qwen 0.8B vs 4B tiny perturbation
    - DeepSeek delayed branch / semantic convergence
-4. For new compute, prefer high-N micro-perturbation sweeps or direct-answer
+5. For new compute, prefer high-N micro-perturbation sweeps or direct-answer
    controls. Avoid more broad model-ranking jobs unless a slide has a specific
    missing answer.
 

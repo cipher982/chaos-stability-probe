@@ -36,7 +36,10 @@ This two-stage design exists because:
 cd /Users/davidrose/git/chaos && uv run --with Pillow python talk/qa_slides.py
 ```
 
-This cleans `talk/slide_images/`, regenerates one PNG per slide, `slides.html`, and `slides.pdf`. No judgment, just rendering.
+This cleans `talk/slide_images/`, regenerates one PNG per slide, and writes
+`slides.html`. No judgment, just rendering. The PNGs are rendered at 2x scale
+because `talk/browser.html` is the presentation deck. The source of truth
+remains `talk/slides.md`; do not edit `browser.html` to change slide content.
 
 ### Step 2 — Inspector subagent (read-only)
 

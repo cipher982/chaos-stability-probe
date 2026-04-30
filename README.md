@@ -1,6 +1,6 @@
 # LLM Stability Probe
 
-Exploratory harness for a learning-club talk on LLMs as systems in motion.
+Exploratory harness for a talk on LLMs as systems in motion.
 
 The first goal is not to estimate a formal Lyapunov exponent. It is to produce
 a defensible stability profile:
@@ -87,8 +87,11 @@ not as interchangeable replacements for the main BF16 model-size ladder.
 
 Current-state docs:
 
-- `talk/slides.md`: live Marp deck (renders to `talk/slides.pdf`).
-- `talk/speaker_notes.md`: per-slide background, likely questions, glossary.
+- `talk/slides.md`: live Marp deck source.
+- `talk/browser.html`: presentation deck. It displays high-resolution PNGs
+  from `talk/slide_images/`. Regenerate with
+  `uv run --with Pillow python talk/qa_slides.py`.
+- `talk/companion_notes.md`: per-slide reading notes and delivery reference.
 - `docs/results_digest.md`: canonical current talk readout.
 - `docs/experiment_journal.md`: chronological lab notebook.
 - `docs/task_list.md`: operational next actions.
@@ -115,6 +118,8 @@ in `docs/experiment_journal.md`.
 Slide assets:
 
 - `runs/talk_figures/`: slide-friendly PNGs
+- `talk/slide_images/`: 2x rendered slide PNGs used by `talk/browser.html`
+  and visual QA.
 
 ## Notes
 

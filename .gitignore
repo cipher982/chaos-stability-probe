@@ -18,3 +18,7 @@ __pycache__/
 .pytest_cache/
 .ruff_cache/
 *.log
+
+# Presentation scratch exports
+talk copy/
+talk/companion_notes copy*.pdf

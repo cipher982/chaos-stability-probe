@@ -24,7 +24,7 @@ reasoning models as "stable" in the early window. See
 | `talk/pond.html` | OK | Single-model (`data/ripple.json` → Qwen3.5-2B). Layer-wise hidden-state cosine distance across perturbation tiers. Not affected. |
 | `talk/family_aligned.html` | **WIP** | Corrected view, but current alignment uses per-model median scaffold length (smears per-pair answer boundary). Per-pair token-exact alignment pending. |
 | `talk/index.html` | updated | Tab labels marked with ⚠ for compromised charts. |
-| `talk/slides.md` / `slides.html` / `slides.pdf` | **Needs separate review** | Large Marp deck with ~31 references to family_fork/scrubber/branching/butterfly and stable/brittle/reasoning narrative. Not auto-watermarked in this pass — the deck's rhetoric needs rewriting, not just a banner. |
+| `talk/slides.md` / `slides.html` / `browser.html` | **Needs separate review** | Large deck with ~31 references to family_fork/scrubber/branching/butterfly and stable/brittle/reasoning narrative. Not auto-watermarked in this pass — the deck's rhetoric needs rewriting, not just a banner. |
 | `talk/concept_canvas.html` | not audited (static concept art) | Appears to be a concept canvas, not a data visualization. Skim suggests OK but flag for review if used as evidence. |
 
 ## What was added
@@ -40,5 +40,5 @@ reasoning models as "stable" in the early window. See
 2. **Reframe `scrubber.html`.** Either (a) drop the 4B/9B reasoning members from the Qwen ladder, leaving a clean non-reasoning cliff story, or (b) separate reasoning-on/off plots and compare at aligned answer-token index.
 3. **Rebuild `branching.html`.** Compare 0.8B vs 2B (both non-reasoning) for the size-cliff narrative, OR compare reasoning-on vs reasoning-off for the *same* 4B model to isolate the scaffold effect cleanly.
 4. **Replace `butterfly.html` framing.** If kept as synthetic illustration, relabel panels so they don't lean on the "0.8B brittle / 4B stable" trope.
-5. **Rewrite slide deck (`talk/slides.md`) sections that cite the compromised charts.** Banners don't help a rendered PDF. Audit `slides.pdf` separately.
+5. **Rewrite slide deck (`talk/slides.md`) sections that cite the compromised charts.** Banners do not fix the presentation deck; audit the rendered browser slides directly.
 6. Keep `ripple.html`, `activation_ripple.html`, `pond.html` as-is — they're single-family and the ripple/pond visualizations aren't affected by the scaffold confound.
