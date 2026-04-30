@@ -1,7 +1,7 @@
 # Results Digest
 
-Last updated: 2026-04-30 after post-talk cleanup and token-certified v3 partial
-processing.
+Last updated: 2026-04-30 after post-talk cleanup, token-certified v3 partial
+processing, and the trajectory-branching research pivot.
 
 This is the compact, talk-oriented current-state readout. The talk is a
 chaos/dynamical-systems teaching talk first; the stability probe is supporting
@@ -115,6 +115,56 @@ parenthesized `(a)` has strong prompt-boundary rescue at layer 0
 shared generated-prefix/final context. This matches the patching story:
 parenthesized `(a)` looks like a sharp edit-boundary representation shift;
 tab-after-space looks more distributed by the time the branch token is chosen.
+
+## Trajectory-Branching Research Frame
+
+The post-talk paper direction should not become a generic robustness or
+accuracy benchmark. Boundary labels such as nuisance edit, task-relevant edit,
+tokenizer no-op, scaffold-heavy, and content-bearing are controls and
+interpretation metadata. The central research object is the **structured
+divergence event**: a localized point where two token-certified, nearby prompt
+trajectories that were visibly identical or near-identical begin to separate in
+logits, hidden states, generated tokens, or downstream semantics.
+
+The working thesis is:
+
+> LLM prompt sensitivity is not merely diffuse output variance. Under
+> token-visible tiny perturbations, paired generations can follow the same
+> visible prefix until localized branch events occur. Those events may be
+> preceded by silent logit or hidden-state divergence, enriched near low-margin
+> decision cliffs or high-confidence basin switches, and amplified into
+> downstream semantic differences.
+
+Concrete hypotheses:
+
+1. **H1: branch localization.** A large share of high-divergence prompt pairs
+   can be traced to localized branch windows rather than smooth global drift.
+2. **H2: silent warning.** Logit or hidden-state divergence often appears in
+   the common-prefix window before visible token divergence.
+3. **H3: margin cliffs and basin switches.** Branch events are enriched near
+   low top-1/top-2 margins or high entropy, but the more surprising cases are
+   high-confidence basin switches where both continuations look locally
+   confident.
+4. **H4: scaffold masking.** Reasoning or template scaffolds can keep visible
+   text identical while logits or hidden states have already separated.
+5. **H5: local causality.** Forced-prefix or residual activation patching can
+   delay, suppress, or flip selected branch events, turning the story from
+   descriptive sensitivity into an intervention test.
+
+Compelling evidence would be a paired case where a tiny token-visible edit
+leaves the generated text identical for many tokens, hidden states separate
+first, logit divergence rises next, margin collapses at the branch token, the
+visible continuation then splits, and a forced-prefix or activation-patching
+intervention moves the branch. The broader panel should then show that these
+events are not cherry-picked: event location, warning lead time, margin
+profile, scaffold-mask rate, and intervention response differ by model family
+or recipe.
+
+The kill condition is also clear. If most divergence happens immediately at
+token 0, if hidden/logit separation has no predictive value beyond trivial
+entropy, if branches do not persist, or if interventions cannot move the
+branch, then the trajectory frame becomes weaker and the project should retreat
+to a more modest prompt-regression / boundary-calibration tool.
 
 Quantization and compression are now supporting material, not the thesis. The
 main thesis is dynamical sensitivity: when the input changes a little, does the
@@ -568,24 +618,35 @@ Interpretation:
 ## Current Next Work
 
 The talk is ready enough for the Learning Club framing. Further work should
-increase measurement cleanliness rather than add more point-estimate rankings.
+move from point-estimate stability rankings to event-level trajectory
+cartography.
 
-1. Make scaffold/content boundary extraction auditable: preserve raw text,
+1. Mine structured divergence events from every completed logit run: visible
+   branch token, first silent logit warning, margin/entropy at branch,
+   persistence, scaffold/content label, and final semantic divergence.
+2. Run the margin-cliff prediction analysis: while outputs are still identical,
+   predict whether a branch occurs within 1, 2, 5, or 10 tokens.
+3. Run a focused hidden-state silent-divergence pilot on Qwen3.5 2B/4B/9B and
+   selected Gemma contrasts. Save selected layers if full hidden capture is too
+   expensive.
+4. Expand the forced-prefix and residual-patching intervention set only after
+   event mining identifies clear branch candidates.
+5. Make scaffold/content boundary extraction auditable: preserve raw text,
    boundary span, confidence label, and score-before/after for every generation.
-2. Expand prompt-pair count before ranking more models. Treat prompt pair as the
+6. Expand prompt-pair count before ranking more models. Treat prompt pair as the
    statistical unit.
-3. Separate sampling controls from input-sensitivity controls. They answer
+7. Separate sampling controls from input-sensitivity controls. They answer
    different questions, even when the distances are similar in magnitude.
-4. Pair perturbation divergence with responsiveness/baseline drift so collapse
+8. Pair perturbation divergence with responsiveness/baseline drift so collapse
    cannot masquerade as robustness.
-5. Use matched recipe comparisons where possible: base vs instruct within the
+9. Use matched recipe comparisons where possible: base vs instruct within the
    same family, scaffold on vs off for the same weights, quantized vs BF16 for
    the same model.
-6. Finish the token-certified v3 panel and rerun any timed-out partials before
+10. Finish the token-certified v3 panel and rerun any timed-out partials before
    treating it as the publishable micro-perturbation table.
-7. Keep older short-output tables as provenance, but use the 512-token semantic
-   panel, token-certified micro runs, and logit-boundary analysis for new
-   claims.
+11. Keep older short-output tables as provenance, but use the 512-token
+   semantic panel, token-certified micro runs, event-level logit analysis, and
+   intervention results for new claims.
 
 Historical pre-result hypotheses have been superseded by the completed
 scaffold-long, Qwen thinking-off, quantization, and logit-correlation readouts.

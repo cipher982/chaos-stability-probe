@@ -257,6 +257,69 @@ uv run python scripts/process_logit_queue.py \
   --out-dir runs/rankings/logit_token_cert_v1
 ```
 
+Trajectory-branching research pivot:
+
+- Main frame: **TrajectoryScope**, a paired-generation microscope for branch
+  points, cliffs, basin switches, scaffold masking, and amplification under
+  tiny token-visible prompt edits.
+- Boundary labels are metadata, not the headline. Use nuisance/task-relevant
+  labels to interpret whether a branch is semantically appropriate, but keep
+  the primary analysis on event localization, warning signals, and
+  interventions.
+- Hypotheses under active test:
+  - H1: high-divergence pairs localize to branch windows.
+  - H2: logits and/or hidden states can warn before visible token divergence.
+  - H3: branch points are enriched near margin cliffs or high-confidence basin
+    switches.
+  - H4: scaffolds can mask internal divergence.
+  - H5: forced-prefix or activation patching can move, delay, or suppress
+    selected branches.
+- Added `scripts/analyze_trajectory_events.py`.
+  - Input: one or more run dirs with `summary.csv`/`summary_with_semantic.csv`
+    and `logit_probes.jsonl`.
+  - Output:
+    - `trajectory_events.csv`
+    - `branch_prediction_windows.csv`
+    - `trajectory_event_summary.csv`
+  - First local validation:
+
+```bash
+uv run python scripts/analyze_trajectory_events.py \
+  runs/mechinterp_seed/qwen35_08b \
+  runs/mechinterp_seed/qwen35_2b \
+  --out-dir runs/trajectory_events/mechinterp_seed
+```
+
+- Added `scripts/capture_silent_divergence.py` for the focused hidden-state
+  pilot along the common-prefix window. Start locally on Qwen3.5 2B selected
+  patch targets, then move broader hidden capture to SageMaker if the pilot is
+  useful.
+- Added `scripts/analyze_branch_prediction.py` to score simple AUROC baselines
+  for branch-within-1/2/5/10-token prediction from `branch_prediction_windows.csv`.
+- The first event-mining validation found mostly `silent_logit_divergence`
+  cases in the local Qwen 0.8B/2B seed set. Treat this as a machinery check,
+  not a final result; the SageMaker token-certified logit queue is the higher-N
+  panel.
+- First local branch-prediction sanity check on the Qwen 0.8B/2B seed set:
+  logit JS and centered logit L2 predict visible branch within 1-10 tokens with
+  AUROC around `0.80-0.86` overall. This is promising enough to run on the
+  higher-N SageMaker logit queue, but too small and target-selected to claim.
+- First local Qwen3.5 2B hidden pilot wrote:
+  - `runs/silent_divergence_pilot/qwen35_2b_silent_divergence_summary.csv`
+  - `runs/silent_divergence_pilot/qwen35_2b_silent_divergence_layers.csv`
+  The blank-line case branches at token 9 and shows logit/hidden movement
+  before the visible split; the parenthesized case is an immediate token-0
+  branch and is less useful for silent-warning claims.
+- Next compute steps:
+  - Process `configs/sagemaker_queue_logit_token_cert_v1.json` whenever jobs
+    complete, then run `analyze_trajectory_events.py` against the extracted
+    run dirs.
+  - Run margin-cliff prediction from `branch_prediction_windows.csv`.
+  - If the hidden pilot shows pre-visible hidden warning, launch a SageMaker
+    hidden-state queue for selected Qwen/Gemma branch cases.
+  - If event mining finds stable branch candidates, expand forced-prefix
+    interventions before doing more broad model rankings.
+
 Local mech-interp seed setup:
 
 - Added `configs/prompt_pairs_mechinterp_seed.json`,
