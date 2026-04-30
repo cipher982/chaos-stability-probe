@@ -2,6 +2,24 @@
 
 This is the live lab notebook for the LLM stability probe.
 
+## Entry Format Going Forward
+
+Use this structure for each new experiment thread. Keep it concise, but make it
+restartable without reading the whole repo history.
+
+- **Question / hypothesis:** what uncertainty this experiment is meant to
+  reduce.
+- **Design:** models, prompt set, controls, decoding mode, token budget, and
+  the statistical unit.
+- **Commands / artifacts:** exact commands or queue names plus the raw run
+  directories and derived summaries.
+- **Results:** compact numbers and the most important concrete examples.
+- **Interpretation:** what changed in the story, including failed hypotheses.
+- **Caveats / guardrails:** confounds, weak rows, replay failures, heuristic
+  boundaries, or partial runs.
+- **Decision / next test:** whether to expand, pivot, stop, or turn into a
+  slide/writeup claim.
+
 ## 2026-04-28 Late Night: Setup
 
 ### Objective
