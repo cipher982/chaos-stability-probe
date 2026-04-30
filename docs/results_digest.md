@@ -136,12 +136,14 @@ parenthesized `(a)` looks like a sharp edit-boundary representation shift;
 tab-after-space looks more distributed by the time the branch token is chosen.
 
 The E10 hidden/logit capture has an early size-contrast hint on the same five
-branch cases, but it should stay a pilot until captures have comparable runtime
-metadata. Qwen3.5 2B/4B local captures and the Qwen9 SageMaker capture differ
-in branch timing, but the old artifacts did not preserve resolved device,
-dtype, backend versions, or git SHA. The capture script now writes
-`run_metadata.json`; future E10 claims should use captures with that metadata
-or carry the missing-metadata caveat explicitly.
+branch cases, and the local Qwen3.5 2B/4B side has now been recaptured with
+runtime metadata. On those local MPS/float16 captures, Qwen4B branches earlier
+than Qwen2B on several cases (`19` vs `35` for one blank-line wrap; `3` vs `9`
+for another), both branch immediately on the parenthesized-word case, and
+Qwen2B still has one no-visible-branch case in the logged 64-step window. The
+old Qwen9 SageMaker artifact still lacks resolved device, dtype, backend
+versions, and git SHA, so Qwen9 timing should remain a caveated larger-model
+hint until it is recaptured with `run_metadata.json`.
 
 ## Trajectory-Branching Research Frame
 

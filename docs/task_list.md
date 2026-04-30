@@ -346,6 +346,9 @@ uv run python scripts/analyze_trajectory_events.py \
     shared generated prefix instead of only `t=0`.
   - Fixed E10 queue processing so auth/profile failures are written as explicit
     errors and missing jobs are recorded as `not_found`.
+  - Recaptured local Qwen2B/Qwen4B E10 from commit `5128d18` with runtime
+    metadata under
+    `runs/rankings/silent_divergence_local_qwen_ladder_meta_20260430/`.
 - Added `scripts/analyze_branch_prediction.py` to score simple AUROC baselines
   for branch decision-window and pre-branch targets from
   `branch_prediction_windows.csv`.
