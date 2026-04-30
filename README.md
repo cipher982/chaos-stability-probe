@@ -93,6 +93,7 @@ Current-state docs:
   `uv run --with Pillow python talk/qa_slides.py`.
 - `talk/companion_notes.md`: per-slide reading notes and delivery reference.
 - `docs/results_digest.md`: canonical current talk readout.
+- `docs/research_agenda.md`: post-talk paper and experiment plan.
 - `docs/experiment_journal.md`: chronological lab notebook.
 - `docs/task_list.md`: operational next actions.
 
