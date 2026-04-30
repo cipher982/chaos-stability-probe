@@ -228,13 +228,14 @@ The earlier micro sweep found that many raw character edits never survived
 tokenization or chat-template formatting as real prompt-token deltas. The v3
 reinforcement wave now uses model-specific certified prompt files: 25 identical
 controls plus 500 effective prompt-token perturbations per selected model. As
-of the 2026-04-30 16:40 -0300 live check, processed v3 means are:
+of the 2026-04-30 19:35 -0300 processing pass, processed v3 means are:
 
 | Model | Effective pairs | Mean 512-token semantic distance | P90 |
 | --- | ---: | ---: | ---: |
 | Gemma4 E4B base | 500 | 0.129 | 0.303 |
 | Qwen3.5 0.8B thinking-off | 500 | 0.093 | 0.165 |
 | Qwen3.5 2B thinking-off | 500 | 0.091 | 0.165 |
+| OLMo3 7B instruct | 152 | 0.086 | 0.137 |
 | Qwen3.5 4B thinking-off | 500 | 0.086 | 0.160 |
 | Qwen3.5 9B thinking-off | 500 | 0.079 | 0.141 |
 | Gemma4 E4B instruct | 500 | 0.068 | 0.165 |
@@ -242,11 +243,14 @@ of the 2026-04-30 16:40 -0300 live check, processed v3 means are:
 
 This is still not the final v3 panel: Gemma4 E2B base `-003` completed but
 still produced partial raw rows with no `summary.csv`; repair job `-004` is in
-progress. The safe claim is already useful: token-aware filtering is not a
-pedantic detail; it changes which examples are admissible evidence, and the
-base-vs-instruct Gemma split remains a high-signal recipe contrast. The
-token-certified Qwen ladder is ordered 0.8B/2B/4B/9B by decreasing mean
-sensitivity, but 0.8B and 2B are not cleanly separated by paired permutation.
+progress. OLMo3 `-004` was recoverable from raw generations, but it has only
+`152` effective non-control rows after CUDA failures near the end, so treat it
+as a partial sanity check rather than a full panel point. The safe claim is
+already useful: token-aware filtering is not a pedantic detail; it changes
+which examples are admissible evidence, and the base-vs-instruct Gemma split
+remains a high-signal recipe contrast. The token-certified Qwen ladder is
+ordered 0.8B/2B/4B/9B by decreasing mean sensitivity, but 0.8B and 2B are not
+cleanly separated by paired permutation.
 
 The next important contrast is training era/post-training recipe, but it should
 not be reduced to either "modern equals stable" or "older equals stable." A

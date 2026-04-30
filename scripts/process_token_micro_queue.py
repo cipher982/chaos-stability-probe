@@ -100,9 +100,24 @@ def process_completed(job: dict[str, Any], region: str, artifact_dir: Path, rank
         print(f"No generations.jsonl found for {name} under {extract_dir}", flush=True)
         return False
 
-    validate_token_micro_run(run_dir)
     out_dir = rank_dir / model_name
     marker = out_dir / "summary.json"
+    if not (run_dir / "summary.csv").exists():
+        run(
+            [
+                "uv",
+                "run",
+                "python",
+                "scripts/process_micro_sweep.py",
+                str(run_dir),
+                "--out-dir",
+                str(out_dir),
+            ]
+        )
+        validate_token_micro_run(run_dir)
+        return True
+
+    validate_token_micro_run(run_dir)
     if marker.exists():
         return False
     run(

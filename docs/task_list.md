@@ -217,9 +217,10 @@ Token-certified v3 reinforcement wave:
   `token-cert-v3`:
   - `scripts/sagemaker_queue_supervisor.py --queue configs/sagemaker_queue_token_certified_v3.json --passes 0 --sleep-s 600`
   - `scripts/process_token_micro_queue.py --queue configs/sagemaker_queue_token_certified_v3.json --rank-dir runs/rankings/token_micro_v3 --passes 0 --sleep-s 900`
-- Live status at 2026-04-30 16:40 -0300:
+- Live status at 2026-04-30 19:35 -0300:
   - Processed in `runs/rankings/token_micro_v3/`: Qwen3.5 0.8B, 2B, 4B, 9B
-    thinking-off; Gemma4 E2B/E4B instruct; Gemma4 E4B base.
+    thinking-off; Gemma4 E2B/E4B instruct; Gemma4 E4B base; partial OLMo3 7B
+    instruct.
   - Completed but still incomplete for this analysis: Gemma4 E2B base
     `-003` produced partial raw rows but no `summary.csv`. A processing retry
     recorded
@@ -227,17 +228,20 @@ Token-certified v3 reinforcement wave:
   - Repair jobs currently in progress:
     `chaos-token-micro-gemma-e2b-base-token-cert-20260430-004`,
     `chaos-token-micro-opt-6p7b-20260430-004`.
-  - Completed but unusable repair: `chaos-token-micro-olmo3-7b-20260430-004`
-    produced no `summary.csv` after CUDA errors near the end of the run
-    (354 generation rows, 348 failure rows). Keep it out of v3 claims unless a
-    smaller retry is explicitly launched.
+  - Recovered partial repair: `chaos-token-micro-olmo3-7b-20260430-004`
+    produced no `summary.csv`, but `scripts/process_micro_sweep.py` recovered
+    one from `generations.jsonl`. It has 177 summary rows = 25 controls + 152
+    effective non-controls after CUDA errors near the end, so keep it caveated
+    in v3 claims.
   - Logit mechanism jobs currently in progress:
-    `chaos-logit-token-cert-qwen9b-thinkoff-20260430-001`,
-    `chaos-logit-token-cert-gemma-e2b-it-20260430-001`.
-  - Current v3 processed means, all with 500 effective token perturbations:
+    `chaos-logit-token-cert-gemma-e2b-base-20260430-001`,
+    `chaos-logit-token-cert-gemma-e4b-it-20260430-001`,
+    `chaos-logit-token-cert-gemma-e4b-base-20260430-001`.
+  - Current v3 processed means:
     Gemma4 E4B base `0.1286`, Qwen3.5 0.8B `0.0930`, Qwen3.5 2B `0.0912`,
-    Qwen3.5 4B `0.0855`, Qwen3.5 9B `0.0786`, Gemma4 E4B instruct `0.0684`,
-    Gemma4 E2B instruct `0.0591`.
+    OLMo3 7B instruct `0.0860` over 152 effective rows, Qwen3.5 4B `0.0855`,
+    Qwen3.5 9B `0.0786`, Gemma4 E4B instruct `0.0684`, Gemma4 E2B instruct
+    `0.0591`.
   - Added `scripts/analyze_token_micro_panel.py`; current bootstrap output is
     under `runs/rankings/token_micro_v3/stats/`.
 

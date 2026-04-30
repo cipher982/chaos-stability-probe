@@ -38,6 +38,16 @@ def write_summary_from_generations(run_dir: Path) -> None:
     rows = [json.loads(line) for line in (run_dir / "generations.jsonl").open()]
     by_key: dict[tuple, dict[str, dict]] = {}
     key_fields = ["model_name", "pair_id", "category", "repeat", "sample", "seed_a", "seed_b"]
+    prompt_delta_fields = [
+        "formatted_prompt_equal",
+        "prompt_token_equal",
+        "prompt_token_edit_distance",
+        "prompt_token_delta_kind",
+        "prompt_token_lcp",
+        "prompt_input_tokens_a",
+        "prompt_input_tokens_b",
+        "prompt_input_token_delta",
+    ]
     for row in rows:
         key = tuple(row.get(field) for field in key_fields)
         by_key.setdefault(key, {})[row["side"]] = row
@@ -54,7 +64,8 @@ def write_summary_from_generations(run_dir: Path) -> None:
             a["generated_text"],
             b["generated_text"],
         )
-        summary_rows.append({**dict(zip(key_fields, key)), **metrics})
+        prompt_delta = {field: a.get(field) for field in prompt_delta_fields if field in a}
+        summary_rows.append({**dict(zip(key_fields, key)), **prompt_delta, **metrics})
 
     if not summary_rows:
         raise SystemExit("No completed A/B pairs found in generations.jsonl")
