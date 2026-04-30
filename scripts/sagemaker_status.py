@@ -16,6 +16,7 @@ def main() -> None:
     parser.add_argument("--job-name", default="")
     parser.add_argument("--prefix", default="chaos-stability")
     parser.add_argument("--max-results", type=int, default=10)
+    parser.add_argument("--details", action="store_true", help="Describe each listed job and include instance details.")
     args = parser.parse_args()
 
     sm = boto3.Session(profile_name=args.profile, region_name=args.region).client("sagemaker")
@@ -51,6 +52,17 @@ def main() -> None:
         NameContains=args.prefix,
     )
     for summary in resp["TrainingJobSummaries"]:
+        if args.details:
+            job = sm.describe_training_job(TrainingJobName=summary["TrainingJobName"])
+            print(
+                summary["TrainingJobName"],
+                job["TrainingJobStatus"],
+                job.get("SecondaryStatus"),
+                job.get("ResourceConfig", {}).get("InstanceType"),
+                summary.get("CreationTime"),
+                summary.get("TrainingEndTime"),
+            )
+            continue
         print(
             summary["TrainingJobName"],
             summary["TrainingJobStatus"],
@@ -61,4 +73,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-
