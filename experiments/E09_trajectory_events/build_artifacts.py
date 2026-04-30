@@ -4,8 +4,11 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
+import json
 import subprocess
 import sys
+import time
 from pathlib import Path
 
 
@@ -15,6 +18,61 @@ ROOT = Path(__file__).resolve().parents[2]
 def run(cmd: list[str]) -> None:
     print("+", " ".join(cmd), flush=True)
     subprocess.run(cmd, cwd=ROOT, check=True)
+
+
+def command_output(cmd: list[str]) -> str:
+    result = subprocess.run(cmd, cwd=ROOT, check=True, stdout=subprocess.PIPE, text=True)
+    return result.stdout.strip()
+
+
+def file_sha256(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as f:
+        for chunk in iter(lambda: f.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def input_metadata(path: Path) -> dict[str, object]:
+    return {
+        "path": str(path),
+        "size_bytes": path.stat().st_size,
+        "sha256": file_sha256(path),
+    }
+
+
+def git_metadata() -> dict[str, object]:
+    try:
+        commit = command_output(["git", "rev-parse", "HEAD"])
+        dirty = bool(command_output(["git", "status", "--porcelain"]))
+    except subprocess.CalledProcessError:
+        return {"available": False}
+    return {"available": True, "commit": commit, "dirty": dirty}
+
+
+def write_run_metadata(args: argparse.Namespace, out_root: Path, events: Path, prediction_windows: Path) -> None:
+    inputs = {
+        "trajectory_events": input_metadata(events),
+        "branch_prediction_windows": input_metadata(prediction_windows),
+    }
+    if args.silent_summary:
+        inputs["silent_summary"] = input_metadata(args.silent_summary)
+    payload = {
+        "schema_version": 1,
+        "built_at": time.strftime("%Y-%m-%dT%H:%M:%S%z"),
+        "artifact": "E09_trajectory_artifacts",
+        "trajectory_dir": str(args.trajectory_dir),
+        "out_root": str(out_root),
+        "inputs": inputs,
+        "args": {
+            "bootstrap_samples": args.bootstrap_samples,
+            "per_archetype": args.per_archetype,
+            "case_limit": args.case_limit,
+            "comparison_model": args.comparison_model,
+        },
+        "git": git_metadata(),
+    }
+    (out_root / "run_metadata.json").write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
 
 
 def main() -> None:
@@ -49,6 +107,8 @@ def main() -> None:
     figures_dir = casebook_dir / "figures"
     comparison_dir = out_root / "model_comparison"
     branch_dir.mkdir(parents=True, exist_ok=True)
+    out_root.mkdir(parents=True, exist_ok=True)
+    write_run_metadata(args, out_root, events, prediction_windows)
 
     run(
         [

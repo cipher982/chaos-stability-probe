@@ -17,6 +17,8 @@ Commands:
 - `uv run python scripts/select_trajectory_cases.py --events runs/trajectory_events/NAME/trajectory_events.csv --windows runs/trajectory_events/NAME/branch_prediction_windows.csv --out-dir runs/trajectory_case_selection/NAME`
 
 Outputs:
+- `run_metadata.json` with input hashes, build arguments, git commit, and dirty
+  state
 - `trajectory_events.csv`
 - `trajectory_event_summary.csv`
 - `branch_prediction_windows.csv`
