@@ -11,6 +11,7 @@ Inputs:
 Commands:
 - `uv run python scripts/analyze_trajectory_events.py RUN_DIR ... --out-dir runs/trajectory_events/NAME`
 - `uv run python scripts/build_trajectory_artifacts.py --trajectory-dir runs/trajectory_events/NAME --out-root runs/trajectory_artifacts`
+- `uv run python scripts/compare_model_branching.py --events runs/trajectory_events/NAME/trajectory_events.csv --out-dir runs/trajectory_model_comparison/NAME`
 - `uv run python scripts/analyze_branch_prediction.py runs/trajectory_events/NAME/branch_prediction_windows.csv --bootstrap-samples 200`
   bootstraps aggregate AUROC by prompt-pair group; add `--bootstrap-scope
   groups` only when per-model confidence intervals are needed.
