@@ -25,6 +25,20 @@ LONG_PAIR_LABELS = {
     "semantic_weather_markets": "Small semantic",
 }
 
+QWEN_THINKOFF_RUNS = {
+    "Qwen3.5 0.8B": "runs/sagemaker_artifacts/chaos-scaffold-long-qwen35-08b-thinkoff-20260429-001/runs/qwen35_08b/curves.jsonl",
+    "Qwen3.5 2B": "runs/sagemaker_artifacts/chaos-scaffold-long-qwen35-2b-thinkoff-20260429-001/runs/qwen35_2b/curves.jsonl",
+    "Qwen3.5 4B": "runs/sagemaker_artifacts/chaos-scaffold-long-qwen35-4b-thinkoff-20260429-001/runs/qwen35_4b/curves.jsonl",
+    "Qwen3.5 9B": "runs/sagemaker_artifacts/chaos-scaffold-long-qwen35-9b-thinkoff-20260429-001/runs/qwen35_9b/curves.jsonl",
+}
+
+QWEN_THINKOFF_BOOTSTRAP_LABELS = {
+    "Qwen3.5 0.8B": "Qwen3.5 0.8B think-off",
+    "Qwen3.5 2B": "Qwen3.5 2B think-off",
+    "Qwen3.5 4B": "Qwen3.5 4B think-off",
+    "Qwen3.5 9B": "Qwen3.5 9B think-off",
+}
+
 QWEN_QUANT_RUNS = {
     "Qwen3.5 0.8B": {
         "BF16": "runs/sagemaker_artifacts/chaos-stability-panel-20260429-001/runs/qwen35_08b/curves.jsonl",
@@ -116,6 +130,90 @@ def plot_long_probe() -> None:
     plt.close(fig)
 
 
+def plot_qwen_thinkoff_probe() -> None:
+    frames = []
+    for label, path in QWEN_THINKOFF_RUNS.items():
+        if not Path(path).exists():
+            continue
+        df = read_curves(path)
+        df = df[df["category"].isin(["noop_format", "punctuation", "synonym"])].copy()
+        df = df[df["t"] <= 256].copy()
+        df["model_label"] = label
+        frames.append(df)
+    if not frames:
+        return
+
+    merged = pd.concat(frames, ignore_index=True)
+    fig, axes = plt.subplots(
+        1,
+        2,
+        figsize=(12.2, 4.8),
+        gridspec_kw={"width_ratios": [1.55, 1.0]},
+    )
+
+    for model_label, model_df in merged.groupby("model_label", sort=False):
+        mean_curve = (
+            model_df.groupby("t", as_index=False)["token_edit_distance_norm"]
+            .mean()
+            .sort_values("t")
+        )
+        axes[0].plot(
+            mean_curve["t"],
+            mean_curve["token_edit_distance_norm"],
+            linewidth=2.4,
+            label=model_label,
+        )
+
+    axes[0].set_title("Token-prefix divergence", loc="left", fontsize=13, pad=6)
+    axes[0].set_xlabel("Generated token position")
+    axes[0].set_ylabel("Mean prefix divergence")
+    axes[0].set_ylim(-0.02, 0.86)
+    axes[0].grid(alpha=0.25)
+    axes[0].legend(loc="lower right", frameon=True, fontsize=9)
+
+    bootstrap_path = OUT_DIR.parent / "rankings/scaffold_long_wave/small_perturbation_bootstrap.csv"
+    if bootstrap_path.exists():
+        boot = pd.read_csv(bootstrap_path).set_index("run_label")
+        rows = []
+        for display_label, run_label in QWEN_THINKOFF_BOOTSTRAP_LABELS.items():
+            if run_label not in boot.index:
+                continue
+            row = boot.loc[run_label]
+            rows.append(
+                {
+                    "display_label": display_label,
+                    "mean": float(row["mean"]),
+                    "low": float(row["ci95_low"]),
+                    "high": float(row["ci95_high"]),
+                }
+            )
+        semantic = pd.DataFrame(rows)
+        if not semantic.empty:
+            y = range(len(semantic))
+            xerr = [
+                semantic["mean"] - semantic["low"],
+                semantic["high"] - semantic["mean"],
+            ]
+            axes[1].barh(
+                list(y),
+                semantic["mean"],
+                xerr=xerr,
+                color=["#3b6fb6", "#c07b32", "#50955b", "#8f62b3"][: len(semantic)],
+                alpha=0.85,
+                capsize=3,
+            )
+            axes[1].set_yticks(list(y), semantic["display_label"])
+            axes[1].invert_yaxis()
+            axes[1].set_xlim(0, 0.13)
+            axes[1].set_xlabel("512-token semantic distance")
+            axes[1].set_title("Same runs, semantic metric", loc="left", fontsize=13, pad=6)
+            axes[1].grid(axis="x", alpha=0.25)
+
+    fig.tight_layout(pad=1.2)
+    fig.savefig(OUT_DIR / "qwen_thinkoff_trajectory_and_semantic.png", dpi=220)
+    plt.close(fig)
+
+
 def plot_quantized_qwen() -> None:
     fig, axes = plt.subplots(1, 2, figsize=(12, 4.8), sharey=True)
     for ax, (model_label, runs) in zip(axes, QWEN_QUANT_RUNS.items(), strict=True):
@@ -173,6 +271,7 @@ def write_branch_summary() -> None:
 def main() -> None:
     OUT_DIR.mkdir(parents=True, exist_ok=True)
     plot_long_probe()
+    plot_qwen_thinkoff_probe()
     plot_quantized_qwen()
     write_branch_summary()
     print(f"Wrote trajectory figures to {OUT_DIR}")

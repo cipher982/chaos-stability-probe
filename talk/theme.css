@@ -12,19 +12,20 @@ section {
 }
 
 section.title {
-  justify-content: center;
+  justify-content: stretch;
   text-align: left;
   color: #f5f5f5;
   background: #101114;
+  padding: 0;
 }
 
-section.title::before {
+section.title[data-marpit-advanced-background="background"] figure::after {
   content: "";
   position: absolute;
   inset: 0;
   background:
-    linear-gradient(90deg, rgba(0, 0, 0, 0.88) 0%, rgba(0, 0, 0, 0.62) 44%, rgba(0, 0, 0, 0.10) 100%),
-    linear-gradient(0deg, rgba(0, 0, 0, 0.42), rgba(0, 0, 0, 0.04) 42%);
+    radial-gradient(circle at 76% 52%, rgba(8, 9, 12, 0) 0%, rgba(8, 9, 12, 0.08) 32%, rgba(8, 9, 12, 0.28) 72%, rgba(8, 9, 12, 0.56) 100%),
+    linear-gradient(90deg, rgba(8, 9, 12, 0.96) 0%, rgba(8, 9, 12, 0.88) 38%, rgba(8, 9, 12, 0.46) 58%, rgba(8, 9, 12, 0.12) 100%);
   pointer-events: none;
 }
 
@@ -36,25 +37,46 @@ section.title footer {
 }
 
 section.title h1 {
-  font-size: 58px;
+  font-size: 54px;
   line-height: 1.15;
   margin-bottom: 24px;
   color: #f5f5f5;
-  max-width: 780px;
+  max-width: 620px;
   text-shadow: 0 2px 18px rgba(0, 0, 0, 0.72);
 }
 
 section.title h2 {
-  font-size: 30px;
+  font-size: 29px;
   font-weight: 400;
   color: #d7d9de;
   border: none;
-  max-width: 860px;
+  max-width: 560px;
   text-shadow: 0 2px 16px rgba(0, 0, 0, 0.68);
+}
+
+section.title em {
+  color: #f5f5f5;
 }
 
 section.title footer {
   color: rgba(255, 255, 255, 0.62);
+}
+
+.title-layout {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+}
+
+.title-copy {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 52%;
+  padding: 0 0 0 80px;
 }
 
 section h1 {
@@ -133,6 +155,14 @@ section footer {
   color: #888;
 }
 
+section::after {
+  font-size: 16px;
+  color: #c8402c;
+  font-weight: 600;
+  bottom: 14px;
+  right: 20px;
+}
+
 ul, ol { margin-top: 0.3em; }
 li { margin-bottom: 0.25em; }
 
@@ -140,6 +170,38 @@ li { margin-bottom: 0.25em; }
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 28px;
+}
+
+.caption-small {
+  font-size: 15px;
+  line-height: 1.14;
+  color: #222;
+  margin: -4px auto 0;
+  max-width: 1080px;
+}
+
+.takeaway {
+  font-size: 25px;
+  line-height: 1.24;
+  color: #202124;
+  margin: 12px auto 0;
+  max-width: 1120px;
+}
+
+.micro-sweep-visual {
+  height: 470px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.micro-sweep-visual img {
+  width: 100%;
+  height: 100%;
+  max-height: none;
+  object-fit: contain;
+  margin: 0;
 }
 
 section.big-quote {

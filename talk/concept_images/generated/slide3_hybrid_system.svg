@@ -1,0 +1,107 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 460" font-family="-apple-system, Helvetica, Arial, sans-serif">
+  <defs>
+    <linearGradient id="actGrad" x1="0" x2="1" y1="0" y2="0">
+      <stop offset="0" stop-color="#e0e0e0"/>
+      <stop offset="1" stop-color="#c8402c" stop-opacity="0.85"/>
+    </linearGradient>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#333"/>
+    </marker>
+    <marker id="arrRed" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#c8402c"/>
+    </marker>
+  </defs>
+
+  <!-- LEFT: continuous activation side -->
+  <rect x="30" y="40" width="460" height="380" rx="10" fill="#ffffff" stroke="#ddd" stroke-width="1"/>
+  <text x="50" y="70" font-size="18" fill="#333" font-weight="600">continuous</text>
+  <text x="50" y="92" font-size="14" fill="#777">activations, logits, KV cache</text>
+
+  <!-- smooth flow curves (layers) -->
+  <g stroke-width="2" fill="none">
+    <path d="M60,160 C160,140 260,180 460,170" stroke="url(#actGrad)"/>
+    <path d="M60,200 C160,230 260,190 460,215" stroke="url(#actGrad)"/>
+    <path d="M60,240 C160,220 260,270 460,250" stroke="url(#actGrad)"/>
+    <path d="M60,280 C160,300 260,260 460,295" stroke="url(#actGrad)"/>
+    <path d="M60,320 C160,310 260,340 460,330" stroke="url(#actGrad)"/>
+  </g>
+
+  <!-- layer markers -->
+  <g fill="#bbb">
+    <circle cx="140" cy="250" r="3"/>
+    <circle cx="220" cy="250" r="3"/>
+    <circle cx="300" cy="250" r="3"/>
+    <circle cx="380" cy="250" r="3"/>
+  </g>
+  <text x="140" y="395" font-size="12" fill="#999" text-anchor="middle">layer 1</text>
+  <text x="380" y="395" font-size="12" fill="#999" text-anchor="middle">layer N</text>
+
+  <text x="260" y="120" font-size="14" fill="#555" text-anchor="middle" font-style="italic">smooth, differentiable flow</text>
+
+  <!-- DIVIDER -->
+  <line x1="540" y1="60" x2="540" y2="400" stroke="#c8402c" stroke-width="1.5" stroke-dasharray="6 6"/>
+  <rect x="495" y="215" width="90" height="30" rx="6" fill="#fafafa" stroke="#c8402c" stroke-width="1.5"/>
+  <text x="540" y="235" font-size="14" fill="#c8402c" text-anchor="middle" font-weight="600">argmax</text>
+
+  <!-- RIGHT: discrete token branching -->
+  <rect x="590" y="40" width="480" height="380" rx="10" fill="#ffffff" stroke="#ddd" stroke-width="1"/>
+  <text x="610" y="70" font-size="18" fill="#333" font-weight="600">discrete</text>
+  <text x="610" y="92" font-size="14" fill="#777">tokens, branch decisions</text>
+
+  <!-- a tree of token choices -->
+  <g stroke="#333" stroke-width="1.5" fill="none">
+    <!-- prompt node -->
+    <line x1="620" y1="230" x2="680" y2="230" marker-end="url(#arr)"/>
+
+    <!-- level 1 split -->
+    <line x1="690" y1="230" x2="780" y2="180" marker-end="url(#arr)"/>
+    <line x1="690" y1="230" x2="780" y2="280" marker-end="url(#arr)" stroke="#c8402c"/>
+
+    <!-- level 2 -->
+    <line x1="790" y1="180" x2="880" y2="150"/>
+    <line x1="790" y1="180" x2="880" y2="210"/>
+    <line x1="790" y1="280" x2="880" y2="260" stroke="#c8402c"/>
+    <line x1="790" y1="280" x2="880" y2="310" stroke="#c8402c"/>
+
+    <!-- level 3 -->
+    <line x1="890" y1="150" x2="970" y2="130"/>
+    <line x1="890" y1="150" x2="970" y2="170"/>
+    <line x1="890" y1="210" x2="970" y2="195"/>
+    <line x1="890" y1="210" x2="970" y2="225"/>
+    <line x1="890" y1="260" x2="970" y2="250" stroke="#c8402c"/>
+    <line x1="890" y1="260" x2="970" y2="275" stroke="#c8402c"/>
+    <line x1="890" y1="310" x2="970" y2="295" stroke="#c8402c"/>
+    <line x1="890" y1="310" x2="970" y2="325" stroke="#c8402c"/>
+  </g>
+
+  <!-- nodes -->
+  <g>
+    <circle cx="685" cy="230" r="8" fill="#333"/>
+    <text x="685" y="218" font-size="11" fill="#333" text-anchor="middle">prompt</text>
+
+    <circle cx="785" cy="180" r="6" fill="#333"/>
+    <circle cx="785" cy="280" r="6" fill="#c8402c"/>
+
+    <circle cx="885" cy="150" r="5" fill="#333"/>
+    <circle cx="885" cy="210" r="5" fill="#333"/>
+    <circle cx="885" cy="260" r="5" fill="#c8402c"/>
+    <circle cx="885" cy="310" r="5" fill="#c8402c"/>
+
+    <circle cx="975" cy="130" r="4" fill="#666"/>
+    <circle cx="975" cy="170" r="4" fill="#666"/>
+    <circle cx="975" cy="195" r="4" fill="#666"/>
+    <circle cx="975" cy="225" r="4" fill="#666"/>
+    <circle cx="975" cy="250" r="4" fill="#c8402c"/>
+    <circle cx="975" cy="275" r="4" fill="#c8402c"/>
+    <circle cx="975" cy="295" r="4" fill="#c8402c"/>
+    <circle cx="975" cy="325" r="4" fill="#c8402c"/>
+  </g>
+
+  <text x="830" y="120" font-size="13" fill="#555" font-style="italic">trajectory A</text>
+  <text x="830" y="355" font-size="13" fill="#c8402c" font-style="italic">trajectory B — one flipped argmax</text>
+
+  <!-- bottom caption -->
+  <text x="550" y="440" font-size="16" fill="#1a1a1a" text-anchor="middle" font-style="italic">
+    Hybrid sequential system: continuous activations feed a discrete branching process.
+  </text>
+</svg>

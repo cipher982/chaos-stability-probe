@@ -16,7 +16,7 @@ import json
 import statistics as stats
 from collections import defaultdict
 from pathlib import Path
-from typing import Optional
+from typing import Any, Optional
 
 from detect_answer_start import detect_answer_start
 
@@ -55,6 +55,7 @@ CATEGORIES = [
 ]
 
 T_MAX = 128
+DRAFT_MARKERS = {"**Drafting final"}
 
 
 def load_generations(run_dir: Path) -> list[dict]:
@@ -64,20 +65,47 @@ def load_generations(run_dir: Path) -> list[dict]:
     return [json.loads(x) for x in path.open()]
 
 
-def edit_distance_prefix(a: list[int], b: list[int]) -> list[int]:
-    """Return per-t token-level edit distance of prefixes a[:t] vs b[:t].
+def detect_final_answer_start(text: str, token_ids: list[int]) -> tuple[Optional[int], Optional[str]]:
+    """Detect a final-answer boundary, not an intermediate drafting section.
 
-    Uses a simplified prefix-divergence metric: # of mismatches when comparing
-    positionally. Matches the existing family_curves notion of `edit_mean`
-    (which is normalized prefix divergence). For t up to min(len(a),len(b)).
+    `detect_answer_start` intentionally recognizes some draft headings for
+    inspection, but this slide claims x=0 is where the answer starts. Drafting
+    headings are still scaffold/deliberation, so this visualization drops them.
     """
-    n = min(len(a), len(b), T_MAX)
-    diffs = 0
+    idx, marker = detect_answer_start(text, token_ids)
+    if marker in DRAFT_MARKERS:
+        return None, None
+    return idx, marker
+
+
+def levenshtein(a: list[Any], b: list[Any]) -> int:
+    if len(a) < len(b):
+        a, b = b, a
+    previous = list(range(len(b) + 1))
+    for i, ca in enumerate(a, 1):
+        current = [i]
+        for j, cb in enumerate(b, 1):
+            insert = current[j - 1] + 1
+            delete = previous[j] + 1
+            replace = previous[j - 1] + (ca != cb)
+            current.append(min(insert, delete, replace))
+        previous = current
+    return previous[-1]
+
+
+def edit_distance_prefix(a: list[int], b: list[int]) -> list[int]:
+    """Return per-t token-level Levenshtein distance of prefixes a[:t] vs b[:t].
+
+    This intentionally matches scripts/run_stability_probe.py::curve_rows.
+    A same-index mismatch count falsely treats a one-token insertion/deletion as
+    sustained divergence; Levenshtein lets offset-only artifacts decay.
+    """
+    n = min(max(len(a), len(b)), T_MAX)
     out = []
-    for i in range(n):
-        if a[i] != b[i]:
-            diffs += 1
-        out.append(diffs)
+    for t in range(1, n + 1):
+        a_prefix = a[: min(t, len(a))]
+        b_prefix = b[: min(t, len(b))]
+        out.append(levenshtein(a_prefix, b_prefix))
     return out  # length n, out[t-1] = edits through position t
 
 
@@ -100,6 +128,9 @@ def build_for_model(name: str, group: str, rel: Path) -> dict:
     # raw[cat] = list of per-t edit arrays (one per pair)
     raw_acc: dict[str, list[list[int]]] = defaultdict(list)
     aligned_acc: dict[str, list[list[int]]] = defaultdict(list)
+    # scaffold_acc[cat] = list of [{x: negative_int, y: cumulative_edits_at_x}]
+    # where x = raw_t - pair_scaffold_end, so end-of-scaffold = 0 for each pair
+    scaffold_acc: dict[str, list[list[dict]]] = defaultdict(list)
     scaffold_lens: list[int] = []
     pairs_total = 0
     pairs_aligned = 0
@@ -121,16 +152,30 @@ def build_for_model(name: str, group: str, rel: Path) -> dict:
         raw_acc[cat].append(raw_curve)
 
         if attempt_align:
-            ia, _ = detect_answer_start(txa, ta)
-            ib, _ = detect_answer_start(txb, tb)
+            ia, _ = detect_final_answer_start(txa, ta)
+            ib, _ = detect_final_answer_start(txb, tb)
             if ia is not None and ib is not None:
                 pairs_aligned += 1
                 scaffold_lens.append(ia)
                 scaffold_lens.append(ib)
+                # Answer side: slice at each pair's detected answer-start
                 sa = ta[ia:]
                 sb = tb[ib:]
                 if sa and sb:
                     aligned_acc[cat].append(edit_distance_prefix(sa, sb))
+                # Scaffold side: plot raw edit curve on x = raw_t - min(ia, ib)
+                # so that each pair's scaffold-end lands at (or near) x=0.
+                # Use min(ia, ib) because that's where the first pair finishes
+                # scaffolding and we stop comparing scaffold-scaffold tokens.
+                anchor = min(ia, ib)
+                scaffold_pts = []
+                for ti, val in enumerate(raw_curve):
+                    t = ti + 1
+                    if t <= anchor:
+                        x = t - anchor  # negative or zero
+                        scaffold_pts.append({"x": x, "y": val / t})
+                if scaffold_pts:
+                    scaffold_acc[cat].append(scaffold_pts)
         else:
             # For thinkoff / non-reasoning: aligned == raw (scaffold = 0)
             pairs_aligned += 1
@@ -156,6 +201,33 @@ def build_for_model(name: str, group: str, rel: Path) -> dict:
             out[cat] = pts
         return out
 
+    def make_scaffold_curves(acc: dict[str, list[list[dict]]]) -> dict:
+        """Aggregate per-pair scaffold-aligned points into a mean curve per x.
+
+        Every pair in a category contributes a list of {x, y} points (x negative,
+        with end-of-scaffold landing at x=0 for THAT pair). We bin by integer x
+        and compute mean y across pairs that have at least one point at that x.
+        """
+        out = {}
+        for cat in CATEGORIES:
+            pair_curves = acc.get(cat, [])
+            if not pair_curves:
+                out[cat] = []
+                continue
+            by_x: dict[int, list[float]] = defaultdict(list)
+            for pc in pair_curves:
+                for p in pc:
+                    by_x[int(p["x"])].append(p["y"])
+            # Require at least ceil(n_pairs / 3) contributions for trustworthy mean
+            need = max(1, (len(pair_curves) + 2) // 3)
+            pts = []
+            for x in sorted(by_x.keys()):
+                vals = by_x[x]
+                if len(vals) >= need:
+                    pts.append({"x": x, "edit_mean": sum(vals) / len(vals), "n": len(vals)})
+            out[cat] = pts
+        return out
+
     median_scaffold = stats.median(scaffold_lens) if scaffold_lens else 0
     p25 = stats.quantiles(scaffold_lens, n=4)[0] if len(scaffold_lens) >= 4 else 0
     p75 = stats.quantiles(scaffold_lens, n=4)[2] if len(scaffold_lens) >= 4 else 0
@@ -167,6 +239,7 @@ def build_for_model(name: str, group: str, rel: Path) -> dict:
         "family": "reasoning" if group != "non-reasoning" else "non-reasoning",
         "raw_categories": make_cat_curves(raw_acc),
         "aligned_categories": make_cat_curves(aligned_acc),
+        "scaffold_categories": make_scaffold_curves(scaffold_acc),
         "meta": {
             "pairs_total": pairs_total,
             "pairs_aligned": pairs_aligned,

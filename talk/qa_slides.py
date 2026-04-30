@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Render the Marp deck to per-slide PNGs, HTML, and PDF.
+"""Render the Marp deck to per-slide PNGs and HTML.
 
 Pure rendering. No visual QA happens here — that's the qa-slides skill's job,
 which spawns a vision subagent to look at the output. Pixel heuristics don't
@@ -34,7 +34,7 @@ def main() -> None:
         "--theme", str(THEME),
         "--allow-local-files",
         "--images", "png",
-        "--image-scale", "1",
+        "--image-scale", "2",
         str(SRC),
         "-o", str(IMG_DIR / "slide.png"),
     ])
@@ -45,18 +45,9 @@ def main() -> None:
         str(SRC),
         "-o", str(HERE / "slides.html"),
     ])
-    run([
-        "npx", "@marp-team/marp-cli@latest",
-        "--theme", str(THEME),
-        "--allow-local-files",
-        "--pdf",
-        str(SRC),
-        "-o", str(HERE / "slides.pdf"),
-    ])
-
     pngs = sorted(IMG_DIR.glob("slide.*.png"))
     print(f"Rendered {len(pngs)} slides to {IMG_DIR}")
-    print(f"Also wrote: {HERE / 'slides.html'}, {HERE / 'slides.pdf'}")
+    print(f"Also wrote: {HERE / 'slides.html'}")
     print()
     print("Next step: run the qa-slides skill or spawn a vision subagent on")
     print(f"the PNGs in {IMG_DIR}. See .agents/skills/qa-slides/SKILL.md.")

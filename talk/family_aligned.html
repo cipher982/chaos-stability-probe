@@ -42,6 +42,8 @@
   .callout { font-size:11px; fill:var(--ink); opacity:0.85; }
   .callout .lead { fill:var(--muted); }
   .callout-line { stroke:var(--muted); stroke-width:1; opacity:0.5; }
+  .dynamic-note { font-size:12px; fill:var(--reasoning); opacity:0.9; font-weight:500; }
+  .dynamic-note-muted { font-size:11px; fill:var(--muted); opacity:0.9; }
   .model-label { font-size:10.5px; font-variant-numeric:tabular-nums; pointer-events:none; }
   .controls { display:flex; gap:10px; align-items:center; padding:6px 0 0; flex-wrap:wrap; }
   .pill {
@@ -80,16 +82,13 @@
 </style>
 </head>
 <body>
-<div id="wip-banner" style="background:#7fb3ff;color:#0a1a33;padding:10px 18px;font:500 13px/1.4 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;border-bottom:2px solid #3a6fb8;">
-  <b style="font-size:14px;">⚠ WORK IN PROGRESS</b><br>
-  Alignment uses per-model <i>median</i> scaffold length, which smears the per-pair answer boundary. Per-pair token-exact alignment pending.
-</div>
 <div class="wrap">
-  <h1>Scaffold ≠ stability <span style="color:#3a6fb8;font-size:13px;font-weight:400;">· ⚠ WIP alignment</span></h1>
+  <h1>Scaffold ≠ stability</h1>
   <div class="sub">
-    Reasoning models' divergence over scaffold tokens (left of 0) is artificially near zero — the preamble is deterministic.
-    Once the answer starts (right of 0), reasoning models diverge as fast or faster than non-reasoning ones.
-    The stability was in the scaffold, not the reasoning.
+    Per-pair token alignment: final-answer markers land at x=0. Negative x = scaffold tokens, positive x = answer tokens.
+    Drafting headings are treated as scaffold, not answers. Many reasoning outputs never reach a final answer within 512 tokens, so
+    answer-side reasoning curves only appear when enough final-answer pairs survive. The raw token-index stability mostly reflected
+    scaffold template structure, not clean answer-content robustness.
   </div>
   <div class="legend">
     <div><span class="swatch" style="background:var(--reasoning)"></span><b>Reasoning-tuned</b> (Qwen 4B/9B, DeepSeek-R1, SmolLM3)</div>
@@ -122,11 +121,12 @@ const CATS = [
 const X_MIN = -180;
 const X_MAX = 80;
 const DIM_THRESHOLD = 10; // n<10 aligned pairs gets dimmed
+const MIN_CATEGORY_N = 2; // hide answer curves from a single surviving pair
 const EXCLUDE = new Set(["Phi-4 reasoning+"]);
 
 let state = { cat: "synonym" };
 
-fetch("data/family_aligned.json").then(r=>r.json()).then(raw => {
+fetch("data/family_aligned.json?v=20260430-1010", { cache: "no-store" }).then(r=>r.json()).then(raw => {
   // Filter Phi-4
   raw.panel = raw.panel.filter(m => !EXCLUDE.has(m.name));
 
@@ -216,18 +216,10 @@ fetch("data/family_aligned.json").then(r=>r.json()).then(raw => {
       .attr("x", 0).attr("y", 8).attr("text-anchor","middle")
       .text("(makes the model *look* stable)");
 
-    // Right callout
-    const rc = calloutG.append("g").attr("transform", `translate(${x(42)}, ${y(0.25)})`);
-    rc.append("text").attr("class","callout")
-      .attr("x", 0).attr("y", 0).attr("text-anchor","middle")
-      .text("answer region — true divergence");
-    rc.append("text").attr("class","callout lead")
-      .attr("x", 0).attr("y", 14).attr("text-anchor","middle")
-      .text("(reasoning & non-reasoning both spike)");
-
     g.append("g").attr("class","curves");
     g.append("g").attr("class","labels");
     g.append("g").attr("class","mean-curves");
+    g.append("g").attr("class","dynamic-notes");
     layout = { svg, g, x, y, iw, ih };
   }
 
@@ -238,52 +230,39 @@ fetch("data/family_aligned.json").then(r=>r.json()).then(raw => {
   }
 
   // Build a model's "scaffold + answer" curve in the new x-coordinate system.
-  // For reasoning models with scaffold > 0:
-  //   scaffold portion: raw_categories shifted by -median_scaffold, clipped to x <= 0
-  //   answer portion:   aligned_categories at x >= 0
-  // For non-reasoning & thinkoff (scaffold = 0):
-  //   just raw_categories at x = t (positive)
-  // Build a model's "scaffold + answer" curve in the new x coord.
-  // Scaffold side uses raw_categories ONLY where raw_t <= scaffold_p25
-  // (i.e. where >=75% of pairs are still in scaffold — keeps it trustworthy).
-  // The segment between the last trusted scaffold point and the answer start
-  // is drawn as a dashed connector so the cliff is visible even when raw
-  // data doesn't cover all of (-scaffold, 0).
+  // Scaffold side uses `scaffold_categories` — per-pair aligned so every pair's
+  // scaffold-end lands at x=0 individually, then averaged across pairs at
+  // each discrete x. No population-median smearing.
+  // Answer side uses `aligned_categories` — per-pair sliced at each pair's
+  // detected answer-start, then averaged.
+  // Non-reasoning / thinkoff: no scaffold, just raw at x=t on positive side.
   function modelCurve(m, catKey) {
-    const scaffold = m.meta.median_scaffold_tokens || 0;
-    const p25 = m.meta.scaffold_p25 || scaffold;
-    const raw = m.raw_categories[catKey] || [];
+    const scaffoldRaw = m.scaffold_categories && m.scaffold_categories[catKey] || [];
     const aligned = m.aligned_categories[catKey] || [];
+    const raw = m.raw_categories[catKey] || [];
 
     const scaffoldPts = [];
     const answerPts = [];
 
-    if (scaffold > 0 && aligned.length > 0) {
-      // Reasoning: scaffold side uses raw up to p25 (where >=75% of pairs
-      // are still in scaffold — keeps values trustworthy).
-      const scaffoldCap = Math.min(p25, 128);
-      raw.forEach(p => {
-        if (p.t <= scaffoldCap) {
-          const xv = p.t - scaffold;
-          if (xv >= X_MIN) scaffoldPts.push({ x: xv, y: p.edit_mean });
-        }
+    if (m.group === "reasoning") {
+      // scaffold_categories is already in x-space (x <= 0)
+      scaffoldRaw.forEach(p => {
+        if (p.x >= X_MIN && p.x <= 0) scaffoldPts.push({ x: p.x, y: p.edit_mean });
       });
-      aligned.forEach(p => {
-        if (p.t >= 0 && p.t <= X_MAX) answerPts.push({ x: p.t, y: p.edit_mean });
-      });
-    } else if (scaffold > 0 && aligned.length === 0) {
-      // Reasoning but no aligned pairs — show only scaffold-side
-      const scaffoldCap = Math.min(p25, 128);
-      raw.forEach(p => {
-        if (p.t <= scaffoldCap) {
-          const xv = p.t - scaffold;
-          if (xv >= X_MIN) scaffoldPts.push({ x: xv, y: p.edit_mean });
-        }
-      });
+      // Answer side from aligned_categories (t=1 -> x=1, t=0 maps to x=0)
+      if (!(m.group === "reasoning" && isDim(m))) {
+        aligned.forEach(p => {
+          if (p.t >= 0 && p.t <= X_MAX && (p.n || 0) >= MIN_CATEGORY_N) {
+            answerPts.push({ x: p.t, y: p.edit_mean });
+          }
+        });
+      }
     } else {
       // Non-reasoning / thinkoff: no scaffold, raw at x=t
       raw.forEach(p => {
-        if (p.t <= X_MAX) answerPts.push({ x: p.t, y: p.edit_mean });
+        if (p.t <= X_MAX && (p.n || 0) >= MIN_CATEGORY_N) {
+          answerPts.push({ x: p.t, y: p.edit_mean });
+        }
       });
     }
 
@@ -435,15 +414,39 @@ fetch("data/family_aligned.json").then(r=>r.json()).then(raw => {
     const rAnswer    = zoneMean(catKey, panel, "reasoning",          1, 60);
     const nAnswer    = zoneMean(catKey, panel, "non-reasoning",      1, 60);
     const tAnswer    = zoneMean(catKey, panel, "reasoning-thinkoff", 1, 60);
+    const reasoningFinalCounts = panel
+      .filter(m => m.group === "reasoning")
+      .map(m => d3.max((m.aligned_categories[catKey] || []).map(p => p.n || 0)) || 0);
+    const reasoningFinalPairs = d3.sum(reasoningFinalCounts);
 
     const cat = CATS.find(c => c.key === catKey);
     d3.select("#readout").html(
       `<b>${cat.label}</b> · mean edit distance · ` +
       `<b class="r">Reasoning scaffold: ${fmt(rScaffold)}</b> &nbsp;│&nbsp; ` +
-      `<b class="r">Reasoning answer: ${fmt(rAnswer)}</b> &nbsp;·&nbsp; ` +
+      `<b class="r">Reasoning final answer: ${fmt(rAnswer)}</b> &nbsp;·&nbsp; ` +
       `<b class="t">Think-off answer: ${fmt(tAnswer)}</b> &nbsp;·&nbsp; ` +
       `<b class="n">Non-reasoning answer: ${fmt(nAnswer)}</b>`
     );
+
+    const notes = g.select(".dynamic-notes");
+    notes.selectAll("*").remove();
+    if (rAnswer == null) {
+      const note = notes.append("g").attr("transform", `translate(${x(34)}, ${y(0.24)})`);
+      note.append("text").attr("class","dynamic-note")
+        .attr("text-anchor","middle")
+        .text("reasoning-full runs did not produce enough final answers here");
+      note.append("text").attr("class","dynamic-note-muted")
+        .attr("y", 16).attr("text-anchor","middle")
+        .text("they stayed in visible draft/scaffold, so answer-aligned comparison uses think-off vs non-reasoning");
+    } else {
+      const note = notes.append("g").attr("transform", `translate(${x(42)}, ${y(0.25)})`);
+      note.append("text").attr("class","callout")
+        .attr("text-anchor","middle")
+        .text("final-answer region");
+      note.append("text").attr("class","callout lead")
+        .attr("y", 14).attr("text-anchor","middle")
+        .text("strictly aligned after detected final-answer marker");
+    }
 
     // Inset: scaffold distribution
     const reasoningModels = panel.filter(p => p.group === "reasoning");
@@ -452,8 +455,9 @@ fetch("data/family_aligned.json").then(r=>r.json()).then(raw => {
     insetBody.selectAll("*").remove();
     reasoningModels.forEach(m => {
       const dim = isDim(m);
+      const catN = d3.max((m.aligned_categories[catKey] || []).map(p => p.n || 0)) || 0;
       const row = insetBody.append("div").attr("class","row" + (dim ? " dim" : ""));
-      row.append("div").attr("class","name").text(m.name + (dim ? ` (n=${m.meta.pairs_aligned})` : ""));
+      row.append("div").attr("class","name").text(m.name + ` (${catN} final)`);
       const track = row.append("div").attr("class","bar-track");
       const med = m.meta.median_scaffold_tokens || 0;
       const p25 = m.meta.scaffold_p25 || med;
@@ -469,7 +473,7 @@ fetch("data/family_aligned.json").then(r=>r.json()).then(raw => {
     });
     d3.select("#corner-note").html(
       `<b style="color:var(--ink)">Phi-4 reasoning+</b> excluded — never finishes reasoning within 512 tokens at temp 0. ` +
-      `Models with <i>n&lt;${DIM_THRESHOLD}</i> aligned pairs are dimmed.`
+      `Right-side orange curves require enough detected final-answer pairs for the selected category.`
     );
   }
 

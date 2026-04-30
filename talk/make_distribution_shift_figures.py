@@ -14,7 +14,7 @@ RED = "#c8402c"
 TEAL = "#287b7f"
 
 
-def normal_pdf(x, mu, sigma):
+def normal_density(x, mu, sigma):
     return np.exp(-0.5 * ((x - mu) / sigma) ** 2) / (sigma * np.sqrt(2 * np.pi))
 
 
@@ -43,8 +43,8 @@ def density_shift():
     style_ax(ax)
 
     x = np.linspace(-3.0, 3.0, 700)
-    a = normal_pdf(x, -1.15, 0.33)
-    b = normal_pdf(x, 1.15, 0.33)
+    a = normal_density(x, -1.15, 0.33)
+    b = normal_density(x, 1.15, 0.33)
 
     ax.fill_between(x, 0, a, color=RED, alpha=0.24)
     ax.plot(x, a, color=RED, lw=3)
@@ -102,8 +102,8 @@ def density_shift_slide():
     style_ax(ax)
 
     x = np.linspace(-3.0, 3.0, 700)
-    a = normal_pdf(x, -1.15, 0.34)
-    b = normal_pdf(x, 1.15, 0.34)
+    a = normal_density(x, -1.15, 0.34)
+    b = normal_density(x, 1.15, 0.34)
 
     ax.fill_between(x, 0, a, color=RED, alpha=0.22)
     ax.plot(x, a, color=RED, lw=3.2)

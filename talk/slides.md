@@ -2,32 +2,49 @@
 marp: true
 theme: chaos
 paginate: true
-footer: "LLM Sensitivity — Learning Club"
+footer: "LLM Sensitivity"
 ---
+
+<!--
+AGENT NOTE: Every slide starts with a marker of the form
+  SLIDE N / slide_images/slide.0NN.png / "Title"
+Slides are 1-indexed. Slide N corresponds to slide_images/slide.0NN.png.
+When referencing a slide, cite both the number AND the title
+(e.g. "slide 14 / Within-Qwen"). Do not count from slide 2.
+Run scripts/check_slide_numbering.py after reordering slides.
+-->
 
 <!-- _class: title -->
 <!-- _paginate: false -->
 <!-- _footer: "" -->
 
-![bg cover](concept_images/lorenz-state-space.png)
+<!-- SLIDE 1 / slide_images/slide.001.png / "Nearby Prompts, Distant Trajectories" -->
 
-# Nearby Prompts, Distant Trajectories
+![bg cover](concept_images/generated/title_background_v2.png)
 
-## Teaching a lens: chaos, dynamical systems, and how they *might* apply to LLMs.
+<div class="title-layout">
+  <div class="title-copy">
+    <h1>Nearby Prompts,<br>Distant Trajectories</h1>
+    <h2>Teaching a lens: chaos, dynamical systems,<br>and how they <em>might</em> apply to LLMs.</h2>
+  </div>
+</div>
 
 <!--
 Set the table. ~60 seconds.
 
 "Most of you have heard of the butterfly effect. I want to teach you what's
-actually under it — compounding, nonlinear divergence — and then walk through
-how that lens MIGHT apply to the LLMs we work with. This is a Learning Club
-talk: I'm teaching a lens, not defending a thesis. Some of what I tried
-clicked. Some of it didn't. I'll show you both."
+actually under it, compounding, nonlinear divergence, and then walk through
+how that lens MIGHT apply to the LLMs we work with. This is exploratory:
+the goal is useful vocabulary, with a few experiments to make it concrete.
+Some of what I tried clicked. Some of it didn't. I'll show you both."
 
-Tone: curious, not defensive. Exploratory, not a paper defense.
+Tone: curious and exploratory. Keep it away from a paper-defense posture.
 -->
 
 ---
+
+
+<!-- SLIDE 2 / slide_images/slide.002.png / "What I'm **not** claiming" -->
 
 ## What I'm **not** claiming.
 
@@ -41,39 +58,48 @@ Tone: curious, not defensive. Exploratory, not a paper defense.
 
 </div>
 
-> Setting expectations. This is a Learning Club talk. I'm teaching a lens,
-> not defending a paper.
+> Setting expectations: chaos as vocabulary,
+> experiments as illustrations.
 
 <!--
 ~45 seconds. Lift the Q&A risk off the rest of the talk by disarming the
 obvious objections up front. Everything I'm not claiming is something
 someone in the room might otherwise object to later.
 
-Say out loud: "If any of these would have been your objection — great, we
+Say out loud: "If any of these would have been your objection, great, we
 agree. I'm going to use chaos as a lens, show you where it seems to apply,
 and tell you where the data got messy."
 -->
 
 ---
 
+
+<!-- SLIDE 3 / slide_images/slide.003.png / "What I **am** claiming" -->
+
 ## What I **am** claiming.
 
-<div style="font-size:0.9em">
+<div class="twocol" style="grid-template-columns: 1fr 1.05fr; gap: 28px; align-items: center;">
+<div style="font-size:0.82em">
 
-- LLMs aren't textbook chaotic systems — but at inference time they're **hybrid sequential systems:** continuous activations feed a **discrete branching process.**
-- Small semantic or formatting changes can **move distributions** or **flip argmax branches.** The sensitivity is real, and **it varies a lot by model, prompt, and metric.**
-- The naive way of measuring this has **specific failure modes** worth naming.
-- Chaos vocabulary helps **organize** the phenomenon. It doesn't *prove* anything about LLMs.
+- Inference time: **hybrid sequential system**, continuous activations feed a **discrete branching process.**
+- Small changes can **move distributions** or **flip argmax branches.** Varies a lot by model, prompt, metric.
+- Naive measurement has **specific failure modes** worth naming.
+- Chaos vocabulary **organizes** the phenomenon. Doesn't *prove* anything.
+
+> **Upshot:** test neighborhoods, not single prompts.
 
 </div>
+<div>
 
-> **Upshot:** treat prompting like operating a high-gain branching system.
-> Test neighborhoods, not single prompts.
+![h:500](concept_images/generated/slide3_hybrid_system.png)
+
+</div>
+</div>
 
 <!--
 ~60 seconds. This is the honest thesis. It's modest enough to defend and
 interesting enough to teach. The "hybrid sequential system" framing is the
-cleanest one a dynamicist won't fight — continuous activations, discrete
+cleanest one a dynamicist won't fight, continuous activations, discrete
 branching, finite-time sensitivity.
 
 Operational line to repeat at the end: "test neighborhoods, not single
@@ -82,7 +108,10 @@ prompts."
 
 ---
 
-## Chaos isn't randomness.
+
+<!-- SLIDE 4 / slide_images/slide.004.png / "Chaos starts with sensitivity" -->
+
+## Chaos starts with sensitivity.
 
 ![bg right:50% fit](concept_images/double-pendulum-divergence.png)
 
@@ -91,10 +120,10 @@ prompts."
 **Chaos is deterministic amplification of small differences.**
 
 - Same equations. Starting angles differ by **half a degree**.
-- A few seconds later — totally different places.
-- Not rolling dice. Magnifying what's already there.
+- A few seconds later, totally different places.
+- Think less dice roll, more amplifier.
 
-> Weather forecasts aren't random. They're **sensitive**.
+> Forecasts go wrong because tiny measurement errors grow.
 
 </div>
 
@@ -102,55 +131,66 @@ prompts."
 ~60 seconds. Kill the pop-culture "chaos = chaotic = random" intuition
 before any LLM content. Everyone in the room understands a pendulum.
 
-Key line out loud: "Chaos is not randomness. Same input gives same output.
-The trick is that NEIGHBORING inputs give wildly different outputs after
-enough time. The system is deterministic — it just magnifies differences
-faster than we can track."
+Key line out loud: "Same input gives same output. The trick is that
+NEIGHBORING inputs can land far apart after enough time. The system is
+deterministic, and it magnifies differences faster than we can track."
 
 Don't mention LLMs yet. Let the physics breathe.
 -->
 
 ---
 
+
+<!-- SLIDE 5 / slide_images/slide.005.png / "Small differences grow. Measurably" -->
+
 ## Small differences grow. Measurably.
 
 ![bg right:50% fit](concept_images/logistic-bifurcation.png)
 
-<div style="font-size:0.75em">
+<div style="font-size:0.58em; line-height:1.22">
 
 **Logistic map:** $x_{n+1} = r \cdot x_n (1 - x_n)$
 
-- **Low r:** single value. **Mid r:** 2, 4, 8 cycles. **High r:** never repeats.
+- **Low r:** one value. **Mid r:** 2, 4, 8 cycles. **High r:** never repeats.
 
-> **Lyapunov λ** — how fast nearby trajectories separate. λ > 0: chaotic.
+> **Lyapunov λ**, how fast nearby trajectories separate. λ > 0: chaotic.
 
-Trained nets **sit near this boundary** (Langton 1990; Zhang 2024). *Which side is any LLM on?*
+Trained nets **sit near this boundary** (Langton 1990; Zhang 2024).
+
+*Which side is any LLM on?*
 
 </div>
 
 <!--
-~90 seconds. This is the bridge slide — it earns you the rest of the talk.
+~90 seconds. This is the bridge slide, it earns you the rest of the talk.
 
 The logistic map is the cleanest "deterministic iteration can produce any
 regime" demonstration. Point at the bifurcation diagram and say: "same
 equation, one knob. Turn it up, you get a phase transition into chaos."
 
-Lyapunov introduced GENTLY — no formula on slide, just "measures how fast
+Lyapunov introduced GENTLY, no formula on slide, just "measures how fast
 trajectories separate." The actual formula |δ(t)| ≈ |δ(0)| · e^(λt) is in
 speaker notes.
 
-Edge-of-chaos citation is load-bearing — it's what makes "is this LLM near
+Edge-of-chaos citation is load-bearing, it's what makes "is this LLM near
 the boundary?" a legitimate research question rather than a metaphor.
 -->
 
 ---
 
+
+<!-- SLIDE 6 / slide_images/slide.006.png / "Same input. Same weights. Different output" -->
+
 ## Same input. Same weights. Different output.
 
-**Prompt A:** `Write a concise Python function that checks whether a string is a palindrome.`
-**Prompt B:** same prompt, **trailing space added**. *(argmax decode — no sampling.)*
+<div style="font-size:0.76em; line-height:1.2">
 
-<div style="font-size:1em"><div class="twocol"><div><p><strong style="color:#c8402c">Output A — OLMo-3 7B</strong></p><pre><code>def is_palindrome(s: str) -&gt; bool:
+**Prompt A:** `Write a concise Python function that checks whether a string is a palindrome.`
+**Prompt B:** same prompt, **trailing space added**. *(argmax decode, no sampling.)*
+
+</div>
+
+<div style="font-size:0.86em"><div class="twocol" style="gap:24px"><div><p><strong style="color:#c8402c">Output A, OLMo-3 7B</strong></p><pre><code>def is_palindrome(s: str) -&gt; bool:
     """
     Check if the given string
     is a palindrome, ignoring
@@ -159,7 +199,7 @@ the boundary?" a legitimate research question rather than a metaphor.
     ...
     """
     cleaned = ''.
-</code></pre></div><div><p><strong style="color:#c8402c">Output B — OLMo-3 7B</strong></p><pre><code>Certainly! Here's a concise
+</code></pre></div><div><p><strong style="color:#c8402c">Output B, OLMo-3 7B</strong></p><pre><code>Certainly! Here's a concise
 Python function to check if a
 string is a palindrome:
 
@@ -173,11 +213,11 @@ How it works: ...
 Real data. Same weights, argmax decode, only the trailing space changed.
 
 "This shouldn't produce two different essays. But it does. This is the puzzle
-the rest of the talk explains — and before anyone asks 'is this just
+the rest of the talk explains, and before anyone asks 'is this just
 temperature,' the next slide separates those two ideas."
 
 Pre-empt: argmax decoding has no sampling step, so seed is inert. That
-means what you see here is not 'the model got unlucky' — it's the model's
+means what you see here is not 'the model got unlucky', it's the model's
 most confident response under one input vs. its most confident response
 under the other. The distribution itself moved.
 
@@ -186,7 +226,10 @@ Don't dunk on OLMo. Other models do this too. This is an existence proof.
 
 ---
 
-## This isn't just temperature.
+
+<!-- SLIDE 7 / slide_images/slide.007.png / "Temperature is a separate axis" -->
+
+## Temperature is a separate axis.
 
 |  | **Same prompt** | **Tiny prompt change** |
 |---|---|---|
@@ -198,7 +241,7 @@ Don't dunk on OLMo. Other models do this too. This is an existence proof.
 
 Starred cell = our probe: zero sampling noise, output still moves. The model's response *function* shifted.
 
-<span style="font-size:0.8em">*(At T=0.7 on OLMo-3, within-prompt and between-prompt sampling distances can match in magnitude — deterministic decode is the only setting where the signal isn't drowned out.)*</span>
+<span style="font-size:0.8em">*(At T=0.7 on OLMo-3, within-prompt and between-prompt sampling distances can match in magnitude, so deterministic decode gives the clean probe.)*</span>
 
 <!--
 This slide is the pedagogical linchpin. ~2 minutes.
@@ -207,10 +250,9 @@ The audience has a ChatGPT-shaped intuition: "LLMs are random, that's
 temperature." That intuition collapses two different phenomena. Break them
 apart here or they'll re-collapse them during Q&A.
 
-Weather analogy: forecasts aren't random. They're SENSITIVE. Change the
-initial conditions by 0.1 degrees and a week later the forecast is
-completely different — not because weather is stochastic, but because the
-system amplifies small input changes. Same claim, for LLMs.
+Weather analogy: change the initial conditions by 0.1 degrees and a week
+later the forecast can land somewhere else because the system amplifies small
+input changes. Same claim, for LLMs.
 
 One-line hook to repeat twice during the talk:
 "Temperature samples from a distribution. Sensitivity asks how far the
@@ -218,6 +260,9 @@ distribution moved."
 -->
 
 ---
+
+
+<!-- SLIDE 8 / slide_images/slide.008.png / "So: is an LLM a dynamical system?" -->
 
 ## So: is an LLM a dynamical system?
 
@@ -227,13 +272,13 @@ distribution moved."
 - Small input perturbations can produce large output changes.
 
 That's the checklist. The remaining question is whether the *magnitude* of
-amplification is interesting — and whether we can measure it.
+amplification is interesting, and whether we can measure it.
 
 > But there's a catch: classical chaos needs perturbations going to zero.
 > Token space is discrete. We'll come back to this.
 
 <!--
-~60 seconds. This slide is much shorter than before — the chaos background
+~60 seconds. This slide is much shorter than before, the chaos background
 already happened on the last two slides. This one's job is just to bridge:
 "LLMs check every box on the dynamical-systems checklist."
 
@@ -244,10 +289,13 @@ slide.
 
 ---
 
+
+<!-- SLIDE 9 / slide_images/slide.009.png / "Both outputs can be correct" -->
+
 ## Both outputs can be correct.
 
-<div class="twocol" style="grid-template-columns: 0.92fr 1.08fr; gap: 34px; align-items: start;">
-<div style="font-size:0.73em">
+<div class="twocol" style="grid-template-columns: 0.9fr 1.1fr; gap: 30px; align-items: start;">
+<div style="font-size:0.60em; line-height:1.28">
 
 > A double pendulum isn't "wrong"; it obeys physics and lands elsewhere.
 > Same bar for LLMs.
@@ -255,12 +303,12 @@ slide.
 - "Book like *Dune*" → Foundation. Add a trailing space → Hyperion.
 - Both recommendations are defensible; neither is a hallucination.
 - Sampling stays local; sensitivity can **move the distribution**.
-- **Measure:** divergence per unit of *meaning-preserving* input change.
+- **Measure:** output divergence per *meaning-preserving* input change.
 
 </div>
 <div style="padding-top: 8px;">
 
-![w:540](concept_images/distribution-shift-basins.png)
+![w:500](concept_images/distribution-shift-basins.png)
 
 </div>
 </div>
@@ -271,7 +319,7 @@ having to argue it. You show two equally valid outputs, not one correct
 and one broken, and the audience gets it.
 
 The "put NOT at the front" trap: big semantic tokens move the output a lot
-because they SHOULD — you changed the meaning. That's the model working,
+because they SHOULD, you changed the meaning. That's the model working,
 not the model being sensitive. The interesting quantity is output-move /
 input-move, conditioned on input-move being small.
 
@@ -283,21 +331,28 @@ the probe into activation space. Both are open extensions with compute.
 
 ---
 
-## State, and prior work — short version
 
-<div style="font-size:0.9em">
+<!-- SLIDE 10 / slide_images/slide.010.png / "State, and prior work, short version" -->
 
-An LLM's "state" is hidden activations + logits + prefix + KV cache. *How much does the output distribution move when the input changes a little?*
+## State, and prior work, short version
 
-People have started probing this:
+<div class="twocol" style="grid-template-columns: 0.78fr 1.22fr; gap: 24px; align-items: start;">
+<div style="font-size:0.47em; line-height:1.18">
 
-- **Li et al. 2025** — QLE-style analysis on Qwen2-14B. Magnitudes grow ~1.32× per layer; shallow layers contract, deep layers amplify. They call it *quasi*-Lyapunov (finite depth, not a fixed map).
-- **Geshkovski et al. 2023** — self-attention as interacting-particle dynamics.
-- **Poole / Schoenholz** — edge-of-chaos signal propagation in deep nets.
+An LLM's state: hidden activations + logits + prefix + KV cache.
 
-> The chaos math is cleanest in **activation space**.
-> What I measure is the downstream shadow at the **output-text level**.
+- **Li et al. 2025**, QLE on Qwen2-14B. ~1.32× per layer. *Quasi*-Lyapunov (finite depth).
+- **Geshkovski 2023**, attention as particle dynamics.
+- **Poole / Schoenholz**, edge-of-chaos signal prop.
 
+> Chaos math is cleanest in **activation space**. These probes observe its **output-text shadow**.
+
+</div>
+<div>
+
+![w:610](concept_images/generated/slide10_compounding.png)
+
+</div>
 </div>
 
 <!--
@@ -315,19 +370,22 @@ models on the axis they didn't: token-level. Complementary, not redundant.
 
 ---
 
+
+<!-- SLIDE 11 / slide_images/slide.011.png / "The experiment" -->
+
 ## The experiment
 
 <div style="font-size:0.9em">
 
-- **~18 models:** Qwen (0.8B → 9B), Gemma 4, Phi-4, DeepSeek-R1, Mistral,
+- **~21 models:** Qwen (0.8B → 9B), Gemma 4, Phi-4, DeepSeek-R1, Mistral,
   Granite, Falcon, SmolLM, OLMo 2 & 3; legacy: GPT-2 XL, GPT-J, Pythia, OPT, LLaMA-1.
 - **Prompt ladder:** identical / no-op formatting / punctuation / synonym /
   paraphrase / small semantic / positive control.
-- **Deterministic decode** (`do_sample=False`, argmax) — divergence is a shift in the model's most confident response.
+- **Deterministic decode** (`do_sample=False`, argmax), divergence is a shift in the model's most confident response.
 - **Metrics:** sentence-embedding cosine distance (primary) + token edit +
-  hidden-state distance + logit KL. All proxies; no ground truth.
+  hidden-state distance + logit JS/KL. All proxies; no ground truth.
 - **Analysis:** bootstrap CIs + paired permutation tests. Present clusters, not ranks.
-- **Reproducibility:** pinned HF revisions, bf16, chat templates disabled, config published with artifacts.
+- **Reproducibility:** deterministic decode, prompt-token deltas logged, model/config metadata published with artifacts.
 
 </div>
 
@@ -344,39 +402,99 @@ Save the punchlines for next slide.
 
 ---
 
+
+<!-- SLIDE 12 / slide_images/slide.012.png / "What actually matters?" -->
+
+## What actually matters?
+
+<div class="micro-sweep-visual">
+  <img src="micro_visuals/token_micro_v2_category_heatmap.png" alt="">
+</div>
+
+<div class="takeaway">
+Columns are sorted by average effect, but the stronger pattern is row-wise: some models are much more sensitive than others.
+</div>
+
+<!--
+This is the new, more intuitive experiment. It is stronger than synonyms or
+paraphrases because the perturbations are almost invisible to a human:
+line breaks, spaces, punctuation placement, parenthesizing one word.
+
+The key point is the contrast, not the exact numbers:
+- the raw character-edit slide was invalid because many edits were token-identical
+- this chart drops those pairs and keeps only effective post-template token deltas
+- internal layout/syntax edits branch across model families once they survive
+
+Say: "This is not 'any byte flips the model.' It's more structured than
+that. Some edits never reach the model as distinct input. Some survive the
+template/tokenizer and move the model into a different basin."
+-->
+
+---
+
+
+<!-- SLIDE 13 / slide_images/slide.013.png / "Same-looking prompt. Different trajectory" -->
+
+## Same-looking prompt. Different trajectory.
+
+![w:1120](micro_visuals/03_branching_trajectories_compact.png)
+
+<div class="takeaway">
+Read this as token-path divergence. Quality and endpoint meaning are separate checks.
+</div>
+
+<!--
+This slide makes the dynamical-systems framing concrete.
+
+Y=0 means the generated prefixes are token-for-token identical. A rising line
+means more edits are needed to align the generated token prefixes. Treat it as
+a token-path diagnostic; quality and semantic distance are separate axes.
+
+Useful narration:
+"This uses Levenshtein, so simple insertion/deletion offsets get aligned. If
+the problem were only 'same output shifted by one token,' the dashed gray line
+is what you'd expect. The blue/red lines staying high means the path itself
+changed. The right panel checks semantic endpoint distance separately."
+-->
+
+---
+
+
+<!-- SLIDE 14 / slide_images/slide.014.png / "Within-Qwen: one clean contrast" -->
+
 ## Within-Qwen: one clean contrast.
 
-**n = 24 prompt pairs, same family** (controls for pretraining + architecture):
+![w:780](concept_images/generated/slide12_qwen_forest.png)
 
-| Model | Mean | 95% CI | vs 4B (p) |
-|---|---:|---:|---:|
-| Qwen3.5 **4B**   | 0.034 | [0.018, 0.053] | — |
-| Qwen3.5 **9B**   | 0.037 | [0.016, 0.061] | 0.78 |
-| Qwen3.5 **2B**   | 0.073 | [0.039, 0.115] | **0.012** |
-| Qwen3.5 **0.8B** | 0.089 | [0.048, 0.137] | **<0.001** |
+<div style="font-size:0.82em">
 
-- 0.8B is **meaningfully more sensitive** than 4B within the same family.
-- 4B vs 9B: indistinguishable at this n — **not claiming "bigger = stable."**
+- 0.8B is **meaningfully more sensitive** than 4B (p<0.001). 2B also separates (p=0.012).
+- 4B vs 9B: indistinguishable at this n. No size law from this panel.
 - Caveat: 4B/9B emit `Thinking Process:` preambles. Scaffold confound, next slide.
+
+</div>
 
 <!--
 This was my single cleanest finding yesterday. Then I looked at the raw
 generations. Qwen 4B/9B start every answer with an identical reasoning
 scaffold. That scaffold inflates common prefix and suppresses early
 semantic distance. The capacity-vs-sensitivity story in this slide is
-real but partly confounded — I'll own that in the next two slides instead
+real but partly confounded, I'll own that in the next two slides instead
 of burying it.
 -->
 
 ---
 
+
+<!-- SLIDE 15 / slide_images/slide.015.png / "Scaffold 'stability' is mostly metric artifact" -->
+
 ## Scaffold "stability" is mostly metric artifact.
 
-<div style="font-size:0.85em">
+<div style="font-size:0.82em">
 
 **Short outputs (64 tokens):** scaffolded models look ~4× more stable.
 Identical `<think>` preambles dominate sentence-embedding similarity.
-**Warning about evaluation — not a claim about model dynamics.**
+**Evaluation warning:** this mostly exposes a metric trap.
 
 **Long outputs (512 tokens) expose the mixed bag:**
 
@@ -389,11 +507,11 @@ Identical `<think>` preambles dominate sentence-embedding similarity.
 
 </div>
 
-<span style="font-size:0.85em">**Phi-4:** certain at the prompt, chaotic at 512 tokens. Scaffold adherence ≠ content robustness. Qwen thinking-off control: small effect, not monotonic — scaffold helps big Qwens a bit, *hurts* Qwen 0.8B.</span>
+<p style="font-size:0.72em; margin-top: 0.3em"><strong>Phi-4:</strong> 0.160 divergence at 512 tokens, <code>&lt;think&gt;</code> never closes (repetition loop). Confident logits can still branch. Thinking-off is mixed: helps big Qwens, <em>hurts</em> 0.8B.</p>
 
 <!--
 This is the scaffold slide after the 512-token rerun. Keep the short-output
-finding — it's what a naive probe would report — but land the fact that
+finding, it's what a naive probe would report, but land the fact that
 longer outputs expose scaffolded models as a mixed bag.
 
 Phi-4 is the crown-jewel counterexample:
@@ -409,22 +527,25 @@ Thinking-off numbers (Qwen default vs enable_thinking=False):
   4B: 0.050 → 0.067 (scaffold helps ~25%)
   9B: 0.057 → 0.072 (scaffold helps ~20%)
   2B: 0.075 → 0.072 (wash)
-  0.8B: 0.103 → 0.079 (scaffold HURTS — scaffold in small model is noisy)
+  0.8B: 0.103 → 0.079 (scaffold HURTS, scaffold in small model is noisy)
 
-So the scaffold is real but not monotonic. Don't overclaim either direction.
+So the scaffold effect is real and mixed. Don't overclaim either direction.
 -->
 
 ---
 
+
+<!-- SLIDE 16 / slide_images/slide.016.png / "Era, recipe, and the LLaMA-1 surprise" -->
+
 ## Era, recipe, and the LLaMA-1 surprise
 
-<div style="font-size:0.78em">
+<div style="font-size:0.76em">
 
 **512-token semantic distance, non-scaffold models only:**
 
 | Model | Semantic | Era |
 |---|---:|---|
-| **LLaMA-1 7B** | **0.053** | 2023 base — stable outlier |
+| **LLaMA-1 7B** | **0.053** | 2023 base, stable outlier |
 | Gemma E2B **instruct** | 0.056 | modern chat |
 | Mistral 7B v0.3 | 0.068 | modern chat |
 | Gemma E4B **instruct** | 0.072 | modern chat |
@@ -432,7 +553,7 @@ So the scaffold is real but not monotonic. Don't overclaim either direction.
 | Gemma E2B **base** | 0.199 | modern base |
 | GPT-2 XL / OPT / Pythia / GPT-J | 0.14 – 0.22 | pre-chat base |
 
-**LLaMA-1 is content-stable without a scaffold.** Within Gemma, **instruct ≫ base** — recipe, not calendar. Era alone does not predict sensitivity; token-path and semantic metrics can even point different ways.
+**LLaMA-1 is a stable outlier in this probe, not a law.** Within Gemma, **instruct ≫ base**, recipe over calendar. Era is a weak predictor; token-path and semantic metrics diverge.
 
 </div>
 
@@ -442,54 +563,65 @@ So the scaffold is real but not monotonic. Don't overclaim either direction.
 Key updates vs earlier slide:
 - Gemma E2B and E4B base actually *swap* order between the 64-token panel
   and the 512-token panel. Good talking point if asked: "stability is a
-  scale-dependent measurement, which is why we report clusters not ranks."
+  scale-dependent measurement, which is why we report clusters rather than ranks."
 - LLaMA-1 actually beats Gemma E2B it by a hair on 512 tokens. Still in the
   stable band. Don't overclaim against one community conversion.
 - Qwen 4B/9B removed from this slide because they're scaffolded; they live
   on the scaffold slide now.
 
-If pushed on "is LLaMA-1 real": possible explanations — pretraining corpus,
+If pushed on "is LLaMA-1 real": possible explanations, pretraining corpus,
 tokenizer, or just a community-conversion artifact. One data point, treat as
-a flag not a law.
+a flag rather than a law.
 
 Follow-up on the "older models more stable?" hunch:
 at token edit distance around t=60, modern/instruct models look slightly more
 surface-divergent than legacy/base models. At 512-token semantic distance,
 the sign flips: modern/instruct models are more semantically contractive.
-So this slide is about recipe and metric choice, not calendar year.
+So this slide is about recipe and metric choice more than calendar year.
 -->
 
 ---
 
-## Stability isn't responsiveness.
 
-> A model that outputs `"the the the"` regardless of input is extremely
-> stable. So is a model collapsed onto one fixed answer. **Neither is what
-> we want.**
+<!-- SLIDE 17 / slide_images/slide.017.png / "Stability and responsiveness split" -->
 
-One thing I tried: **sweep Qwen through BF16 / 8-bit / 4-bit quantization.**
-Qwen 0.8B at 4-bit scored *lower* perturbation divergence (0.138 → 0.091) —
-which sounds like "more stable" until you check its drift from BF16 on
-identical prompts (**0.132 — huge**).
+## Stability and responsiveness split.
 
-Consistent with collapse onto a narrower output manifold, not robustness.
-A naive stability metric **can't tell a robust model from a collapsed one.**
+<div class="twocol" style="grid-template-columns: 1.05fr 1fr; gap: 24px; align-items: center;">
+<div style="font-size:0.78em">
 
-> **Fix:** always pair perturbation distance with drift-from-baseline. Both axes, not one.
+> `"the the the"` forever is extremely stable. So is a model collapsed on one fixed answer. **Neither is what we want.**
+
+Qwen 0.8B quant sweep, 4-bit scored *lower* perturbation divergence (0.138 → 0.091). Sounds "more stable", until you check drift from BF16 on identical prompts: **0.132, huge.**
+
+That looks more like collapse onto a narrower manifold than robustness.
+
+> **Fix:** pair perturbation distance with drift-from-baseline. Both axes.
+
+</div>
+<div>
+
+![w:560](concept_images/generated/slide15_collapse.png)
+
+</div>
+</div>
 
 <!--
 Collapsed the old two quant slides into one conceptual point. The numbers
-are exploratory (n=9), so don't oversell them — the POINT is the principle:
+are exploratory (n=9), so don't oversell them, the POINT is the principle:
 a one-axis stability metric can confuse collapse with robustness. That's
 the scientifically useful takeaway regardless of whether the Qwen 0.8B data
 is itself definitive.
 
 If pushed on whether the quant finding is solid: "this was n=9 per cell, and
 the within-system flip is p=0.19. Treat it as an existence example of the
-collapse confound, not a quantization conclusion."
+collapse confound rather than a quantization conclusion."
 -->
 
 ---
+
+
+<!-- SLIDE 18 / slide_images/slide.018.png / "Measuring is the hard part" -->
 
 ## Measuring is the hard part.
 
@@ -501,17 +633,17 @@ collapse confound, not a quantization conclusion."
 |---|---|---|
 | **Collapse** | Degenerate model scores "stable" because outputs stop responding to input. (Qwen 0.8B 4-bit.) | Distance from baseline on identical prompts. |
 | **Scaffold** | Short-output score dominated by deterministic preamble. (Qwen 4B/9B, SmolLM3.) | Longer continuations; scaffold stripping. |
-| **Confident ≠ stable** | Low prompt-end JS + sharp top-1 argmax doesn't mean trajectory is stable. **Phi-4 is certain at prompt-end and brittle at 512 tokens.** | Multi-scale measurement: short vs long, logit vs text. |
+| **Confidence can still branch** | Low prompt-end JS + sharp top-1 argmax still allowed a divergent trajectory. **Phi-4: top-1 prob 0.99999996 at prompt-end; `<think>` never closes; 0.160 at 512 tokens.** | Multi-scale measurement: short vs long, logit vs text. |
 
 </div>
 
-> The most useful contribution of this work isn't the numbers.
-> **It's naming the failure modes before the field starts quoting the numbers.**
+> The most useful contribution here is naming the failure modes
+> **before the field starts quoting the numbers.**
 
 <!--
 Third row is new. Phi-4 is the cleanest single counterexample in the data:
 top-1 probability 0.99999996 at prompt end, visible <think> scaffold, and
-the second-most brittle model in the panel at 512 tokens (0.160 — above
+the second-most brittle model in the panel at 512 tokens (0.160, above
 GPT-2 XL at 0.144). Sharp-logit ≠ stable-trajectory.
 
 If someone asks "what's the fix": the mature version is multi-scale. Short
@@ -521,62 +653,67 @@ decision-boundary fragility. No single measurement is safe alone.
 
 ---
 
+
+<!-- SLIDE 19 / slide_images/slide.019.png / "Long-generation trajectories" -->
+
 ## Long-generation trajectories
 
-![h:380](../runs/trajectory_figures/longprobe_output_trajectory_divergence.png)
+![h:390](../runs/trajectory_figures/qwen_thinkoff_trajectory_and_semantic.png)
 
-<span style="font-size:0.8em">Early growth, then saturation as outputs enter different textual basins. DeepSeek-R1 keeps a 138-token shared prefix on a punctuation-only perturbation.</span>
+<span style="font-size:0.78em">Updated direct-answer control: token paths can diverge quickly even when 512-token semantic distance stays in a tight band. Use trajectory shape as a diagnostic rather than a leaderboard.</span>
 
 <!--
-Don't force exponential framing if the curves look piecewise linear.
+Updated from the older DeepSeek/Qwen reasoning-on longprobe chart. This is the
+current Qwen thinking-off control, using 24 small perturbation prompt pairs
+from the scaffold-long wave.
 
-Key visual: Qwen 0.8B branches almost immediately on punctuation/synonym;
-Qwen 4B branches later; DeepSeek keeps long shared prefixes and often
-reconverges semantically even when token paths diverge.
+Key visual: lexical token trajectories saturate faster than the semantic
+metric. The semantic bars are close: 4B/9B/2B/0.8B are not cleanly separable
+under this direct-answer control.
 
-"This is where 'dynamical regime' stops being a metaphor. Different models
-have visibly different divergence shapes under the same perturbation."
+"This is why I don't want to sell one curve as the answer. Token paths,
+semantic distance, scaffold behavior, and logit boundaries all see different
+parts of the same system."
 -->
 
 ---
 
+
+<!-- SLIDE 20 / slide_images/slide.020.png / "Mechanism: boundary beats bulk" -->
+
 ## Mechanism: boundary beats bulk
 
-<div style="font-size:0.82em">
+![w:780](concept_images/generated/slide18_correlations.png)
 
-**Cross-model correlations with 512-token semantic divergence** (n=20):
-
-| Logit signal at prompt-end | Pearson r | Reads as |
-|---|---:|---|
-| Top-1 probability | **−0.84** | more confident next-token → less downstream drift |
-| Top-1 flip rate | +0.57 | argmax crossings predict later divergence |
-| Top-1 margin (logit) | −0.39 | weaker but same direction |
-| Full-vocab JS divergence | −0.10 | **bulk distribution shift doesn't predict anything** |
-
-</div>
+<div style="font-size:0.78em">
 
 > Small prompt change → argmax crosses a low-margin boundary → different first token → autoregressive feedback → different trajectory.
 
-<span style="font-size:0.85em">**The distribution often isn't moving much in bulk.** It's that a low-margin next-token decision is fragile, and one flipped argmax steers the generation into a different basin.</span>
+**The distribution often barely moves in bulk.** A low-margin next-token decision is fragile; one flipped argmax steers generation into a different basin.
+
+</div>
 
 <!--
 This is the mechanism slide. Say out loud:
 
-"If you took one thing from the measurement side of this talk: it's not that
-the whole next-token distribution shifts. It's that some next-token decisions
+"If you took one thing from the measurement side of this talk: the whole
+next-token distribution does not have to shift much. Some next-token decisions
 are made at very low margin. A tiny input perturbation crosses that boundary,
 flips the argmax, and the model is now generating from a different starting
 token. Autoregression does the rest."
 
 Phi-4 is the extreme case in the next slide: prompt-end top-1 probability
 0.99999996 (the model is *certain*), JS ~1.4e-9 (distribution hasn't moved
-at all), yet 512-token semantic divergence is 0.160 — higher than GPT-2 XL.
+at all), yet 512-token semantic divergence is 0.160, higher than GPT-2 XL.
 Prompt-end confidence says nothing about trajectory stability on its own.
 -->
 
 ---
 
-## A question the lens suggests (not a claim).
+
+<!-- SLIDE 21 / slide_images/slide.021.png / "A question the lens suggests" -->
+
+## A question the lens suggests.
 
 <div class="twocol"><div>
 
@@ -601,8 +738,8 @@ How few bits before *behavior* drifts?
 
 <!--
 Softened from "two floors" conjecture to "a question the lens suggests."
-This matches the teaching-lens framing — we're raising interesting questions,
-not defending theorems.
+This matches the teaching-lens framing, we're raising interesting questions
+and being clear about what the data can support.
 
 If someone asks "do you believe it?": "I lean yes, but my own data has the
 Qwen 0.8B collapse case that would naively falsify the claim. So: open
@@ -610,6 +747,9 @@ question I'd love someone else to chase."
 -->
 
 ---
+
+
+<!-- SLIDE 22 / slide_images/slide.022.png / "The practitioner upshot" -->
 
 ## The practitioner upshot.
 
@@ -619,7 +759,7 @@ question I'd love someone else to chase."
 > Prompting is operating a high-gain branching system.**
 
 **Operational:**
-- **Reliability:** test prompt *neighborhoods*, not one canonical prompt.
+- **Reliability:** test prompt *neighborhoods* around the canonical prompt.
 - **Model comparison:** report sensitivity *ranges* over equivalent prompts.
 - **Output metrics:** strip boilerplate, compare answer spans, watch prefixes.
 - **Decoding:** deterministic for sensitivity; sampling separately for deployment.
@@ -627,11 +767,11 @@ question I'd love someone else to chase."
 
 </div>
 
-> **The chaos lens doesn't prove anything about LLMs. It suggests questions
-> that benchmarks don't ask — and those questions are worth asking.**
+> **The chaos lens gives us questions
+> that standard benchmarks rarely ask, and those questions are worth asking.**
 
 <!--
-Land and stop. This is the honest teaching-lens closing.
+Land and stop. This is the honest closing.
 
 "If you remember one thing: prompting is operating a high-gain branching
 system. Test neighborhoods, not single prompts. Watch for the confounds
@@ -640,7 +780,10 @@ when you score stability. That's it."
 
 ---
 
+
 <!-- _class: big-quote -->
+
+<!-- SLIDE 23 / slide_images/slide.023.png / "Questions?" -->
 
 # Questions?
 
@@ -648,7 +791,10 @@ when you score stability. That's it."
 
 ---
 
-## Backup — "Would I get the same answer if I ran it?"
+
+<!-- SLIDE 24 / slide_images/slide.024.png / "Backup, 'Would I get the same answer if I ran it?'" -->
+
+## Backup, "Would I get the same answer if I ran it?"
 
 <span style="font-size:0.85em">
 
@@ -662,69 +808,83 @@ when you score stability. That's it."
 - Prompt A: 30 samples cluster tightly. Prompt B: same.
 - A-cluster and B-cluster are visibly separate.
 
-Not "got unlucky once" — two different attractors. Sampling noise smaller than the shift between them.
+The samples form two different attractors. Sampling noise is smaller than the shift between them.
 
 </span>
 
 ---
 
-## Backup — "Is this chaos?" defense
+
+<!-- SLIDE 25 / slide_images/slide.025.png / "Backup, 'Is this chaos?' defense" -->
+
+## Backup, "Is this chaos?" defense
 
 - Formal chaos needs exponential divergence under iteration. **Not proven.**
 - What was measured: small input perturbations producing different outputs,
   varying by model, reproducible under deterministic decode.
-- Consistent with behavior near a chaos boundary. Not a proof of chaos.
-- The frame is the contribution; the experiment is a probe, not a theorem.
+- Consistent with behavior near a chaos boundary.
+- The frame is the contribution; the experiment is a probe.
 
 ---
 
-## Backup — Related work I came across late
+
+<!-- SLIDE 26 / slide_images/slide.026.png / "Backup, Related work I came across late" -->
+
+## Backup, Related work I came across late
 
 <div style="font-size:0.68em">
 
 **Prompt sensitivity / brittleness:**
-- **Salinas & Morstatter 2024** — "Butterfly Effect of Altering Prompts." My whitespace example, already published.
-- **Sclar et al. 2023** — formatting sensitivity; up to 76-point swings on LLaMA-2-13B.
-- **Lu et al. 2021** — example ordering alone moves few-shot near-random to near-SOTA.
-- **PromptRobust / POSIX / RobustAlpacaEval** — published sensitivity benchmarks.
+- **Salinas & Morstatter 2024**, "Butterfly Effect of Altering Prompts." My whitespace example, already published.
+- **Sclar et al. 2023**, formatting sensitivity; up to 76-point swings on LLaMA-2-13B.
+- **Lu et al. 2021**, example ordering alone moves few-shot near-random to near-SOTA.
+- **PromptRobust / POSIX / RobustAlpacaEval**, published sensitivity benchmarks.
 
 **Dynamical systems in NNs:**
-- **Poole 2016 / Schoenholz 2017** — edge-of-chaos signal propagation.
-- **Geshkovski et al. 2023** — attention as interacting-particle dynamics.
-- **Tomihari & Karakida 2025** — Jacobian/Lyapunov analysis of self-attention.
+- **Poole 2016 / Schoenholz 2017**, edge-of-chaos signal propagation.
+- **Geshkovski et al. 2023**, attention as interacting-particle dynamics.
+- **Tomihari & Karakida 2025**, Jacobian/Lyapunov analysis of self-attention.
 
 </div>
 
 ---
 
-## Backup — Statistical honesty
+
+<!-- SLIDE 27 / slide_images/slide.027.png / "Backup, Statistical honesty" -->
+
+## Backup, Statistical honesty
 
 <div style="font-size:0.88em">
 
 - **n = 9** prompt pairs per model; **n = 24** in hardened Qwen wave. Small.
 - **Robust at n = 24:** Qwen 4B vs 0.8B p<0.001; Qwen 4B vs 2B p=0.012; cluster membership.
-- **Not robust at this n:** Qwen 4B vs 9B (p=0.78); middle-pack ordering; standalone quant flip.
-- Scaffold vs non-scaffold is **confounded with post-training recipe** — needs different *models*, not more prompts.
+- **Weak at this n:** Qwen 4B vs 9B (p=0.78); middle-pack ordering; standalone quant flip.
+- Scaffold vs non-scaffold is **confounded with post-training recipe**, needs different *models*, not more prompts.
 
 </div>
 
-> If you want to disagree with "stable cluster vs brittle cluster" you need
-> 100+ prompts. If you want to disagree with specific model orderings —
-> you're already right, I'm not claiming them.
+> Disagreeing with a specific model ordering is fair; those are intentionally
+> underclaimed. Disagreeing with the broad clusters needs a much larger prompt set.
 
 ---
 
-## Backup — Failed experiments
+
+<!-- SLIDE 28 / slide_images/slide.028.png / "Backup, Failed experiments" -->
+
+## Backup, Failed experiments
 
 - **gpt-oss-20b:** MXFP4 / Triton driver mismatch on SageMaker image.
 - **Nemotron Nano 9B v2:** container lacked `mamba-ssm`.
 - **Phi-4 mini:** Transformers version / custom-code import failure.
 
-Reported as tooling misses, not stability findings.
+Reported as tooling misses rather than stability findings.
 
 ---
 
-## Backup — Full bootstrap readout (512 tokens)
+
+<!-- SLIDE 29 / slide_images/slide.029.png / "Backup, Full bootstrap readout (512 tokens)" -->
+
+## Backup, Full bootstrap readout (512 tokens)
 
 <div style="font-size:0.88em"><div class="twocol"><div>
 
@@ -757,4 +917,4 @@ Reported as tooling misses, not stability findings.
 
 </div></div></div>
 
-<span style="font-size:0.62em">n=24 pairs, 512 tokens. Clusters, not ranks. **Phi-4: scaffolded yet brittle** — scaffold ≠ stable.</span>
+<span style="font-size:0.62em">n=24 pairs, 512 tokens. Cluster view. **Phi-4: scaffolded yet brittle**, scaffold does not guarantee stability.</span>
