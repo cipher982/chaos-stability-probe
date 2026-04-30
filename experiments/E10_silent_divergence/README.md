@@ -11,6 +11,7 @@ Inputs:
 Commands:
 - `uv run python scripts/capture_silent_divergence.py --model qwen35_2b`
 - `uv run python scripts/run_silent_divergence_panel.py --model qwen35_2b`
+- `uv run python scripts/build_silent_divergence_readout.py --capture-root runs/silent_divergence_panel/NAME --out-dir runs/rankings/NAME`
 - `uv run python scripts/process_silent_divergence_queue.py`
 
 Outputs:
