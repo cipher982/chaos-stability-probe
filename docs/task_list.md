@@ -257,6 +257,22 @@ uv run python scripts/process_logit_queue.py \
   --out-dir runs/rankings/logit_token_cert_v1
 ```
 
+Local mech-interp seed setup:
+
+- Added `configs/prompt_pairs_mechinterp_seed.json`,
+  `scripts/analyze_branch_points.py`, and
+  `scripts/activation_patch_branch.py`.
+- Ran local Qwen3.5 0.8B and 2B thinking-off seed panels under
+  `runs/mechinterp_seed/`.
+- Ran residual activation patching under `runs/mechinterp_patch/`.
+- Current strongest finding: parenthesized `(a)` and tab-after-space prompt
+  edits can flip answer-opening/early-branch tokens, and last-layer
+  final-context residual patching fully rescues the clean branch in both Qwen
+  0.8B and 2B.
+- Next useful step: run a broader branch-target selector over local seed
+  outputs, then either expand patching to Qwen 4B or attach Qwen-Scope SAE
+  feature activations to the same selected branch cases.
+
 Micro-perturbation work started:
 
 - Added `configs/prompt_pairs_micro_500.json` with 525 prompt pairs:

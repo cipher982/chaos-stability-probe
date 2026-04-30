@@ -1667,3 +1667,39 @@ Actions launched:
   divergence over the first 64 generated tokens.
 - Added `scripts/process_logit_queue.py` so the logit wave has a reusable
   processing path rather than a one-off notebook/script.
+
+## 2026-04-30 Local Mechanistic-Interpretability Seed Tests
+
+Started a local, laptop-sized mechanism pass for the whitespace/punctuation
+question. Added:
+
+- `configs/prompt_pairs_mechinterp_seed.json`: hand-picked high-signal
+  token-certified micro pairs plus controls.
+- `scripts/analyze_branch_points.py`: reads `logit_probes.jsonl` and summarizes
+  `pre_branch` / `branch` / `post_branch` logit behavior around the first
+  generated-token divergence.
+- `scripts/activation_patch_branch.py`: residual activation patching for one
+  prompt pair, measuring whether patching clean activations into the corrupted
+  run rescues the clean branch token.
+
+Local Qwen3.5 0.8B and 2B thinking-off seed runs completed under
+`runs/mechinterp_seed/`. Both reproduce the same qualitative mechanism:
+semantically inert formatting edits often leave pre-branch distributions close,
+then hit a low-margin branch step where top-1 flips.
+
+Best current causal evidence:
+
+- `qwen35_08b`, `token_cert_parenthesize_word_0434`: adding `(a)` to
+  "Describe when a cache..." changes the first token from `A` to `Cache`.
+  Patching the clean final-context residual into the corrupted run at the last
+  layer fully rescues the clean branch (`rescue_fraction=1.0`).
+- `qwen35_08b`, `token_cert_tab_after_space_0572`: tab after space changes the
+  branch token from ` critical` to ` key` at generated token 3. Last-layer
+  final-context patch fully rescues the clean branch.
+- `qwen35_2b`, same two cases: parenthesized `(a)` and tab-after-space are also
+  fully rescued by last-layer final-context patching.
+
+Important guardrail: `token_cert_triple_internal_space_0029` looked like a good
+late-branch example by output text, but full-forward replay at the nominal
+branch did not favor the observed corrupted branch token. Treat such cases as
+weak patching targets until the replay/branch-token metric is aligned.
