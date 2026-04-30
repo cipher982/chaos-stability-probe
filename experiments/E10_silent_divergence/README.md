@@ -38,8 +38,9 @@ Qwen2B has one no-visible-branch case in the 64-step logged window. Qwen9
 SageMaker still branches earlier on the old artifact, but that artifact predates
 `run_metadata.json`, so keep the larger-model timing caveated.
 
-Queue state: the SageMaker Qwen2B/Qwen4B E10 entries are currently `not_found`;
-Qwen9 is `processed` but missing runtime metadata.
+Queue state: Qwen2B and Qwen4B SageMaker metadata captures were launched at
+2026-04-30 19:40 -0300 on separate `g5.2xlarge` lanes. Qwen9 is `processed`
+but missing runtime metadata.
 
 Next: decide whether relaunching Qwen9 E10 with metadata adds enough beyond the
 local captures. Keep the original queue in `configs/`; the copy here records the

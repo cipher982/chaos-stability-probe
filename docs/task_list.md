@@ -264,16 +264,19 @@ Paper-grade follow-up wave launched 2026-04-30:
 - Queued behind full lanes:
   - Gemma4 E2B base, E4B instruct, E4B base logit probes
 
-Live operations at 2026-04-30 18:45 -0300:
+Live operations at 2026-04-30 19:42 -0300:
 
 - E06/E09 processed jobs: Qwen3.5 0.8B, Qwen3.5 2B, Qwen3.5 4B, Qwen3.5 9B,
   Gemma4 E2B instruct.
 - E06/E09 still running: Gemma4 E2B base/E4B instruct/E4B base on preprod.
 - E10 local captures completed: Qwen3.5 2B and Qwen3.5 4B.
-- E10 SageMaker Qwen2B/Qwen4B queue entries remain `not_found`; local
-  metadata-backed captures exist for both.
-- Paper-repair note: OLMo3 `-004` remains unusable; the artifact has no
-  `summary.csv`.
+- E10 SageMaker metadata captures launched:
+  - `chaos-silent-div-qwen2b-20260430-001` on ML production `g5.2xlarge`
+    (`InProgress`, pending as of launch check).
+  - `chaos-silent-div-qwen4b-20260430-001` on marketing production
+    `g5.2xlarge` (`InProgress`, pending as of launch check).
+- Paper-repair note: OLMo3 `-004` was recovered from raw generations but is
+  partial: 25 controls + 152 effective non-controls.
 - Experiment readouts now belong in `docs/experiment_index.md` and
   `experiments/E##_*/README.md`, not this operational list.
 - Next step when lanes free: rerun
@@ -341,10 +344,11 @@ uv run python scripts/analyze_trajectory_events.py \
     at 2026-04-30 16:50 -0300.
   - `chaos-silent-div-qwen9b-20260430-001` completed at 2026-04-30 17:04 -0300
     and was processed to `runs/rankings/silent_divergence_pilot_v1/`.
-  - Qwen2B/Qwen4B queue entries are not currently launched/found in their
-    configured accounts:
-    `chaos-silent-div-qwen2b-20260430-001`,
-    `chaos-silent-div-qwen4b-20260430-001`.
+  - Launched metadata-backed Qwen2B/Qwen4B SageMaker entries at 2026-04-30
+    19:40 -0300:
+    `chaos-silent-div-qwen2b-20260430-001` on ML production `g5.2xlarge`,
+    `chaos-silent-div-qwen4b-20260430-001` on marketing production
+    `g5.2xlarge`.
   - Fixed E10 capture for no-visible-branch controls: it now captures the full
     shared generated prefix instead of only `t=0`.
   - Fixed E10 queue processing so auth/profile failures are written as explicit

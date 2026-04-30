@@ -153,7 +153,9 @@ for another), both branch immediately on the parenthesized-word case, and
 Qwen2B still has one no-visible-branch case in the logged 64-step window. The
 old Qwen9 SageMaker artifact still lacks resolved device, dtype, backend
 versions, and git SHA, so Qwen9 timing should remain a caveated larger-model
-hint until it is recaptured with `run_metadata.json`.
+hint until it is recaptured with `run_metadata.json`. Metadata-backed Qwen2B
+and Qwen4B SageMaker recaptures are now running on separate `g5.2xlarge` lanes,
+which will let us separate local MPS/float16 quirks from model-level timing.
 
 ## Trajectory-Branching Research Frame
 
