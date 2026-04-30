@@ -37,6 +37,7 @@ def main() -> None:
     parser.add_argument("--temperature", type=float, default=0.7)
     parser.add_argument("--top-p", type=float, default=0.95)
     parser.add_argument("--different-seeds-within-pair", action="store_true")
+    parser.add_argument("--skip-token-identical-non-controls", action="store_true")
     parser.add_argument("--skip-hidden", action="store_true")
     parser.add_argument("--logit-probe", action="store_true")
     parser.add_argument("--logit-top-k", type=int, default=20)
@@ -87,6 +88,8 @@ def main() -> None:
             cmd.extend(["--temperature", str(args.temperature), "--top-p", str(args.top_p)])
         if args.different_seeds_within_pair:
             cmd.append("--different-seeds-within-pair")
+        if args.skip_token_identical_non_controls:
+            cmd.append("--skip-token-identical-non-controls")
         if args.skip_hidden:
             cmd.append("--skip-hidden")
         if args.logit_probe:

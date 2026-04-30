@@ -153,6 +153,45 @@ def tokenize_prompt(
     return {k: v.to(loaded.device) for k, v in inputs.items()}
 
 
+def prompt_token_payload(
+    loaded: LoadedModel,
+    prompt_a: str,
+    prompt_b: str,
+    system_prompt: str | None,
+    thinking_mode: str,
+) -> dict[str, Any]:
+    formatted_a = format_prompt(loaded.tokenizer, prompt_a, system_prompt, thinking_mode)
+    formatted_b = format_prompt(loaded.tokenizer, prompt_b, system_prompt, thinking_mode)
+    ids_a = loaded.tokenizer(formatted_a)["input_ids"]
+    ids_b = loaded.tokenizer(formatted_b)["input_ids"]
+    edit = levenshtein(ids_a, ids_b)
+    lcp = common_prefix_len(ids_a, ids_b)
+    if edit == 0:
+        kind = "token_identical"
+    elif edit == 1 and len(ids_b) == len(ids_a) + 1:
+        kind = "one_token_insert"
+    elif edit == 1 and len(ids_b) == len(ids_a) - 1:
+        kind = "one_token_delete"
+    elif edit == 1 and len(ids_b) == len(ids_a):
+        kind = "one_token_substitution"
+    elif edit <= 3:
+        kind = "small_token_delta_2_3"
+    else:
+        kind = "multi_token_delta"
+    return {
+        "formatted_prompt_equal": formatted_a == formatted_b,
+        "prompt_token_equal": ids_a == ids_b,
+        "prompt_token_edit_distance": edit,
+        "prompt_token_delta_kind": kind,
+        "prompt_token_lcp": lcp,
+        "prompt_input_tokens_a": len(ids_a),
+        "prompt_input_tokens_b": len(ids_b),
+        "prompt_input_token_delta": len(ids_b) - len(ids_a),
+        "prompt_token_ids_a": ids_a,
+        "prompt_token_ids_b": ids_b,
+    }
+
+
 def generate_once(
     loaded: LoadedModel,
     prompt: str,
@@ -497,6 +536,11 @@ def main() -> None:
         help="Pass enable_thinking to chat templates that support it. Use disabled for Qwen thinking-off controls.",
     )
     parser.add_argument(
+        "--skip-token-identical-non-controls",
+        action="store_true",
+        help="Skip non-control prompt pairs whose formatted prompt token IDs are identical.",
+    )
+    parser.add_argument(
         "--system-prompt",
         default="You are a concise, accurate assistant. Answer directly.",
     )
@@ -508,8 +552,10 @@ def main() -> None:
     curve_path = args.out_dir / "curves.jsonl"
     hidden_path = args.out_dir / "hidden_states.jsonl"
     logit_path = args.out_dir / "logit_probes.jsonl"
+    prompt_token_path = args.out_dir / "prompt_tokens.jsonl"
+    skipped_path = args.out_dir / "skipped_pairs.jsonl"
     failures_path = args.out_dir / "failures.jsonl"
-    for path in [generation_path, curve_path, hidden_path, logit_path, failures_path]:
+    for path in [generation_path, curve_path, hidden_path, logit_path, prompt_token_path, skipped_path, failures_path]:
         if path.exists():
             path.unlink()
 
@@ -536,6 +582,8 @@ def main() -> None:
         "logit_top_k": args.logit_top_k,
         "logit_max_steps": args.logit_max_steps,
         "thinking_mode": args.thinking_mode,
+        "skip_token_identical_non_controls": args.skip_token_identical_non_controls,
+        "system_prompt": args.system_prompt,
     }
     (args.out_dir / "metadata.json").write_text(json.dumps(metadata, indent=2), encoding="utf-8")
 
@@ -549,6 +597,32 @@ def main() -> None:
 
         for pair_idx, pair in enumerate(prompt_pairs):
             try:
+                prompt_delta = prompt_token_payload(
+                    loaded,
+                    pair["prompt_a"],
+                    pair["prompt_b"],
+                    args.system_prompt,
+                    args.thinking_mode,
+                )
+                prompt_token_row = {
+                    "model_name": loaded.name,
+                    "model_id": loaded.model_id,
+                    "pair_id": pair["id"],
+                    "category": pair["category"],
+                    **prompt_delta,
+                }
+                write_jsonl(prompt_token_path, prompt_token_row)
+                prompt_delta_scalars = {
+                    k: v for k, v in prompt_delta.items() if not k.startswith("prompt_token_ids_")
+                }
+                if (
+                    args.skip_token_identical_non_controls
+                    and pair["category"] != "micro_control_identical"
+                    and prompt_delta["prompt_token_edit_distance"] == 0
+                ):
+                    write_jsonl(skipped_path, {**prompt_token_row, "reason": "token_identical_non_control"})
+                    continue
+
                 for repeat_idx in range(args.repeats):
                     seed_a = args.seed + pair_idx * 1000 + repeat_idx
                     seed_b = seed_a if not args.different_seeds_within_pair else seed_a + 100_000
@@ -561,6 +635,7 @@ def main() -> None:
                         "sample": args.sample,
                         "seed_a": seed_a,
                         "seed_b": seed_b,
+                        **prompt_delta_scalars,
                     }
                     gen_a = generate_once(
                         loaded,

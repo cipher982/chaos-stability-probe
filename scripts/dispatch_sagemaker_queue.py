@@ -74,6 +74,8 @@ def build_launch_cmd(job: dict[str, Any]) -> list[str]:
         cmd.extend(["--top-p", str(job.get("top_p", 0.95))])
     if job.get("different_seeds_within_pair"):
         cmd.append("--different-seeds-within-pair")
+    if job.get("skip_token_identical_non_controls"):
+        cmd.append("--skip-token-identical-non-controls")
     if job.get("skip_hidden"):
         cmd.append("--skip-hidden")
     if "thinking_mode" in job:
@@ -98,6 +100,11 @@ def main() -> None:
         action="store_true",
         help="Also consider queue entries whose profile differs from --profile.",
     )
+    parser.add_argument(
+        "--continue-on-error",
+        action="store_true",
+        help="Keep trying later queue entries if one launch fails, for mixed account/quota queues.",
+    )
     parser.add_argument("--dry-run", action="store_true")
     args = parser.parse_args()
 
@@ -121,7 +128,13 @@ def main() -> None:
         cmd = build_launch_cmd(job)
         print("+", " ".join(cmd))
         if not args.dry_run:
-            subprocess.run(cmd, check=True)
+            try:
+                subprocess.run(cmd, check=True)
+            except subprocess.CalledProcessError as exc:
+                print(f"Launch failed for {job['job_name']}: {exc}")
+                if not args.continue_on_error:
+                    raise
+                continue
         launched += 1
 
     if launched == 0:
