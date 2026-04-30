@@ -67,7 +67,8 @@ def main() -> None:
     paths = sorted(
         path
         for path in args.patch_dir.glob("*.csv")
-        if path.name not in {"selected_patch_targets.csv", "patch_summary.csv"}
+        if not path.name.startswith("selected_patch_targets")
+        and path.name != "patch_summary.csv"
     )
     if not paths:
         raise SystemExit(f"No patch CSVs found in {args.patch_dir}")
