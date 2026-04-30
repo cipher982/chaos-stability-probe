@@ -1,0 +1,56 @@
+[
+  {
+    "id": "token_cert_control_identical_001",
+    "category": "micro_control_identical",
+    "prompt_a": "Describe when a cache should be invalidated in a web application.",
+    "prompt_b": "Describe when a cache should be invalidated in a web application."
+  },
+  {
+    "id": "token_cert_control_identical_006",
+    "category": "micro_control_identical",
+    "prompt_a": "List the main reasons secrets should not be committed to a repository.",
+    "prompt_b": "List the main reasons secrets should not be committed to a repository."
+  },
+  {
+    "id": "token_cert_triple_internal_space_0029",
+    "category": "micro_triple_internal_space",
+    "prompt_a": "Describe how a background job queue should handle retries.",
+    "prompt_b": "Describe how a background   job queue should handle retries."
+  },
+  {
+    "id": "token_cert_blank_line_wrap_0212",
+    "category": "micro_blank_line_wrap",
+    "prompt_a": "List the main risks of depending on an external API in production.",
+    "prompt_b": "List the main risks of\n\ndepending on an external API in production."
+  },
+  {
+    "id": "token_cert_blank_line_wrap_0357",
+    "category": "micro_blank_line_wrap",
+    "prompt_a": "Give three reasons production services need monitoring.",
+    "prompt_b": "Give three reasons production\n\nservices need monitoring."
+  },
+  {
+    "id": "token_cert_double_internal_space_0393",
+    "category": "micro_double_internal_space",
+    "prompt_a": "Describe how a background job queue should handle retries.",
+    "prompt_b": "Describe how a background job queue should handle  retries."
+  },
+  {
+    "id": "token_cert_line_wrap_0406",
+    "category": "micro_line_wrap",
+    "prompt_a": "List the main reasons secrets should not be committed to a repository.",
+    "prompt_b": "List the main\nreasons secrets should not be committed to a repository."
+  },
+  {
+    "id": "token_cert_parenthesize_word_0434",
+    "category": "micro_parenthesize_word",
+    "prompt_a": "Describe when a cache should be invalidated in a web application.",
+    "prompt_b": "Describe when (a) cache should be invalidated in a web application."
+  },
+  {
+    "id": "token_cert_tab_after_space_0572",
+    "category": "micro_tab_after_space",
+    "prompt_a": "Give three reasons production services need monitoring.",
+    "prompt_b": "Give three reasons \tproduction services need monitoring."
+  }
+]
