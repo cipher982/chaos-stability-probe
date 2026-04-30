@@ -154,7 +154,8 @@ def select_recommendations(candidates: pd.DataFrame, per_archetype: int) -> pd.D
     seen: set[tuple[str, str, Any]] = set()
     for archetype in ARCHETYPE_ORDER:
         subset = candidates[candidates["archetypes"].str.contains(archetype, regex=False, na=False)]
-        for _, row in subset.head(per_archetype).iterrows():
+        archetype_count = 0
+        for _, row in subset.iterrows():
             key = (row["model_name"], row["pair_id"], row.get("repeat"))
             if key in seen:
                 continue
@@ -162,6 +163,9 @@ def select_recommendations(candidates: pd.DataFrame, per_archetype: int) -> pd.D
             out["selected_for"] = archetype
             selected_rows.append(out)
             seen.add(key)
+            archetype_count += 1
+            if archetype_count >= per_archetype:
+                break
     if not selected_rows:
         return pd.DataFrame()
     return pd.DataFrame(selected_rows).sort_values(["selected_for", "case_score"], ascending=[True, False])
