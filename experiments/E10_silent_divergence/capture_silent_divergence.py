@@ -92,7 +92,11 @@ def trajectory_rows_for_pair(
 
     inputs_a = tokenize_prompt(loaded, pair["prompt_a"], system_prompt, thinking_mode)
     inputs_b = tokenize_prompt(loaded, pair["prompt_b"], system_prompt, thinking_mode)
-    common_tokens = gen_a["generated_tokens"][: branch_t or 0]
+    if branch_t is None:
+        common_prefix_len_tokens = min(len(gen_a["generated_tokens"]), len(gen_b["generated_tokens"]))
+    else:
+        common_prefix_len_tokens = branch_t
+    common_tokens = gen_a["generated_tokens"][:common_prefix_len_tokens]
     max_t = min(logit_max_steps, len(common_tokens))
     if branch_t is not None:
         max_t = min(max_t, branch_t)

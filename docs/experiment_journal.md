@@ -204,12 +204,14 @@ updated when an experiment thread materially changes status.
   `runs/silent_divergence_pilot/`.
 - **Result:** local Qwen3.5 2B pilot: parenthesized `(a)` branches immediately
   at token 0; blank-line wrap branches at token 9 and shows logit/hidden
-  movement before visible split.
+  movement before visible split. Qwen3.5 9B SageMaker pilot completed and was
+  processed under `runs/rankings/silent_divergence_pilot_v1/`.
 - **Caveat:** hidden distance can be nonzero from prompt token differences
   alone; use change over the common-prefix trajectory and no-branch controls,
-  not raw hidden distance alone.
-- **Decision / next test:** launch the SageMaker silent-divergence pilot when
-  lanes free; compare warning lead time across Qwen 2B/4B/9B.
+  not raw hidden distance alone. The initial capture implementation only wrote
+  `t=0` for no-visible-branch controls; that is fixed going forward.
+- **Decision / next test:** launch or verify the Qwen 2B/4B queue entries, then
+  compare warning lead time across Qwen 2B/4B/9B.
 
 ## 2026-04-28 Late Night: Setup
 
@@ -2040,3 +2042,27 @@ causal branch positions, not named "whitespace features."
   `configs/sagemaker_queue_silent_divergence_pilot_v1.json`; meanwhile process
   logit queue completions and attach E9 event tables to the digest only if the
   signal survives the larger panel.
+
+## 2026-04-30 E10 Silent-Divergence Bugfix and Qwen9 Processing
+
+- **Question / hypothesis:** Does the E10 capture/processing path preserve
+  negative controls and report SageMaker state honestly?
+- **Design:** local no-visible-branch control capture plus live processing of
+  `configs/sagemaker_queue_silent_divergence_pilot_v1.json` after AWS SSO
+  refresh.
+- **Commands / artifacts:**
+  - `uv run python scripts/capture_silent_divergence.py --model qwen35_08b --pair-id token_cert_control_identical_001 --out-dir runs/_review_tmp_silent_control --max-new-tokens 12 --logit-max-steps 4 --thinking-mode disabled`
+  - `uv run python scripts/process_silent_divergence_queue.py --queue configs/sagemaker_queue_silent_divergence_pilot_v1.json --out-dir runs/rankings/silent_divergence_pilot_v1`
+  - `uv run python scripts/sagemaker_status.py --prefix chaos-silent-div --max-results 10`
+- **Results:** no-visible-branch control now captures `t=0..4` in the smoke
+  check instead of only `t=0`. Qwen9 silent-divergence job completed and
+  processed. Qwen2B/Qwen4B queue entries are not currently found/launched in
+  their configured accounts.
+- **Interpretation:** the E10 path is now usable for negative controls and the
+  queue processor no longer hides auth/profile failures as "not ready."
+- **Caveats / guardrails:** `not_completed` in the E10 manifest can mean
+  genuinely not launched/found, not just still running; check live SageMaker
+  state before relaunching.
+- **Decision / next test:** decide whether to launch the queued Qwen2B/Qwen4B
+  silent-divergence jobs or first inspect the Qwen9 readout for whether the
+  larger hidden-state run is worth extending.

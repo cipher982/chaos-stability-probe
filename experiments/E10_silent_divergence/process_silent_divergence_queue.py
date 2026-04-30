@@ -10,6 +10,7 @@ from pathlib import Path
 from typing import Any
 
 import boto3
+import botocore.exceptions
 import pandas as pd
 
 
@@ -22,8 +23,15 @@ def describe(job: dict[str, Any], region: str) -> dict[str, Any] | None:
     sm = boto3.Session(profile_name=profile, region_name=region).client("sagemaker")
     try:
         return sm.describe_training_job(TrainingJobName=job["job_name"])
-    except Exception:
+    except sm.exceptions.ResourceNotFound:
         return None
+    except botocore.exceptions.ClientError as exc:
+        error = exc.response.get("Error", {})
+        if error.get("Code") == "ValidationException" and "not found" in error.get("Message", "").lower():
+            return None
+        raise RuntimeError(f"Could not describe {job['job_name']} with profile {profile}: {exc}") from exc
+    except botocore.exceptions.BotoCoreError as exc:
+        raise RuntimeError(f"Could not describe {job['job_name']} with profile {profile}: {exc}") from exc
 
 
 def run(cmd: list[str]) -> None:
@@ -78,8 +86,21 @@ def main() -> None:
     layer_frames = []
     manifest_rows = []
     for job in load_queue(args.queue):
-        extract_dir = ensure_artifact(job, args.region, args.artifact_dir)
+        try:
+            extract_dir = ensure_artifact(job, args.region, args.artifact_dir)
+        except Exception as exc:
+            manifest_rows.append(
+                {
+                    "job_name": job["job_name"],
+                    "model_name": job["model"],
+                    "status": "describe_or_download_error",
+                    "error_type": type(exc).__name__,
+                    "error": str(exc),
+                }
+            )
+            continue
         if extract_dir is None:
+            manifest_rows.append({"job_name": job["job_name"], "model_name": job["model"], "status": "not_completed"})
             continue
         model_dir = find_model_dir(extract_dir, job["model"])
         if model_dir is None:

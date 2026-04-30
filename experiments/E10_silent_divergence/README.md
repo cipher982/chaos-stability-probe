@@ -18,5 +18,8 @@ Outputs:
 - merged SageMaker readouts under `runs/rankings/silent_divergence_pilot_v1/`
 - raw SageMaker artifacts under `runs/sagemaker_artifacts/`
 
-Status: SageMaker pilot is active. Keep the original queue in `configs/`;
-the copy here records the experiment-owned config snapshot.
+Status: Qwen9 SageMaker pilot completed and processed under
+`runs/rankings/silent_divergence_pilot_v1/`. Qwen2B/Qwen4B queue entries were
+not found/launched in their configured accounts at the latest processing pass.
+Keep the original queue in `configs/`; the copy here records the
+experiment-owned config snapshot.

@@ -321,9 +321,17 @@ uv run python scripts/analyze_trajectory_events.py \
     silent-divergence artifacts.
   - Launched `chaos-silent-div-qwen9b-20260430-001` on preprod `g6e.2xlarge`
     at 2026-04-30 16:50 -0300.
-  - Still queued because 24 GB lanes are occupied:
+  - `chaos-silent-div-qwen9b-20260430-001` completed at 2026-04-30 17:04 -0300
+    and was processed to `runs/rankings/silent_divergence_pilot_v1/`.
+  - Qwen2B/Qwen4B queue entries are not currently launched/found in their
+    configured accounts:
     `chaos-silent-div-qwen2b-20260430-001`,
     `chaos-silent-div-qwen4b-20260430-001`.
+  - Fixed E10 capture for no-visible-branch controls: it now captures the full
+    shared generated prefix instead of only `t=0`.
+  - Fixed E10 queue processing so auth/profile failures are written as explicit
+    errors instead of being silently treated as incomplete jobs; missing jobs
+    are recorded as `not_completed`.
 - Added `scripts/analyze_branch_prediction.py` to score simple AUROC baselines
   for branch-within-1/2/5/10-token prediction from `branch_prediction_windows.csv`.
 - The first event-mining validation found mostly `silent_logit_divergence`
