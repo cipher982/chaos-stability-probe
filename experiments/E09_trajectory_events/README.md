@@ -17,6 +17,10 @@ Outputs:
 - `trajectory_event_summary.csv`
 - `branch_prediction_windows.csv`
 - `branch_prediction_auc.csv`
+- optional HTML casebook under `runs/casebooks/...`
+
+Inspection:
+- `uv run python scripts/render_trajectory_casebook.py --events runs/trajectory_events/NAME/trajectory_events.csv --windows runs/trajectory_events/NAME/branch_prediction_windows.csv --out-dir runs/casebooks/NAME`
 
 Status:
 - Higher-N logit-token readout currently includes Qwen3.5 0.8B, Qwen3.5 2B,
