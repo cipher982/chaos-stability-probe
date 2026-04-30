@@ -260,15 +260,14 @@ Paper-grade follow-up wave launched 2026-04-30:
 - Queued behind full lanes:
   - Gemma4 E2B base, E4B instruct, E4B base logit probes
 
-Live operations at 2026-04-30 17:45 -0300:
+Live operations at 2026-04-30 18:45 -0300:
 
-- E06/E09 processed jobs: Qwen3.5 0.8B, Qwen3.5 2B, Qwen3.5 9B, Gemma4 E2B
-  instruct.
-- E06/E09 still running: Qwen3.5 4B on marketing prod, Gemma4 E2B base/E4B
-  instruct/E4B base on preprod.
+- E06/E09 processed jobs: Qwen3.5 0.8B, Qwen3.5 2B, Qwen3.5 4B, Qwen3.5 9B,
+  Gemma4 E2B instruct.
+- E06/E09 still running: Gemma4 E2B base/E4B instruct/E4B base on preprod.
 - E10 local captures completed: Qwen3.5 2B and Qwen3.5 4B.
-- E10 SageMaker Qwen4B was not launched because its account lane is occupied
-  by the Qwen4B logit-token job.
+- E10 SageMaker Qwen2B/Qwen4B queue entries remain `not_found`; local
+  metadata-backed captures exist for both.
 - Paper-repair note: OLMo3 `-004` remains unusable; the artifact has no
   `summary.csv`.
 - Experiment readouts now belong in `docs/experiment_index.md` and

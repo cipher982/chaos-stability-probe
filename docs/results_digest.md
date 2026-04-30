@@ -75,21 +75,22 @@ The completed logit probe records full-vocab KL/JS divergence, top-token
 margins, winner-rank shifts, and teacher-forced logit divergence along the same
 continuation.
 
-The first higher-N E9 logit-token readout now has four completed models:
-Qwen3.5 0.8B/2B/9B thinking-off and Gemma4 E2B instruct, each with 525
+The first higher-N E9 logit-token readout now has five completed models:
+Qwen3.5 0.8B/2B/4B/9B thinking-off and Gemma4 E2B instruct, each with 525
 token-certified pairs. Identical controls are effectively zero. Non-control
-semantic means are `0.0873` for Qwen0.8B, `0.0872` for Qwen2B, `0.0787` for
-Qwen9, and `0.0589` for Gemma E2B IT. Prompt-end JS is similar for Qwen2B,
-Qwen9, and Gemma (`0.00606`, `0.00630`, `0.00637`) but higher for Qwen0.8B
-(`0.00877`). The internal confidence story differs: Qwen0.8B has the lowest
-mean margin (`2.09`), Qwen2B has the highest top-1 flip rate (`0.0438`), Qwen9
-is intermediate, and Gemma has the lowest flip rate (`0.0114`) with the widest
-margin (`10.32`). On common-prefix branch windows, the metric split matters:
-at the actual branch timestep, low margin and JS are strong classifiers
-(`0.950` and `0.891` AUROC). The older `branch_within_1` decision-window target
-includes the branch timestep, so its `0.759` JS AUROC should not be described as
+semantic means are `0.0873` for Qwen0.8B, `0.0872` for Qwen2B, `0.0827` for
+Qwen4B, `0.0787` for Qwen9, and `0.0589` for Gemma E2B IT. Prompt-end JS is
+lowest for Qwen2B/Qwen9/Gemma (`0.00606`, `0.00630`, `0.00637`), higher for
+Qwen4B (`0.00741`), and highest for Qwen0.8B (`0.00877`). The internal
+confidence story differs: Qwen0.8B has the lowest mean margin (`2.09`), Qwen4B
+has the highest top-1 flip rate (`0.0533`), Qwen9 is lower-flip/wider-margin,
+and Gemma has the lowest flip rate (`0.0114`) with the widest margin (`10.32`).
+On common-prefix branch windows, the metric split matters: at the actual branch
+timestep, low margin and JS are strong classifiers (`0.953` and `0.891` AUROC,
+clustered by prompt pair). The older `branch_within_1` decision-window target
+includes the branch timestep, so its `0.766` JS AUROC should not be described as
 pure one-token-ahead warning. The stricter pre-branch-within-1 target is weaker
-but still above chance for centered logit L2 (`0.650`) and JS (`0.607`). This
+but still above chance for centered logit L2 (`0.649`) and JS (`0.620`). This
 supports the decision-boundary version of the story more than a generic
 "formatting changes outputs" version, but the current pre-branch warning claim
 should stay modest.
