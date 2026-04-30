@@ -25,7 +25,7 @@ Operational board only. Keep historical narrative out of this file; use
 
 ## Live Operations
 
-Last checked: 2026-04-30 20:15 -0300.
+Last checked: 2026-04-30 20:22 -0300.
 
 ### SageMaker Running
 
@@ -36,9 +36,12 @@ Last checked: 2026-04-30 20:15 -0300.
   - `chaos-token-micro-gemma-e2b-base-token-cert-20260430-004`
   - `chaos-activation-patch-qwen9b-20260430-001`
 - ML production `g5.2xlarge`:
-  - `chaos-activation-patch-qwen2b-20260430-001` (`Downloading`)
+  - `chaos-activation-patch-qwen2b-20260430-001`
 - Marketing production `g5.2xlarge`:
-  - `chaos-activation-patch-qwen4b-20260430-001` (`Downloading`)
+  - `chaos-activation-patch-qwen4b-20260430-001`
+
+No failed/stopped `chaos-*` jobs found in the last 8 hours across preprod, ML
+production, marketing production, or QA.
 
 ### Newly Processed
 

@@ -160,6 +160,26 @@ the relevant experiment README. Extra docs must be clearly dated
 artifacts/snapshots, and should be avoided unless the existing files cannot
 reasonably hold the information.
 
+## Documentation Hygiene
+
+After any substantial round of changes, agents must clean up the primary docs
+before stopping:
+
+- Trim stale checklist/history from `docs/task_list.md`; leave only active
+  operations, current blockers, and next actions.
+- Update the affected row in `docs/experiment_index.md` when an experiment
+  changes status, artifacts, readout, or next decision.
+- Update `docs/results_digest.md` only when the interpretation or safest claim
+  changed.
+- Update the relevant `experiments/E##_*/README.md` when restart commands,
+  queue configs, inputs, outputs, or caveats changed.
+- Remove or rewrite notes that became false after new results landed. Do not
+  rely on the user to notice stale docs.
+
+Prefer deleting stale prose over adding more explanation. If a detail is only a
+moment-in-time observation, keep it in `runs/` artifacts or a dated snapshot,
+not in a living doc.
+
 ## Agent Boundaries
 
 Always:
