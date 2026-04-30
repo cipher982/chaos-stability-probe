@@ -216,12 +216,20 @@ Token-certified v3 reinforcement wave:
   `token-cert-v3`:
   - `scripts/sagemaker_queue_supervisor.py --queue configs/sagemaker_queue_token_certified_v3.json --passes 0 --sleep-s 600`
   - `scripts/process_token_micro_queue.py --queue configs/sagemaker_queue_token_certified_v3.json --rank-dir runs/rankings/token_micro_v3 --passes 0 --sleep-s 900`
-- Live status at 2026-04-30 15:21 -0300:
+- Live status at 2026-04-30 16:40 -0300:
   - Processed in `runs/rankings/token_micro_v3/`: Qwen3.5 0.8B, 2B, 4B, 9B
     thinking-off; Gemma4 E2B/E4B instruct; Gemma4 E4B base.
-  - Completed but incomplete for this analysis: Gemma4 E2B base timed out at
-    six hours and produced partial raw rows but no `summary.csv`; do not use it
-    in v3 claims without rerunning or explicitly labeling it partial.
+  - Completed but still incomplete for this analysis: Gemma4 E2B base
+    `-003` produced partial raw rows but no `summary.csv`. A processing retry
+    recorded
+    `runs/rankings/token_micro_v3/_processing_errors/chaos-token-micro-gemma-e2b-base-token-cert-20260430-003.json`.
+  - Repair jobs currently in progress:
+    `chaos-token-micro-gemma-e2b-base-token-cert-20260430-004`,
+    `chaos-token-micro-olmo3-7b-20260430-004`,
+    `chaos-token-micro-opt-6p7b-20260430-004`.
+  - Logit mechanism jobs currently in progress:
+    `chaos-logit-token-cert-qwen9b-thinkoff-20260430-001`,
+    `chaos-logit-token-cert-gemma-e2b-it-20260430-001`.
   - Current v3 processed means, all with 500 effective token perturbations:
     Gemma4 E4B base `0.1286`, Qwen3.5 0.8B `0.0930`, Qwen3.5 2B `0.0912`,
     Qwen3.5 4B `0.0855`, Qwen3.5 9B `0.0786`, Gemma4 E4B instruct `0.0684`,
@@ -947,70 +955,36 @@ attempt preserved the container Torch/CUDA stack and installed Triton 3.4.0 with
 
 ## Next
 
-### Reasoning-scaffold confound (surfaced 2026-04-29 while building talk viz)
+Current priority is structured mechanism work, not more broad model ranking.
 
-Qwen 3.5 4B/9B emit a deterministic "Thinking Process:" preamble. Current talk
-framing does not try to solve scaffold/content extraction before tomorrow; it
-presents scaffold as an evaluation confound and uses the Qwen thinking-off
-control as the same-weights sanity check.
-
-Before the talk:
-
-- [ ] Do one read-through of `talk/companion_notes.md` against `talk/slides.md`.
-- [ ] Keep the scaffold slide phrased as "metric artifact / mixed bag," not
-      "reasoning causes stability."
-- [ ] Do not add new scaffold-stripping charts tonight unless there is time to
-      visually QA them. The current deck is defensible without them.
-
-Research follow-up:
-
-- [ ] Write `scripts/strip_scaffold.py` with scaffold-kind-specific boundary
-      confidence:
-      - `<think>...</think>` (Phi-4, SmolLM3): clean regex.
-      - `Thinking Process:` (Qwen): heuristic close, flag as `heuristic`.
-      - `visible_cot` (DeepSeek-R1): model-specific; may be `failed`.
-      - Emit per-generation boundary confidence (`clean` / `heuristic` /
-        `failed`) so downstream analyses can filter.
-- [ ] Recompute raw vs content-only metrics with a fixed post-scaffold token
-      budget so scaffolded and non-scaffolded models are compared on the same
-      content window.
-- [ ] Build a two-bar chart per model: "full output" vs "content-only"
-      semantic divergence. The gap is the scaffold effect.
-- [ ] Keep the collinearity caveat: scaffold presence in this panel is tied to
-      modern post-training, so scaffold-vs-recipe causality is not identified.
-- [ ] Longer-term split: boilerplate prefix / scaffold content / answer content.
-
-After the talk (research follow-up):
-
-- [ ] Test H2: do reasoning-tuned models show *delayed* divergence rather
-      than *reduced* divergence? Compare early-token vs late-token
-      divergence for reasoning vs size-matched non-reasoning peers.
-      Candidates in current panel: DeepSeek-R1-Qwen-7B, Phi-4 reasoning
-      plus, Qwen3.5 4B/9B (reasoning) vs Mistral 7B, LLaMA1 7B,
-      OLMo2/3 7B, Granite 3.3 8B, Falcon3 10B (non-reasoning).
-- [ ] Test H3: within a single reasoning model, compute
-      scaffold-phase vs content-phase divergence separately. If scaffold
-      divergence ≈ 0 and content divergence ≈ non-reasoning peers, that is
-      a publishable finding: "reasoning-tune apparent stability is scaffold
-      adherence, not robustness."
-
-### Talk polish
-
-1. Use [results_digest.md](results_digest.md) as the compact talk readout.
-2. Use [../talk/companion_notes.md](../talk/companion_notes.md) as the live
-   delivery reference; it now matches all 27 current slides.
-3. Prefer these presentation artifacts:
-   - `runs/trajectory_figures/qwen_thinkoff_trajectory_and_semantic.png`
-   - `runs/trajectory_figures/current_small_perturbation_semantic_ranking.png`
-   - `runs/quantization_fidelity/qwen_quantized_vs_bf16_small_semantic.png`
-   - `runs/rankings/wave2_13model_bootstrap/small_perturbation_bootstrap_buckets.png`
-4. Pull 2-3 concrete text examples for the slide narrative:
-   - no-op formatting failure
-   - Qwen 0.8B vs 4B tiny perturbation
-   - DeepSeek delayed branch / semantic convergence
-5. For new compute, prefer high-N micro-perturbation sweeps or direct-answer
-   controls. Avoid more broad model-ranking jobs unless a slide has a specific
-   missing answer.
+1. Keep the `docs/experiment_journal.md` experiment index current. Every new
+   experiment thread needs question/design/artifacts/results/interpretation/
+   caveats/decision.
+2. Mine structured divergence events from completed logit runs:
+   - visible branch token;
+   - first silent logit warning while output text is still identical;
+   - margin/entropy at branch;
+   - persistence/reconvergence;
+   - scaffold/content confidence;
+   - final semantic divergence.
+3. Run margin-cliff prediction: while continuations are still identical, test
+   whether branch probability within 1/2/5/10 tokens is predictable from
+   margin, entropy, top-1 probability, or rank instability.
+4. Expand branch patching by mechanism type:
+   - edit-boundary shocks;
+   - accumulated branch bias;
+   - token-effective but inert edits;
+   - replay-unstable false positives.
+5. Add negative controls for the SAE pilot: prompt-token-effective edits with
+   similar token deltas but no output branch, so feature deltas are not confused
+   with generic tokenization differences.
+6. Keep scaffold/content boundary extraction as a separate measurement cleanup:
+   preserve raw text, boundary span, confidence label, and score-before/after.
+7. Finish or explicitly retire stale token-certified/SageMaker queues before
+   using them in current claims. Check live SageMaker state before changing
+   queue language.
+8. Use the old talk-polish tasks below this point as historical context only;
+   the current interpretation lives in `docs/results_digest.md`.
 
 ## Commands Worth Reusing
 

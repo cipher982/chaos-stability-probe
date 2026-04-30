@@ -189,7 +189,7 @@ The earlier micro sweep found that many raw character edits never survived
 tokenization or chat-template formatting as real prompt-token deltas. The v3
 reinforcement wave now uses model-specific certified prompt files: 25 identical
 controls plus 500 effective prompt-token perturbations per selected model. As
-of 2026-04-30 15:21 -0300, processed v3 means are:
+of the 2026-04-30 16:40 -0300 live check, processed v3 means are:
 
 | Model | Effective pairs | Mean 512-token semantic distance | P90 |
 | --- | ---: | ---: | ---: |
@@ -201,8 +201,9 @@ of 2026-04-30 15:21 -0300, processed v3 means are:
 | Gemma4 E4B instruct | 500 | 0.068 | 0.165 |
 | Gemma4 E2B instruct | 500 | 0.059 | 0.112 |
 
-This is still not the final v3 panel: Gemma4 E2B base timed out after producing partial raw rows but no
-`summary.csv`. The safe claim is already useful: token-aware filtering is not a
+This is still not the final v3 panel: Gemma4 E2B base `-003` completed but
+still produced partial raw rows with no `summary.csv`; repair job `-004` is in
+progress. The safe claim is already useful: token-aware filtering is not a
 pedantic detail; it changes which examples are admissible evidence, and the
 base-vs-instruct Gemma split remains a high-signal recipe contrast. The
 token-certified Qwen ladder is ordered 0.8B/2B/4B/9B by decreasing mean
@@ -621,6 +622,11 @@ The talk is ready enough for the Learning Club framing. Further work should
 move from point-estimate stability rankings to event-level trajectory
 cartography.
 
+Going forward, every new thread should start as a structured experiment entry
+in `docs/experiment_journal.md`: question, design, commands/artifacts, results,
+interpretation, caveats, and decision. The main research direction is now
+mechanism-typed replication, not broad leaderboard expansion.
+
 1. Mine structured divergence events from every completed logit run: visible
    branch token, first silent logit warning, margin/entropy at branch,
    persistence, scaffold/content label, and final semantic divergence.
@@ -629,22 +635,25 @@ cartography.
 3. Run a focused hidden-state silent-divergence pilot on Qwen3.5 2B/4B/9B and
    selected Gemma contrasts. Save selected layers if full hidden capture is too
    expensive.
-4. Expand the forced-prefix and residual-patching intervention set only after
-   event mining identifies clear branch candidates.
-5. Make scaffold/content boundary extraction auditable: preserve raw text,
+4. Expand residual-patching/SAE analysis by mechanism type:
+   edit-boundary shocks, accumulated branch bias, inert token deltas, and
+   replay-unstable false positives.
+5. Add negative controls: prompt-token-effective edits that do not branch, so
+   branch-localized features are not confused with generic tokenization changes.
+6. Make scaffold/content boundary extraction auditable: preserve raw text,
    boundary span, confidence label, and score-before/after for every generation.
-6. Expand prompt-pair count before ranking more models. Treat prompt pair as the
+7. Expand prompt-pair count before ranking more models. Treat prompt pair as the
    statistical unit.
-7. Separate sampling controls from input-sensitivity controls. They answer
+8. Separate sampling controls from input-sensitivity controls. They answer
    different questions, even when the distances are similar in magnitude.
-8. Pair perturbation divergence with responsiveness/baseline drift so collapse
+9. Pair perturbation divergence with responsiveness/baseline drift so collapse
    cannot masquerade as robustness.
-9. Use matched recipe comparisons where possible: base vs instruct within the
+10. Use matched recipe comparisons where possible: base vs instruct within the
    same family, scaffold on vs off for the same weights, quantized vs BF16 for
    the same model.
-10. Finish the token-certified v3 panel and rerun any timed-out partials before
+11. Finish the token-certified v3 panel and rerun any timed-out partials before
    treating it as the publishable micro-perturbation table.
-11. Keep older short-output tables as provenance, but use the 512-token
+12. Keep older short-output tables as provenance, but use the 512-token
    semantic panel, token-certified micro runs, event-level logit analysis, and
    intervention results for new claims.
 

@@ -20,6 +20,154 @@ restartable without reading the whole repo history.
 - **Decision / next test:** whether to expand, pivot, stop, or turn into a
   slide/writeup claim.
 
+## Experiment Index
+
+This index is the structured map over the raw chronology below. It should be
+updated when an experiment thread materially changes status.
+
+### E0 — Harness, Controls, and Dry Runs
+
+- **Question / hypothesis:** Can we reproducibly separate implementation
+  nondeterminism, sampling variance, prompt perturbation sensitivity, and
+  hidden-state distance?
+- **Design:** Qwen3.5 0.8B local smoke, identical/no-op/punctuation/synonym/
+  paraphrase/semantic/positive-control ladder, deterministic and sampled
+  variants, hidden-state extraction.
+- **Artifacts:** `runs/qwen35_08b_smoke`,
+  `runs/qwen35_08b_allpairs_v2`,
+  `runs/qwen35_08b_sampled_controls`,
+  `runs/qwen35_08b_sampled_different_seeds`.
+- **Result:** deterministic identical/no-op controls are effectively zero;
+  different-seed sampling variance can be as large as prompt perturbation
+  variance.
+- **Decision / next test:** keep deterministic decode or paired same-seed
+  sampling for input-sensitivity claims; treat sampling as a separate axis.
+
+### E1 — Qwen Size Ladder
+
+- **Question / hypothesis:** Does local prompt stability improve within a model
+  family as capacity increases?
+- **Design:** Qwen3.5 0.8B/2B/4B/9B across expanded and robust prompt ladders,
+  deterministic decode, later thinking-off controls.
+- **Artifacts:** `runs/comparisons/qwen35_size_ladder`,
+  `runs/comparisons/qwen35_expanded_size_ladder`,
+  `runs/rankings/final_21model_readout/`,
+  `runs/rankings/token_micro_v3/`.
+- **Result:** 4B separates from 0.8B/2B on robust ladder; 4B and 9B are close.
+  Token-certified v3 orders Qwen 0.8B/2B/4B/9B by decreasing mean sensitivity,
+  but 0.8B vs 2B is not a clean paired separation.
+- **Caveat:** size is not monotonic enough to be the story by itself.
+- **Decision / next test:** use Qwen ladder as a stable within-family contrast,
+  not as a general scaling law.
+
+### E2 — Broad Model Panel and Statistical Readout
+
+- **Question / hypothesis:** Are stability signatures model/recipe dependent
+  beyond Qwen?
+- **Design:** multi-model panel, bootstrap over prompt pairs, semantic distance
+  and token edit metrics.
+- **Artifacts:** `runs/rankings/wave2_13model_bootstrap/`,
+  `runs/rankings/final_21model_readout/`.
+- **Result:** useful clusters emerged, but exact rankings are fragile; older
+  and base models are often more sensitive, with counterexamples.
+- **Caveat:** prompt count is the limiting statistical unit. Do not treat
+  generated tokens as independent samples.
+- **Decision / next test:** prefer recipe- or family-matched comparisons over
+  adding more unrelated models.
+
+### E3 — Scaffold and Reasoning-Format Confound
+
+- **Question / hypothesis:** Are apparently stable reasoning models preserving
+  answer content or preserving a deterministic scaffold?
+- **Design:** raw-prefix inspection, model scaffold annotations, 512-token
+  scaffold-long panel, Qwen thinking-on/off controls.
+- **Artifacts:** `runs/inspection/generation_prefixes_final21.csv`,
+  `runs/inspection/generation_prefix_summary_final21.csv`,
+  `runs/rankings/scaffold_analysis/`,
+  `runs/rankings/scaffold_long_wave/`.
+- **Result:** some stability is format/scaffold stability. Qwen thinking-off
+  controls show scaffold effects are real but mixed, not universal.
+- **Decision / next test:** treat reasoning-on deliberation streams separately
+  from answer-first outputs; scaffold/content boundary extraction remains a
+  follow-up, not a solved measurement.
+
+### E4 — Quantization and Collapse Controls
+
+- **Question / hypothesis:** Can a model look stable because it collapsed onto
+  a narrower output manifold?
+- **Design:** Qwen BF16 vs 8-bit/4-bit comparisons, prompt sensitivity plus
+  BF16-fidelity checks.
+- **Artifacts:** `runs/quantization_fidelity/qwen_quantized_vs_bf16_small_summary.csv`,
+  `runs/quantization_fidelity/qwen_quantized_vs_bf16_small_semantic.png`.
+- **Result:** 4-bit Qwen0.8B can look more stable while drifting from BF16,
+  making stability-vs-quality/fidelity a separate axis.
+- **Decision / next test:** pair sensitivity metrics with fidelity/baseline
+  drift whenever compression or model editing is involved.
+
+### E5 — Micro-Perturbation and Token Certification
+
+- **Question / hypothesis:** Do visually/semantically inert edits affect
+  deterministic outputs after tokenizer/template filtering?
+- **Design:** high-N whitespace/punctuation/layout perturbations, then
+  token-audited and model-specific token-certified prompt files.
+- **Artifacts:** `configs/prompt_pairs_micro_500.json`,
+  `configs/prompt_pairs_token_certified/`,
+  `runs/rankings/micro_qwen35_08b_500/`,
+  `runs/rankings/token_micro_v2/`,
+  `runs/rankings/token_micro_v3/`.
+- **Result:** many raw character edits normalize away; token-certified edits
+  still produce real branches. Internal layout/syntax edits are more active
+  than prefix/suffix whitespace in the local Qwen0.8B sweep.
+- **Decision / next test:** only use prompt-token-effective pairs for tiny-edit
+  claims; keep token-identical raw edits as tokenizer/wrapper findings.
+
+### E6 — Logit Decision-Boundary Analysis
+
+- **Question / hypothesis:** Is text divergence better predicted by low-margin
+  branch decisions than by bulk full-vocab prompt-end movement?
+- **Design:** prompt-end and teacher-forced logit probes, top-1 probability,
+  top-1 flip rate, margin, JS/KL, 512-token semantic distance.
+- **Artifacts:** `runs/rankings/logit_token_cert_v1/` when processed,
+  scaffold-long logit artifacts under `runs/rankings/scaffold_long_wave/`.
+- **Result:** prompt-end top-1 probability is the strongest scalar found so
+  far; full-vocab JS is weak as a single predictor.
+- **Decision / next test:** analyze first generated-token branch windows and
+  patch replayable branch cases.
+
+### E7 — Mechanistic Branch Patching
+
+- **Question / hypothesis:** Can semantically inert formatting edits be
+  localized causally to residual states that choose different branch tokens?
+- **Design:** local Qwen3.5 0.8B/2B seed set, branch-window logit analysis,
+  residual activation patching, then aligned-position sweeps.
+- **Artifacts:** `runs/mechinterp_seed/`, `runs/mechinterp_patch/`,
+  `runs/mechinterp_patch_aligned/`,
+  `runs/mechinterp_patch/patch_summary.csv`.
+- **Result:** replayable high-signal cases are rescuable at late final-context
+  residual states. Parenthesized `(a)` also shows strong edit-boundary/LCP
+  rescue; tab-after-space is more distributed by the shared generated prefix.
+- **Caveat:** raw same-index position sweeps are invalid for insertion/deletion
+  prompt deltas; use `--positions aligned`.
+- **Decision / next test:** expand by mechanism type, not by random new pairs:
+  edit-boundary shocks, accumulated branch bias, inert token deltas, and
+  replay-unstable false positives.
+
+### E8 — SAE Feature Pilot
+
+- **Question / hypothesis:** Do SAE feature activations at causal branch
+  positions distinguish clean vs perturbed branch states?
+- **Design:** Qwen-Scope Qwen3.5 2B residual-stream SAEs at selected layers and
+  positions from patchable branch cases.
+- **Artifacts:** `runs/mechinterp_sae/qwen35_2b__token_cert_parenthesize_word_0434__sae_features.csv`,
+  `runs/mechinterp_sae/qwen35_2b__token_cert_tab_after_space_0572__sae_features.csv`,
+  `runs/mechinterp_sae/sae_feature_delta_summary.csv`.
+- **Result:** parenthesized `(a)` has nearly disjoint top-20 SAE features at
+  the prompt boundary; tab-after-space has low prompt-boundary overlap but high
+  final-context overlap.
+- **Caveat:** these are feature IDs, not human-readable feature labels.
+- **Decision / next test:** add feature labels/steering only if the feature
+  source supports it; otherwise keep claims at feature-overlap/delta level.
+
 ## 2026-04-28 Late Night: Setup
 
 ### Objective

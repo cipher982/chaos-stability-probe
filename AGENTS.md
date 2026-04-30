@@ -107,6 +107,38 @@ longer continuations, hidden states, logits, and raw token/text artifacts.
 - Label heuristic boundary detection as heuristic; do not hide failed
   scaffold/answer boundaries.
 
+## Experiment Design Protocol
+
+Every new experiment thread must be recorded in `docs/experiment_journal.md`
+using the repo's experiment-entry format:
+
+- **Question / hypothesis:** the uncertainty being reduced.
+- **Design:** models, prompt set, controls, decoding mode, token budget, and
+  statistical unit.
+- **Commands / artifacts:** exact commands or queue names plus raw run
+  directories and derived summaries.
+- **Results:** compact numbers and concrete examples.
+- **Interpretation:** what changed in the story, including failed hypotheses.
+- **Caveats / guardrails:** confounds, replay failures, heuristic boundaries,
+  tokenization issues, partial runs, or scaffold/content uncertainty.
+- **Decision / next test:** expand, pivot, stop, or promote to a slide/writeup
+  claim.
+
+Before launching new compute, check whether the proposed run answers a current
+open question in `docs/results_digest.md` or `docs/task_list.md`. Prefer
+discriminating tests over broader leaderboards:
+
+- controls that can falsify the current interpretation;
+- paired comparisons within the same model family or recipe;
+- token-certified prompt perturbations instead of raw character edits;
+- replayable branch cases before SAE/feature interpretation;
+- negative controls that change prompt tokens but do not change behavior.
+
+When cleaning up prior work, do not rewrite or delete the raw chronology. Add
+structured summaries, index entries, and decision notes that point to existing
+artifacts. Treat raw run directories and `generations.jsonl` as the audit log;
+derived CSVs and charts are summaries, not source of truth.
+
 ## Documentation Boundaries
 
 - `AGENTS.md`: stable instructions only.
