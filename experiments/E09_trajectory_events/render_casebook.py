@@ -116,7 +116,38 @@ def bool_value(value: Any) -> bool:
     return str(value).lower() in {"true", "1", "yes"}
 
 
+def key_tuple(row: pd.Series) -> tuple[str, str, str]:
+    return (clean_token(row.get("model_name")), clean_token(row.get("pair_id")), clean_token(row.get("repeat")))
+
+
+def selected_from_cases_file(events: pd.DataFrame, cases_from: Path) -> pd.DataFrame:
+    cases = pd.read_csv(cases_from)
+    if not all(col in cases.columns for col in KEY_COLS):
+        raise SystemExit(f"{cases_from} must contain {KEY_COLS}")
+    event_map = {key_tuple(row): row for _, row in events.iterrows()}
+    rows = []
+    missing = []
+    for _, case in cases.iterrows():
+        key = key_tuple(case)
+        event = event_map.get(key)
+        if event is None:
+            missing.append(key)
+            continue
+        row = event.copy()
+        if "selected_for" in case:
+            row["selected_for"] = case.get("selected_for")
+        if "case_score" in case:
+            row["case_score"] = case.get("case_score")
+        rows.append(row)
+    if missing:
+        print(f"Warning: {len(missing)} selected cases were not found in events")
+    return pd.DataFrame(rows)
+
+
 def select_events(events: pd.DataFrame, windows: pd.DataFrame, args: argparse.Namespace) -> pd.DataFrame:
+    if args.cases_from:
+        return selected_from_cases_file(events, args.cases_from).head(args.limit)
+
     selected = events.copy()
     if args.model:
         selected = selected[selected["model_name"].isin(args.model)]
@@ -165,6 +196,7 @@ def select_events(events: pd.DataFrame, windows: pd.DataFrame, args: argparse.Na
 
 def metric_cards(event: pd.Series) -> str:
     fields = [
+        ("selected", "selected_for"),
         ("kind", "event_kind"),
         ("branch", "branch_t"),
         ("warning", "warning_t"),
@@ -451,6 +483,7 @@ def main() -> None:
     parser.add_argument("--windows", type=Path, required=True)
     parser.add_argument("--prompt-pairs", type=Path, action="append", default=[])
     parser.add_argument("--silent-summary", type=Path, default=None)
+    parser.add_argument("--cases-from", type=Path, default=None)
     parser.add_argument("--out-dir", type=Path, default=Path("runs/casebooks/trajectory_events"))
     parser.add_argument("--figure-dir", type=Path, default=None)
     parser.add_argument("--no-index", action="store_true")

@@ -11,18 +11,22 @@ Inputs:
 Commands:
 - `uv run python scripts/analyze_trajectory_events.py RUN_DIR ... --out-dir runs/trajectory_events/NAME`
 - `uv run python scripts/analyze_branch_prediction.py runs/trajectory_events/NAME/branch_prediction_windows.csv`
+- `uv run python scripts/select_trajectory_cases.py --events runs/trajectory_events/NAME/trajectory_events.csv --windows runs/trajectory_events/NAME/branch_prediction_windows.csv --out-dir runs/trajectory_case_selection/NAME`
 
 Outputs:
 - `trajectory_events.csv`
 - `trajectory_event_summary.csv`
 - `branch_prediction_windows.csv`
 - `branch_prediction_auc.csv`
+- `case_candidates.csv` and `recommended_cases.csv` for figure/story selection
 - optional HTML casebook under `runs/casebooks/...`
 
 Inspection:
 - `uv run python scripts/render_trajectory_casebook.py --events runs/trajectory_events/NAME/trajectory_events.csv --windows runs/trajectory_events/NAME/branch_prediction_windows.csv --out-dir runs/casebooks/NAME`
 - Add `--figure-dir runs/figures/NAME` to emit one standalone HTML panel per
   selected case plus a `manifest.csv`.
+- Add `--cases-from runs/trajectory_case_selection/NAME/recommended_cases.csv`
+  to render the exact recommended rows from case selection.
 
 Status:
 - Higher-N logit-token readout currently includes Qwen3.5 0.8B, Qwen3.5 2B,
