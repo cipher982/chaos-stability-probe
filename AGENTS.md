@@ -114,11 +114,14 @@ longer continuations, hidden states, logits, and raw token/text artifacts.
 - `docs/results_digest.md`: compact current interpretation.
 - `docs/task_list.md`: current operational state.
 - `docs/experiment_journal.md`: append-only experiment history.
-- `docs/rebuttals.md`: talk Q&A and objections.
-- `docs/prior_art.md`: citations and conceptual anchors.
+- `docs/rebuttals.md` and `docs/prior_art.md`: supporting reference artifacts,
+  not living source-of-truth docs.
 
-Avoid creating new top-level docs unless the existing files cannot reasonably
-hold the information.
+Do not create new living docs for research direction, paper plans, or next
+steps. Put current interpretation in `results_digest.md`, active work in
+`task_list.md`, and chronological notes in `experiment_journal.md`. Extra docs
+must be clearly dated artifacts/snapshots, and should be avoided unless the
+existing files cannot reasonably hold the information.
 
 ## Agent Boundaries
 

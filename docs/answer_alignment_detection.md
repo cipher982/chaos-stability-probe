@@ -1,5 +1,9 @@
 # Answer-start boundary detection feasibility
 
+Snapshot date: 2026-04-29. This is an analysis artifact, not a living source of
+truth. Use `docs/results_digest.md` for current claims and `docs/task_list.md`
+for active next steps.
+
 We need a "final answer starts here" marker in generations so we can realign
 divergence curves to token 0 = start of the answer (not token 0 = first generated
 token). Measured on `chaos-scaffold-long-*` 512-token runs (n=84 generations per

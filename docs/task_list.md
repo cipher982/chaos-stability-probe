@@ -20,7 +20,8 @@
 ## Done
 
 - Read and consolidated `raw_initial_discussion.txt`.
-- Wrote [north_star.md](north_star.md) with talk framing, claims, caveats, and model panel.
+- Captured the initial talk framing, claims, caveats, and model panel in the
+  journal/digest.
 - Wrote [experiment_journal.md](experiment_journal.md) as the live lab notebook.
 - Built local Hugging Face/Transformers harness:
   - deterministic and sampled generation
@@ -783,12 +784,11 @@ not the whole story because LLaMA1 7B is relatively stable. The cleaner claim
 is that post-training/base-model recipe can change response attractors; the
 within-family Gemma base-vs-instruct contrast is especially useful.
 
-Follow-up reanalysis for `docs/findings/older_models_more_stable.md`:
-token edit distance around `t=60` weakly suggests modern/instruct models are
-more surface-divergent, but 512-token semantic distance flips the sign and
-shows modern/instruct models as more semantically contractive. Do not present
-this as "older models are more stable"; present it as a metric split and recipe
-confound.
+Follow-up reanalysis: token edit distance around `t=60` weakly suggests
+modern/instruct models are more surface-divergent, but 512-token semantic
+distance flips the sign and shows modern/instruct models as more semantically
+contractive. Do not present this as "older models are more stable"; present it
+as a metric split and recipe confound.
 
 Parked / not needed for tomorrow:
 

@@ -829,9 +829,8 @@ Documentation policy from here:
 - `docs/results_digest.md` is the pinned current-state talk readout.
 - `docs/experiment_journal.md` is the chronological lab notebook.
 - `docs/task_list.md` is operational only.
-- `docs/north_star.md`, `docs/talk_outline.md`, and `docs/presenter_notes.md`
-  are useful historical/supporting notes, but should not be treated as current
-  state if they conflict with the digest.
+- Superseded planning docs should be folded into the digest or journal, then
+  deleted rather than kept as additional living surfaces.
 
 Statistical reset:
 

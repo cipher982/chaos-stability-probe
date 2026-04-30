@@ -1,6 +1,7 @@
 # Results Digest
 
-Last updated: 2026-04-29 after the robust-wave and logit-probe pivot.
+Last updated: 2026-04-30 after post-talk cleanup and token-certified v3 partial
+processing.
 
 This is the compact, talk-oriented current-state readout. The talk is a
 chaos/dynamical-systems teaching talk first; the stability probe is supporting

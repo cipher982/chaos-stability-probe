@@ -2,7 +2,7 @@
 
 This is a supporting reference doc, not the current-state narrative. Use
 [results_digest.md](results_digest.md) for current claims and
-[talk_outline.md](talk_outline.md) for slide flow.
+[`../talk/slides.md`](../talk/slides.md) for the current slide flow.
 
 ## How To Use This In The Talk
 

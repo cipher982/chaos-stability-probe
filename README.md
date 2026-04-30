@@ -93,7 +93,6 @@ Current-state docs:
   `uv run --with Pillow python talk/qa_slides.py`.
 - `talk/companion_notes.md`: per-slide reading notes and delivery reference.
 - `docs/results_digest.md`: canonical current talk readout.
-- `docs/research_agenda.md`: post-talk paper and experiment plan.
 - `docs/experiment_journal.md`: chronological lab notebook.
 - `docs/task_list.md`: operational next actions.
 
@@ -105,13 +104,13 @@ Current-state config:
   not as non-reasoning.
 - `configs/sagemaker_queue.json`: ordered SageMaker work queue.
 
-Supporting/historical docs:
+Supporting docs:
 
-- `docs/presenter_notes.md`: earlier speaker notes.
-- `docs/talk_outline.md`: earlier draft slide flow.
-- `docs/north_star.md`: initial framing.
 - `docs/rebuttals.md`: steel man objections and sober answers.
 - `docs/prior_art.md`: supporting literature and talks/explainers.
+- `docs/answer_alignment_detection.md` and
+  `docs/chart_integrity_audit.md`: dated analysis snapshots, not living
+  source-of-truth docs.
 
 If these conflict, trust `docs/results_digest.md` first, then the latest entry
 in `docs/experiment_journal.md`.
