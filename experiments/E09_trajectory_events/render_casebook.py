@@ -84,6 +84,10 @@ def slug(value: str) -> str:
     return re.sub(r"[^a-zA-Z0-9_-]+", "-", value).strip("-")
 
 
+def case_id_for_event(event: pd.Series) -> str:
+    return slug(f"{event.get('model_name')}-{event.get('pair_id')}-{event.get('repeat')}")
+
+
 def inline_diff(a: str, b: str) -> tuple[str, str]:
     matcher = difflib.SequenceMatcher(None, a, b)
     left: list[str] = []
@@ -318,7 +322,7 @@ def render_case(
 def render_index(events: pd.DataFrame) -> str:
     rows = []
     for _, event in events.iterrows():
-        case_id = slug(f"{event.get('model_name')}-{event.get('pair_id')}-{event.get('repeat')}")
+        case_id = case_id_for_event(event)
         rows.append(
             "<tr>"
             f'<td><a href="#{case_id}">{html.escape(clean_token(event.get("model_name")))}</a></td>'
@@ -367,7 +371,78 @@ svg { width: 100%; height: 132px; background: #fbfcfd; border: 1px solid #e0e5ed
 .axis { stroke: #d0d5dd; stroke-width: 1; }
 .legend { font-size: 11px; dominant-baseline: middle; }
 @media (max-width: 820px) { .prompt-grid { grid-template-columns: 1fr; } main { padding: 20px 12px 48px; } }
+body.figure { background: #fff; }
+body.figure main { max-width: 1040px; padding: 18px; }
+body.figure .case { border: 0; border-radius: 0; margin-top: 0; padding: 0; }
+body.figure h2 { font-size: 24px; }
+body.figure .metrics { grid-template-columns: repeat(4, 1fr); }
 """
+
+
+def html_document(title: str, body: str, body_class: str = "") -> str:
+    class_attr = f' class="{html.escape(body_class)}"' if body_class else ""
+    return f"""<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{html.escape(title)}</title>
+  <style>{css()}</style>
+</head>
+<body{class_attr}>
+<main>
+  {body}
+</main>
+</body>
+</html>
+"""
+
+
+def case_manifest_row(event: pd.Series, filename: str) -> dict[str, Any]:
+    return {
+        "file": filename,
+        "case_id": case_id_for_event(event),
+        "model_name": event.get("model_name"),
+        "pair_id": event.get("pair_id"),
+        "category": event.get("category"),
+        "repeat": event.get("repeat"),
+        "event_kind": event.get("event_kind"),
+        "branch_t": event.get("branch_t"),
+        "warning_t": event.get("warning_t"),
+        "silent_logit_lead": event.get("silent_logit_lead"),
+        "semantic_cosine_distance": event.get("semantic_cosine_distance"),
+        "branch_js": event.get("branch_js"),
+    }
+
+
+def render_casebook_document(events_path: Path, selected: pd.DataFrame, cases: str) -> str:
+    body = f"""
+  <h1>Trajectory Casebook</h1>
+  <p class="muted">Generated from {html.escape(str(events_path))}. Rows are selected branch cases, not statistical summaries.</p>
+  {render_index(selected)}
+  {cases}
+"""
+    return html_document("Trajectory Casebook", body)
+
+
+def write_figure_panels(
+    figure_dir: Path,
+    selected: pd.DataFrame,
+    windows: pd.DataFrame,
+    prompt_pairs: dict[str, dict[str, Any]],
+    silent_summary: pd.DataFrame | None,
+) -> None:
+    figure_dir.mkdir(parents=True, exist_ok=True)
+    manifest_rows = []
+    for _, event in selected.iterrows():
+        case_id = case_id_for_event(event)
+        filename = f"{case_id}.html"
+        panel = render_case(event, windows, prompt_pairs, silent_summary)
+        title = f"{event.get('model_name')} {event.get('pair_id')}"
+        (figure_dir / filename).write_text(html_document(title, panel, "figure"), encoding="utf-8")
+        manifest_rows.append(case_manifest_row(event, filename))
+    pd.DataFrame(manifest_rows).to_csv(figure_dir / "manifest.csv", index=False)
+    print(f"Wrote {len(manifest_rows)} figure panels to {figure_dir}")
 
 
 def main() -> None:
@@ -377,6 +452,8 @@ def main() -> None:
     parser.add_argument("--prompt-pairs", type=Path, action="append", default=[])
     parser.add_argument("--silent-summary", type=Path, default=None)
     parser.add_argument("--out-dir", type=Path, default=Path("runs/casebooks/trajectory_events"))
+    parser.add_argument("--figure-dir", type=Path, default=None)
+    parser.add_argument("--no-index", action="store_true")
     parser.add_argument("--limit", type=int, default=24)
     parser.add_argument("--model", action="append", default=[])
     parser.add_argument("--pair-id", action="append", default=[])
@@ -390,29 +467,16 @@ def main() -> None:
     prompt_pairs = load_prompt_pairs(prompt_paths)
     silent_summary = pd.read_csv(args.silent_summary) if args.silent_summary and args.silent_summary.exists() else None
 
-    args.out_dir.mkdir(parents=True, exist_ok=True)
     cases = "\n".join(render_case(event, windows, prompt_pairs, silent_summary) for _, event in selected.iterrows())
-    content = f"""<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Trajectory Casebook</title>
-  <style>{css()}</style>
-</head>
-<body>
-<main>
-  <h1>Trajectory Casebook</h1>
-  <p class="muted">Generated from {html.escape(str(args.events))}. Rows are selected branch cases, not statistical summaries.</p>
-  {render_index(selected)}
-  {cases}
-</main>
-</body>
-</html>
-"""
-    out_path = args.out_dir / "index.html"
-    out_path.write_text(content, encoding="utf-8")
-    print(f"Wrote {out_path}")
+    if not args.no_index:
+        args.out_dir.mkdir(parents=True, exist_ok=True)
+        out_path = args.out_dir / "index.html"
+        out_path.write_text(render_casebook_document(args.events, selected, cases), encoding="utf-8")
+        print(f"Wrote {out_path}")
+    if args.figure_dir:
+        write_figure_panels(args.figure_dir, selected, windows, prompt_pairs, silent_summary)
+    if args.no_index and not args.figure_dir:
+        raise SystemExit("--no-index requires --figure-dir")
 
 
 if __name__ == "__main__":

@@ -21,6 +21,8 @@ Outputs:
 
 Inspection:
 - `uv run python scripts/render_trajectory_casebook.py --events runs/trajectory_events/NAME/trajectory_events.csv --windows runs/trajectory_events/NAME/branch_prediction_windows.csv --out-dir runs/casebooks/NAME`
+- Add `--figure-dir runs/figures/NAME` to emit one standalone HTML panel per
+  selected case plus a `manifest.csv`.
 
 Status:
 - Higher-N logit-token readout currently includes Qwen3.5 0.8B, Qwen3.5 2B,
