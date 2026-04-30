@@ -345,10 +345,10 @@ uv run python scripts/analyze_trajectory_events.py \
   - Fixed E10 capture for no-visible-branch controls: it now captures the full
     shared generated prefix instead of only `t=0`.
   - Fixed E10 queue processing so auth/profile failures are written as explicit
-    errors instead of being silently treated as incomplete jobs; missing jobs
-    are recorded as `not_completed`.
+    errors and missing jobs are recorded as `not_found`.
 - Added `scripts/analyze_branch_prediction.py` to score simple AUROC baselines
-  for branch-within-1/2/5/10-token prediction from `branch_prediction_windows.csv`.
+  for branch decision-window and pre-branch targets from
+  `branch_prediction_windows.csv`.
 - The first event-mining validation found mostly `silent_logit_divergence`
   cases in the local Qwen 0.8B/2B seed set. Treat this as a machinery check,
   not a final result; the SageMaker token-certified logit queue is the higher-N

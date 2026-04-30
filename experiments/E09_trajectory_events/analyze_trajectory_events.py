@@ -235,6 +235,7 @@ def analyze_run(run_dir: Path, js_threshold: float | None, l2_threshold: float |
                 "t": t,
                 "branch_t": branch_t,
                 "tokens_until_branch": None if branch_t is None else branch_t - t,
+                "at_branch": branch_t is not None and branch_t == t,
                 "js_divergence": lrow.get("js_divergence"),
                 "centered_logit_normalized_l2": lrow.get("centered_logit_normalized_l2"),
                 "top1_flip": not bool(lrow.get("top1_same", True)),
@@ -245,6 +246,9 @@ def analyze_run(run_dir: Path, js_threshold: float | None, l2_threshold: float |
             for horizon in HORIZONS:
                 pred[f"branch_within_{horizon}"] = (
                     branch_t is not None and 0 <= branch_t - t <= horizon
+                )
+                pred[f"pre_branch_within_{horizon}"] = (
+                    branch_t is not None and 1 <= branch_t - t <= horizon
                 )
             prediction_rows.append(pred)
 

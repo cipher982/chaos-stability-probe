@@ -22,10 +22,17 @@ Status:
 - Higher-N logit-token readout currently includes Qwen3.5 0.8B, Qwen3.5 2B,
   Qwen3.5 9B, and Gemma4 E2B instruct.
 - Current output is `runs/trajectory_events/logit_token_cert_v1/`.
-- Branch-within-1 prediction remains above chance after adding Qwen0.8B:
-  JS AUROC `0.759`, low-margin AUROC `0.739`, entropy AUROC `0.670`.
+- `branch_within_N` is a decision-window target and includes the branch
+  timestep itself.
+- At-branch classification is strong: low-margin AUROC `0.950`, JS AUROC
+  `0.891`.
+- Decision-window branch-within-1 is moderate: JS AUROC `0.759`, low-margin
+  AUROC `0.739`.
+- Pure pre-branch-within-1 warning is weaker: centered-logit-L2 AUROC `0.650`,
+  JS AUROC `0.607`.
 
 Caveat: the warning threshold often fires at `t=0`, so use this as a branch
-risk detector, not yet a precise "silent lead time" claim.
+risk detector, not yet a precise "silent lead time" claim. Do not call
+`branch_within_1` a one-token-ahead metric.
 
 Next: rerun after Qwen4B and the newly launched Gemma logit jobs finish.

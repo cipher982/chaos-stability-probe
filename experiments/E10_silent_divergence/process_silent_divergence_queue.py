@@ -39,10 +39,23 @@ def run(cmd: list[str]) -> None:
     subprocess.run(cmd, check=True)
 
 
-def ensure_artifact(job: dict[str, Any], region: str, artifact_dir: Path) -> Path | None:
+def normalize_training_status(status: str) -> str:
+    return {
+        "Completed": "completed",
+        "InProgress": "in_progress",
+        "Failed": "failed",
+        "Stopped": "stopped",
+        "Stopping": "stopping",
+    }.get(status, status.lower())
+
+
+def ensure_artifact(job: dict[str, Any], region: str, artifact_dir: Path) -> tuple[str, Path | None, dict[str, Any] | None]:
     desc = describe(job, region)
-    if not desc or desc["TrainingJobStatus"] != "Completed":
-        return None
+    if not desc:
+        return "not_found", None, None
+    training_status = desc["TrainingJobStatus"]
+    if training_status != "Completed":
+        return normalize_training_status(training_status), None, desc
     name = job["job_name"]
     extract_dir = artifact_dir / name
     if not extract_dir.exists():
@@ -62,7 +75,7 @@ def ensure_artifact(job: dict[str, Any], region: str, artifact_dir: Path) -> Pat
                 "--extract",
             ]
         )
-    return extract_dir
+    return "completed", extract_dir, desc
 
 
 def find_model_dir(extract_dir: Path, model_name: str) -> Path | None:
@@ -71,6 +84,33 @@ def find_model_dir(extract_dir: Path, model_name: str) -> Path | None:
         return preferred
     matches = sorted(extract_dir.glob(f"**/{model_name}_silent_divergence_summary.csv"))
     return matches[0].parent if matches else None
+
+
+def read_metadata(model_dir: Path) -> dict[str, Any]:
+    keys = [
+        "model_name",
+        "model_id",
+        "backend",
+        "requested_device",
+        "resolved_device",
+        "requested_dtype",
+        "resolved_dtype",
+        "torch_version",
+        "transformers_version",
+        "git_sha",
+        "git_dirty",
+    ]
+    metadata_path = model_dir / "run_metadata.json"
+    if not metadata_path.exists():
+        return {
+            "runtime_metadata_status": "missing",
+            **{f"runtime_{key}": None for key in keys},
+        }
+    metadata = json.loads(metadata_path.read_text(encoding="utf-8"))
+    return {
+        "runtime_metadata_status": "present",
+        **{f"runtime_{key}": metadata.get(key) for key in keys},
+    }
 
 
 def main() -> None:
@@ -87,7 +127,7 @@ def main() -> None:
     manifest_rows = []
     for job in load_queue(args.queue):
         try:
-            extract_dir = ensure_artifact(job, args.region, args.artifact_dir)
+            artifact_status, extract_dir, desc = ensure_artifact(job, args.region, args.artifact_dir)
         except Exception as exc:
             manifest_rows.append(
                 {
@@ -100,7 +140,11 @@ def main() -> None:
             )
             continue
         if extract_dir is None:
-            manifest_rows.append({"job_name": job["job_name"], "model_name": job["model"], "status": "not_completed"})
+            row = {"job_name": job["job_name"], "model_name": job["model"], "status": artifact_status}
+            if desc:
+                row["secondary_status"] = desc.get("SecondaryStatus")
+                row["failure_reason"] = desc.get("FailureReason")
+            manifest_rows.append(row)
             continue
         model_dir = find_model_dir(extract_dir, job["model"])
         if model_dir is None:
@@ -113,11 +157,22 @@ def main() -> None:
             continue
         summary = pd.read_csv(summary_path)
         layers = pd.read_csv(layer_path)
+        metadata = read_metadata(model_dir)
         summary["job_name"] = job["job_name"]
         layers["job_name"] = job["job_name"]
+        for key, value in metadata.items():
+            summary[key] = value
+            layers[key] = value
         summary_frames.append(summary)
         layer_frames.append(layers)
-        manifest_rows.append({"job_name": job["job_name"], "model_name": job["model"], "status": "processed"})
+        manifest_rows.append(
+            {
+                "job_name": job["job_name"],
+                "model_name": job["model"],
+                "status": "processed",
+                "runtime_metadata_status": metadata["runtime_metadata_status"],
+            }
+        )
 
     pd.DataFrame(manifest_rows).to_csv(args.out_dir / "job_manifest.csv", index=False)
     if not summary_frames:
@@ -136,6 +191,15 @@ def main() -> None:
             max_js=("js_divergence", "max"),
             max_final_hidden=("final_layer_cosine_distance", "max"),
             max_any_hidden=("max_layer_cosine_distance", "max"),
+            runtime_metadata_status=("runtime_metadata_status", "first"),
+            runtime_backend=("runtime_backend", "first"),
+            runtime_model_id=("runtime_model_id", "first"),
+            runtime_resolved_device=("runtime_resolved_device", "first"),
+            runtime_resolved_dtype=("runtime_resolved_dtype", "first"),
+            runtime_torch_version=("runtime_torch_version", "first"),
+            runtime_transformers_version=("runtime_transformers_version", "first"),
+            runtime_git_sha=("runtime_git_sha", "first"),
+            runtime_git_dirty=("runtime_git_dirty", "first"),
         )
         .reset_index()
     )

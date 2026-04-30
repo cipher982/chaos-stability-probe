@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Score simple branch-within-horizon predictors from trajectory event rows."""
+"""Score simple branch-window predictors from trajectory event rows."""
 
 from __future__ import annotations
 
@@ -16,6 +16,23 @@ FEATURES = {
     "max_entropy": "higher",
     "min_margin_logit": "lower",
 }
+
+
+def target_specs(df: pd.DataFrame) -> list[tuple[str, str, int | None]]:
+    specs: list[tuple[str, str, int | None]] = []
+    if "at_branch" in df.columns:
+        specs.append(("at_branch", "at_branch", None))
+    for prefix, label in [
+        ("pre_branch_within_", "pre_branch_within"),
+        ("branch_within_", "branch_within"),
+    ]:
+        horizons = sorted(
+            int(col.removeprefix(prefix))
+            for col in df.columns
+            if col.startswith(prefix)
+        )
+        specs.extend((f"{prefix}{horizon}", label, horizon) for horizon in horizons)
+    return specs
 
 
 def auroc(labels: pd.Series, scores: pd.Series) -> float | None:
@@ -42,18 +59,13 @@ def main() -> None:
     df = pd.read_csv(args.prediction_windows)
 
     rows = []
-    horizons = sorted(
-        int(col.removeprefix("branch_within_"))
-        for col in df.columns
-        if col.startswith("branch_within_")
-    )
+    targets = target_specs(df)
     groups = [("all", df)]
     if "model_name" in df.columns:
         groups.extend((model, group) for model, group in df.groupby("model_name", sort=False))
 
     for group_name, group in groups:
-        for horizon in horizons:
-            target = f"branch_within_{horizon}"
+        for target, target_kind, horizon in targets:
             if target not in group:
                 continue
             labels = group[target]
@@ -67,6 +79,8 @@ def main() -> None:
                 rows.append(
                     {
                         "group": group_name,
+                        "target": target,
+                        "target_kind": target_kind,
                         "horizon": horizon,
                         "feature": feature,
                         "direction": direction,
@@ -78,7 +92,11 @@ def main() -> None:
 
     out = pd.DataFrame(rows)
     out.to_csv(out_dir / "branch_prediction_auc.csv", index=False)
-    printable = out.dropna(subset=["auroc"]).sort_values(["group", "horizon", "auroc"], ascending=[True, True, False])
+    printable = out.dropna(subset=["auroc"]).sort_values(
+        ["group", "target_kind", "horizon", "auroc"],
+        ascending=[True, True, True, False],
+        na_position="first",
+    )
     print(printable.to_string(index=False))
     print(f"Wrote {out_dir / 'branch_prediction_auc.csv'}")
 

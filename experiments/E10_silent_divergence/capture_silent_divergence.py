@@ -5,12 +5,17 @@ from __future__ import annotations
 
 import argparse
 import csv
+import json
+import platform
+import subprocess
 import sys
+import time
 from pathlib import Path
 from typing import Any
 
 import pandas as pd
 import torch
+import transformers
 
 ROOT = Path(__file__).resolve().parents[2]
 SCRIPTS_DIR = ROOT / "scripts"
@@ -33,6 +38,101 @@ from run_stability_probe import (
 
 
 DEFAULT_SYSTEM_PROMPT = "You are a concise, accurate assistant. Answer directly."
+
+
+def current_git_sha() -> str | None:
+    try:
+        return subprocess.check_output(
+            ["git", "rev-parse", "HEAD"],
+            cwd=ROOT,
+            text=True,
+            stderr=subprocess.DEVNULL,
+        ).strip()
+    except Exception:
+        return None
+
+
+def current_git_dirty() -> bool | None:
+    try:
+        return bool(
+            subprocess.check_output(
+                ["git", "status", "--porcelain"],
+                cwd=ROOT,
+                text=True,
+                stderr=subprocess.DEVNULL,
+            ).strip()
+        )
+    except Exception:
+        return None
+
+
+def device_name(device: torch.device) -> str | None:
+    if device.type == "cuda" and torch.cuda.is_available():
+        return torch.cuda.get_device_name(device.index or 0)
+    if device.type == "mps":
+        return "mps"
+    if device.type == "cpu":
+        return platform.processor() or "cpu"
+    return None
+
+
+def dtype_name(dtype: torch.dtype) -> str:
+    return str(dtype).removeprefix("torch.")
+
+
+def metadata_subset(metadata: dict[str, Any]) -> dict[str, Any]:
+    keys = [
+        "model_name",
+        "model_id",
+        "backend",
+        "requested_device",
+        "resolved_device",
+        "requested_dtype",
+        "resolved_dtype",
+        "torch_version",
+        "transformers_version",
+        "git_sha",
+        "git_dirty",
+    ]
+    return {f"runtime_{key}": metadata.get(key) for key in keys}
+
+
+def build_run_metadata(
+    args: argparse.Namespace,
+    entry: dict[str, Any],
+    loaded: Any,
+    device: torch.device,
+    dtype: torch.dtype,
+    pair_ids: list[str],
+) -> dict[str, Any]:
+    model = loaded.model
+    return {
+        "created_at": time.strftime("%Y-%m-%dT%H:%M:%S%z"),
+        "backend": "transformers",
+        "model_name": args.model,
+        "model_id": entry["model_id"],
+        "model_class": type(model).__name__,
+        "tokenizer_class": type(loaded.tokenizer).__name__,
+        "hf_device_map": getattr(model, "hf_device_map", None),
+        "requested_device": args.device,
+        "resolved_device": str(device),
+        "device_name": device_name(device),
+        "requested_dtype": args.dtype,
+        "resolved_dtype": dtype_name(dtype),
+        "thinking_mode": args.thinking_mode,
+        "system_prompt": args.system_prompt,
+        "max_new_tokens": args.max_new_tokens,
+        "logit_max_steps": args.logit_max_steps,
+        "prompt_pairs": str(args.prompt_pairs),
+        "pair_ids": pair_ids,
+        "torch_version": torch.__version__,
+        "transformers_version": transformers.__version__,
+        "python_version": platform.python_version(),
+        "platform": platform.platform(),
+        "git_sha": current_git_sha(),
+        "git_dirty": current_git_dirty(),
+        "argv": sys.argv,
+    }
 
 
 def select_model(models_path: Path, selector: str) -> dict[str, Any]:
@@ -191,6 +291,8 @@ def main() -> None:
     device = pick_device(args.device)
     dtype = pick_dtype(device, args.dtype)
     loaded = load_model(entry, device, dtype)
+    run_metadata = build_run_metadata(args, entry, loaded, device, dtype, pair_ids)
+    runtime_cols = metadata_subset(run_metadata)
 
     summary_rows: list[dict[str, Any]] = []
     layer_rows: list[dict[str, Any]] = []
@@ -206,13 +308,17 @@ def main() -> None:
         )
         for row in srows:
             row["model_name"] = args.model
+            row.update(runtime_cols)
         for row in lrows:
             row["model_name"] = args.model
+            row.update(runtime_cols)
         summary_rows.extend(srows)
         layer_rows.extend(lrows)
 
     summary_path = args.out_dir / f"{args.model}_silent_divergence_summary.csv"
     layer_path = args.out_dir / f"{args.model}_silent_divergence_layers.csv"
+    metadata_path = args.out_dir / "run_metadata.json"
+    metadata_path.write_text(json.dumps(run_metadata, indent=2, sort_keys=True), encoding="utf-8")
     with summary_path.open("w", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(f, fieldnames=list(summary_rows[0].keys()))
         writer.writeheader()
@@ -223,6 +329,7 @@ def main() -> None:
         writer.writerows(layer_rows)
     print(f"Wrote {summary_path}")
     print(f"Wrote {layer_path}")
+    print(f"Wrote {metadata_path}")
 
 
 if __name__ == "__main__":
