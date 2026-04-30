@@ -109,22 +109,24 @@ The earlier micro sweep found that many raw character edits never survived
 tokenization or chat-template formatting as real prompt-token deltas. The v3
 reinforcement wave now uses model-specific certified prompt files: 25 identical
 controls plus 500 effective prompt-token perturbations per selected model. As
-of 2026-04-30 13:45 -0300, processed v3 means are:
+of 2026-04-30 15:21 -0300, processed v3 means are:
 
 | Model | Effective pairs | Mean 512-token semantic distance | P90 |
 | --- | ---: | ---: | ---: |
 | Gemma4 E4B base | 500 | 0.129 | 0.303 |
 | Qwen3.5 0.8B thinking-off | 500 | 0.093 | 0.165 |
 | Qwen3.5 2B thinking-off | 500 | 0.091 | 0.165 |
+| Qwen3.5 4B thinking-off | 500 | 0.086 | 0.160 |
 | Qwen3.5 9B thinking-off | 500 | 0.079 | 0.141 |
 | Gemma4 E4B instruct | 500 | 0.068 | 0.165 |
 | Gemma4 E2B instruct | 500 | 0.059 | 0.112 |
 
-This is not yet the final v3 panel: Qwen3.5 4B thinking-off is still running,
-and Gemma4 E2B base timed out after producing partial raw rows but no
+This is still not the final v3 panel: Gemma4 E2B base timed out after producing partial raw rows but no
 `summary.csv`. The safe claim is already useful: token-aware filtering is not a
 pedantic detail; it changes which examples are admissible evidence, and the
-base-vs-instruct Gemma split remains a high-signal recipe contrast.
+base-vs-instruct Gemma split remains a high-signal recipe contrast. The
+token-certified Qwen ladder is ordered 0.8B/2B/4B/9B by decreasing mean
+sensitivity, but 0.8B and 2B are not cleanly separated by paired permutation.
 
 The next important contrast is training era/post-training recipe, but it should
 not be reduced to either "modern equals stable" or "older equals stable." A

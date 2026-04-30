@@ -216,17 +216,18 @@ Token-certified v3 reinforcement wave:
   `token-cert-v3`:
   - `scripts/sagemaker_queue_supervisor.py --queue configs/sagemaker_queue_token_certified_v3.json --passes 0 --sleep-s 600`
   - `scripts/process_token_micro_queue.py --queue configs/sagemaker_queue_token_certified_v3.json --rank-dir runs/rankings/token_micro_v3 --passes 0 --sleep-s 900`
-- Live status at 2026-04-30 13:45 -0300:
-  - Processed in `runs/rankings/token_micro_v3/`: Qwen3.5 0.8B, 2B, 9B
+- Live status at 2026-04-30 15:21 -0300:
+  - Processed in `runs/rankings/token_micro_v3/`: Qwen3.5 0.8B, 2B, 4B, 9B
     thinking-off; Gemma4 E2B/E4B instruct; Gemma4 E4B base.
-  - Still training: Qwen3.5 4B thinking-off.
   - Completed but incomplete for this analysis: Gemma4 E2B base timed out at
     six hours and produced partial raw rows but no `summary.csv`; do not use it
     in v3 claims without rerunning or explicitly labeling it partial.
   - Current v3 processed means, all with 500 effective token perturbations:
     Gemma4 E4B base `0.1286`, Qwen3.5 0.8B `0.0930`, Qwen3.5 2B `0.0912`,
-    Qwen3.5 9B `0.0786`, Gemma4 E4B instruct `0.0684`, Gemma4 E2B instruct
-    `0.0591`.
+    Qwen3.5 4B `0.0855`, Qwen3.5 9B `0.0786`, Gemma4 E4B instruct `0.0684`,
+    Gemma4 E2B instruct `0.0591`.
+  - Added `scripts/analyze_token_micro_panel.py`; current bootstrap output is
+    under `runs/rankings/token_micro_v3/stats/`.
 
 Paper-grade follow-up wave launched 2026-04-30:
 
@@ -241,10 +242,10 @@ Paper-grade follow-up wave launched 2026-04-30:
 - Launched immediately:
   - Qwen3.5 0.8B thinking-off logit probe on QA `g5.2xlarge`
   - Qwen3.5 2B thinking-off logit probe on ML prod `g5.2xlarge`
+  - Qwen3.5 4B thinking-off logit probe on marketing prod `g5.2xlarge`
   - Qwen3.5 9B thinking-off logit probe on preprod `g6e.2xlarge`
   - Gemma4 E2B instruct logit probe on preprod `g6e.2xlarge`
 - Queued behind full lanes:
-  - Qwen3.5 4B thinking-off logit probe
   - Gemma4 E2B base, E4B instruct, E4B base logit probes
 - Next step when lanes free: rerun
   `uv run python scripts/sagemaker_queue_supervisor.py --queue configs/sagemaker_queue_logit_token_cert_v1.json --passes 1`.
