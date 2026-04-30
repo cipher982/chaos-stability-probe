@@ -102,7 +102,13 @@ Current-state config:
   `observed_behavior` block for scaffold/template/reasoning-prefix behavior
   when we have inspected raw outputs. Treat `unknown` entries as unobserved,
   not as non-reasoning.
-- `configs/sagemaker_queue.json`: ordered SageMaker work queue.
+- `configs/sagemaker_queue*.json`: active and compatibility SageMaker work
+  queues.
+- `experiments/E##_*/`: committed experiment-specific code/config snapshots
+  with short restart notes. Stable historical commands remain available through
+  `scripts/` wrappers.
+- `runs/E##_*/` or other `runs/` subdirectories: generated artifacts and
+  derived summaries. Raw run outputs are not moved into `experiments/`.
 
 Supporting docs:
 

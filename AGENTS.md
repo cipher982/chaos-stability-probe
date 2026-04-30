@@ -34,7 +34,7 @@ Implications for agent behavior on this repo:
 | Run local smoke | `uv run python scripts/run_stability_probe.py --smoke --limit-pairs 3 --max-new-tokens 48 --out-dir runs/local_smoke` |
 | Plot a run | `uv run python scripts/plot_results.py runs/local_smoke` |
 | Inspect a run | `uv run python scripts/inspect_run.py runs/local_smoke` |
-| Compile scripts | `uv run python -m py_compile scripts/*.py` |
+| Compile scripts | `uv run python -m py_compile scripts/*.py experiments/E*/*.py` |
 | Process robust wave | `uv run python scripts/process_robust_wave.py` |
 | Process logit wave | `uv run python scripts/process_logit_wave.py` |
 | Process sampling demo | `uv run python scripts/process_sampling_demo.py` |
@@ -58,7 +58,7 @@ Do not encode live experiment status in `AGENTS.md`. Put dynamic state in
   - `observed_behavior` records inspected scaffold/template/reasoning-prefix
     behavior for this repo's harness.
   - `unknown` means uninspected, not non-reasoning.
-- `configs/sagemaker_queue.json` is the ordered SageMaker queue.
+- `configs/sagemaker_queue*.json` holds active/compatibility SageMaker queues.
 - Prompt sets live in `configs/prompt_pairs*.json`.
 
 ## Architecture
@@ -70,6 +70,10 @@ Do not encode live experiment status in `AGENTS.md`. Put dynamic state in
   and `scripts/download_sagemaker_artifact.py` operate SageMaker GPU jobs.
 - `scripts/process_*.py` scripts pull artifacts and generate analysis outputs
   under `runs/rankings/`.
+- `experiments/E##_*/` holds committed experiment-specific code/config
+  snapshots and short restart notes. Keep stable command shims in `scripts/`
+  when docs, queues, or SageMaker jobs reference those paths.
+- Generated outputs stay under `runs/`, not `experiments/`.
 - `talk/` contains slide and visualization artifacts. `talk/slides.md` is the
   Marp source of truth; present from `talk/browser.html`, which displays
   high-resolution PNGs from `talk/slide_images/`.

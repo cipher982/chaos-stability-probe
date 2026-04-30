@@ -49,6 +49,8 @@ def build_launch_cmd(job: dict[str, Any]) -> list[str]:
         job.get("region", DEFAULT_REGION),
         "--job-name",
         job["job_name"],
+        "--entrypoint",
+        job.get("entrypoint", "panel"),
         "--prompt-pairs",
         job["prompt_pairs"],
         "--model",
@@ -68,6 +70,8 @@ def build_launch_cmd(job: dict[str, Any]) -> list[str]:
         cmd.extend(["--role-arn", job["role_arn"]])
     if "repeats" in job:
         cmd.extend(["--repeats", str(job["repeats"])])
+    for pair_id in job.get("pair_ids", []):
+        cmd.extend(["--pair-id", pair_id])
     if job.get("sample"):
         cmd.append("--sample")
         cmd.extend(["--temperature", str(job.get("temperature", 0.7))])
@@ -84,6 +88,8 @@ def build_launch_cmd(job: dict[str, Any]) -> list[str]:
         cmd.append("--logit-probe")
         cmd.extend(["--logit-top-k", str(job.get("logit_top_k", 10))])
         cmd.extend(["--logit-max-steps", str(job.get("logit_max_steps", 128))])
+    elif job.get("entrypoint") == "silent_divergence":
+        cmd.extend(["--logit-max-steps", str(job.get("logit_max_steps", 64))])
     if job.get("no_tags"):
         cmd.append("--no-tags")
     return cmd

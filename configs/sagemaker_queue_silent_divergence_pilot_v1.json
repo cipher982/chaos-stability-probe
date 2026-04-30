@@ -1,0 +1,69 @@
+[
+  {
+    "entrypoint": "silent_divergence",
+    "prompt_pairs": "configs/prompt_pairs_mechinterp_seed.json",
+    "pair_ids": [
+      "token_cert_blank_line_wrap_0357",
+      "token_cert_tab_after_space_0572",
+      "token_cert_parenthesize_word_0434",
+      "token_cert_line_wrap_0406",
+      "token_cert_blank_line_wrap_0212"
+    ],
+    "max_new_tokens": 128,
+    "logit_max_steps": 64,
+    "timeout_s": 14400,
+    "max_runtime_s": 28800,
+    "profile": "zh-ml-productionengineer",
+    "bucket": "sagemaker-us-east-1-766806801073",
+    "role_arn": "arn:aws:iam::766806801073:role/service-role/AmazonSageMaker-ExecutionRole-20210902T010917",
+    "job_name": "chaos-silent-div-qwen2b-20260430-001",
+    "model": "qwen35_2b",
+    "instance_type": "ml.g5.2xlarge",
+    "thinking_mode": "disabled"
+  },
+  {
+    "entrypoint": "silent_divergence",
+    "prompt_pairs": "configs/prompt_pairs_mechinterp_seed.json",
+    "pair_ids": [
+      "token_cert_blank_line_wrap_0357",
+      "token_cert_tab_after_space_0572",
+      "token_cert_parenthesize_word_0434",
+      "token_cert_line_wrap_0406",
+      "token_cert_blank_line_wrap_0212"
+    ],
+    "max_new_tokens": 128,
+    "logit_max_steps": 64,
+    "timeout_s": 21600,
+    "max_runtime_s": 43200,
+    "profile": "zh-marketing-productionengineer",
+    "bucket": "066377602118-use1-zme-prod-ml-ops-sagemaker-models",
+    "role_arn": "arn:aws:iam::066377602118:role/zme-prod-use1_sagemaker_0",
+    "no_tags": true,
+    "job_name": "chaos-silent-div-qwen4b-20260430-001",
+    "model": "qwen35_4b",
+    "instance_type": "ml.g5.2xlarge",
+    "thinking_mode": "disabled"
+  },
+  {
+    "entrypoint": "silent_divergence",
+    "prompt_pairs": "configs/prompt_pairs_mechinterp_seed.json",
+    "pair_ids": [
+      "token_cert_blank_line_wrap_0357",
+      "token_cert_tab_after_space_0572",
+      "token_cert_parenthesize_word_0434",
+      "token_cert_line_wrap_0406",
+      "token_cert_blank_line_wrap_0212"
+    ],
+    "max_new_tokens": 128,
+    "logit_max_steps": 64,
+    "timeout_s": 21600,
+    "max_runtime_s": 43200,
+    "profile": "zh-marketing-preprod-aiengineer",
+    "bucket": "636347950933-use1-zmp-preprod-ml-ops-sagemaker-models",
+    "role_arn": "arn:aws:iam::636347950933:role/zmp-preprod-use1_sagemaker_0",
+    "job_name": "chaos-silent-div-qwen9b-20260430-001",
+    "model": "qwen35_9b",
+    "instance_type": "ml.g6e.2xlarge",
+    "thinking_mode": "disabled"
+  }
+]

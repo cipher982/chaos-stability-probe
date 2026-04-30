@@ -61,8 +61,10 @@ def main() -> None:
     parser.add_argument("--volume-size-gb", type=int, default=200)
     parser.add_argument("--max-runtime-s", type=int, default=8 * 60 * 60)
     parser.add_argument("--job-name", default="")
+    parser.add_argument("--entrypoint", choices=["panel", "silent_divergence"], default="panel")
     parser.add_argument("--model", action="append", default=[], help="Model name or ID. Repeatable.")
     parser.add_argument("--prompt-pairs", default="configs/prompt_pairs.json")
+    parser.add_argument("--pair-id", action="append", dest="pair_ids", default=[])
     parser.add_argument("--limit-pairs", type=int, default=0)
     parser.add_argument("--max-new-tokens", type=int, default=96)
     parser.add_argument("--repeats", type=int, default=1)
@@ -93,8 +95,6 @@ def main() -> None:
         str(args.timeout_s),
         "--max-new-tokens",
         str(args.max_new_tokens),
-        "--repeats",
-        str(args.repeats),
         "--prompt-pairs",
         args.prompt_pairs,
         "--device",
@@ -104,20 +104,22 @@ def main() -> None:
         "--thinking-mode",
         args.thinking_mode,
     ]
+    if args.entrypoint == "panel":
+        run_args.extend(["--repeats", str(args.repeats)])
     for model in args.model:
         run_args.extend(["--model", model])
     if args.limit_pairs:
         run_args.extend(["--limit-pairs", str(args.limit_pairs)])
-    if args.sample:
+    if args.entrypoint == "panel" and args.sample:
         run_args.append("--sample")
         run_args.extend(["--temperature", str(args.temperature), "--top-p", str(args.top_p)])
-    if args.different_seeds_within_pair:
+    if args.entrypoint == "panel" and args.different_seeds_within_pair:
         run_args.append("--different-seeds-within-pair")
-    if args.skip_token_identical_non_controls:
+    if args.entrypoint == "panel" and args.skip_token_identical_non_controls:
         run_args.append("--skip-token-identical-non-controls")
-    if args.skip_hidden:
+    if args.entrypoint == "panel" and args.skip_hidden:
         run_args.append("--skip-hidden")
-    if args.logit_probe:
+    if args.entrypoint == "panel" and args.logit_probe:
         run_args.extend(
             [
                 "--logit-probe",
@@ -127,6 +129,10 @@ def main() -> None:
                 str(args.logit_max_steps),
             ]
         )
+    if args.entrypoint == "silent_divergence":
+        run_args.extend(["--logit-max-steps", str(args.logit_max_steps)])
+        for pair_id in args.pair_ids:
+            run_args.extend(["--pair-id", pair_id])
 
     sess = boto3.Session(profile_name=args.profile, region_name=args.region)
     s3 = sess.client("s3")
@@ -162,6 +168,7 @@ def main() -> None:
         },
         "Environment": {
             "CHAOS_RUN_ARGS": json.dumps(run_args),
+            "CHAOS_ENTRYPOINT": args.entrypoint,
         },
         "EnableNetworkIsolation": False,
     }

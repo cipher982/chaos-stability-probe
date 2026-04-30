@@ -168,6 +168,49 @@ updated when an experiment thread materially changes status.
 - **Decision / next test:** add feature labels/steering only if the feature
   source supports it; otherwise keep claims at feature-overlap/delta level.
 
+### E9 — Structured Trajectory Event Mining
+
+- **Question / hypothesis:** Are large downstream output differences caused by
+  localized branch events with measurable pre-visible logit warning, rather
+  than diffuse drift or generic accuracy failures?
+- **Design:** token-certified prompt-pair runs with deterministic decode,
+  `logit_probes.jsonl`, common-prefix branch windows, branch-within-1/2/5/10
+  prediction rows. Statistical unit is prompt pair.
+- **Artifacts:** `scripts/analyze_trajectory_events.py`,
+  `scripts/analyze_branch_prediction.py`,
+  `runs/trajectory_events/mechinterp_seed/`; higher-N SageMaker artifacts will
+  land under `runs/rankings/logit_token_cert_v1/`.
+- **Result:** local Qwen 0.8B/2B seed set is a machinery check: many selected
+  high-signal cases classify as `silent_logit_divergence`; JS/L2 predict branch
+  windows with AUROC around `0.80-0.86`.
+- **Caveat:** the seed set is selected and small; do not claim predictive power
+  until the token-certified SageMaker logit queue is processed.
+- **Decision / next test:** process `configs/sagemaker_queue_logit_token_cert_v1.json`,
+  then run event mining and prediction scoring across the completed Qwen/Gemma
+  logit panel.
+
+### E10 — Common-Prefix Hidden-State Silent Divergence
+
+- **Question / hypothesis:** Do hidden states separate before visible token
+  divergence in replayable tiny-edit branch cases?
+- **Design:** run selected replayable branch cases through shared generated
+  prefixes; at each common-prefix step, capture logits and layerwise final-token
+  hidden-state distance. Start with local Qwen3.5 2B, then use SageMaker for
+  Qwen 4B/9B.
+- **Artifacts:** `scripts/capture_silent_divergence.py`,
+  `scripts/run_silent_divergence_panel.py`,
+  `configs/sagemaker_queue_silent_divergence_pilot_v1.json`,
+  `scripts/process_silent_divergence_queue.py`,
+  `runs/silent_divergence_pilot/`.
+- **Result:** local Qwen3.5 2B pilot: parenthesized `(a)` branches immediately
+  at token 0; blank-line wrap branches at token 9 and shows logit/hidden
+  movement before visible split.
+- **Caveat:** hidden distance can be nonzero from prompt token differences
+  alone; use change over the common-prefix trajectory and no-branch controls,
+  not raw hidden distance alone.
+- **Decision / next test:** launch the SageMaker silent-divergence pilot when
+  lanes free; compare warning lead time across Qwen 2B/4B/9B.
+
 ## 2026-04-28 Late Night: Setup
 
 ### Objective
@@ -1966,3 +2009,34 @@ Readout:
 Keep the caveat explicit: these are Qwen-Scope feature IDs, not human-readable
 feature labels. The useful current claim is about feature-set overlap/deltas at
 causal branch positions, not named "whitespace features."
+
+## 2026-04-30 TrajectoryScope Experiment Prep
+
+- **Question / hypothesis:** Can the post-talk work be made restartable under
+  the new experiment protocol while preserving the tiny-edit trajectory
+  motivation?
+- **Design:** keep boundary/accuracy labels as metadata, then prepare two
+  mechanism threads: E9 event mining from logit queues and E10 hidden-state
+  silent-divergence capture on replayable branch cases.
+- **Commands / artifacts:**
+  - `scripts/analyze_trajectory_events.py`
+  - `scripts/analyze_branch_prediction.py`
+  - `scripts/capture_silent_divergence.py`
+  - `scripts/run_silent_divergence_panel.py`
+  - `scripts/process_silent_divergence_queue.py`
+  - `configs/sagemaker_queue_silent_divergence_pilot_v1.json`
+- **Results:** local E9/E10 checks already run on Qwen seed artifacts. The
+  OLMo3 repair job `chaos-token-micro-olmo3-7b-20260430-004` completed at the
+  SageMaker level but produced no `summary.csv`; it has 354 generation rows,
+  525 prompt-token rows, and 348 CUDA-error failure rows, so it is an unusable
+  partial for current v3 claims.
+- **Interpretation:** the current research path is mechanism-typed replication:
+  branch-event mining, branch prediction, hidden warning, and interventions.
+  More broad leaderboards are deprioritized unless they test a specific
+  mechanism contrast.
+- **Caveats / guardrails:** do not promote the local AUROC/pilot hidden result
+  beyond machinery validation until the higher-N SageMaker logit queue lands.
+- **Decision / next test:** when GPU lanes open, launch
+  `configs/sagemaker_queue_silent_divergence_pilot_v1.json`; meanwhile process
+  logit queue completions and attach E9 event tables to the digest only if the
+  signal survives the larger panel.

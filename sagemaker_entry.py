@@ -29,13 +29,15 @@ def main() -> None:
     install_gpt_oss_runtime_deps(extra_args)
 
     out_root = model_dir / "runs"
-    cmd = [
-        sys.executable,
-        "scripts/run_panel.py",
-        "--out-root",
-        str(out_root),
-        *[str(arg) for arg in extra_args],
-    ]
+    entrypoint = os.environ.get("CHAOS_ENTRYPOINT", "panel")
+    if entrypoint == "panel":
+        script = "scripts/run_panel.py"
+    elif entrypoint == "silent_divergence":
+        script = "scripts/run_silent_divergence_panel.py"
+    else:
+        raise ValueError(f"Unknown CHAOS_ENTRYPOINT: {entrypoint}")
+
+    cmd = [sys.executable, script, "--out-root", str(out_root), *[str(arg) for arg in extra_args]]
     print("Running:", " ".join(cmd), flush=True)
     subprocess.check_call(cmd)
 

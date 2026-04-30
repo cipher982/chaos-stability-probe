@@ -225,8 +225,11 @@ Token-certified v3 reinforcement wave:
     `runs/rankings/token_micro_v3/_processing_errors/chaos-token-micro-gemma-e2b-base-token-cert-20260430-003.json`.
   - Repair jobs currently in progress:
     `chaos-token-micro-gemma-e2b-base-token-cert-20260430-004`,
-    `chaos-token-micro-olmo3-7b-20260430-004`,
     `chaos-token-micro-opt-6p7b-20260430-004`.
+  - Completed but unusable repair: `chaos-token-micro-olmo3-7b-20260430-004`
+    produced no `summary.csv` after CUDA errors near the end of the run
+    (354 generation rows, 348 failure rows). Keep it out of v3 claims unless a
+    smaller retry is explicitly launched.
   - Logit mechanism jobs currently in progress:
     `chaos-logit-token-cert-qwen9b-thinkoff-20260430-001`,
     `chaos-logit-token-cert-gemma-e2b-it-20260430-001`.
@@ -270,6 +273,10 @@ Trajectory-branching research pivot:
 - Main frame: **TrajectoryScope**, a paired-generation microscope for branch
   points, cliffs, basin switches, scaffold masking, and amplification under
   tiny token-visible prompt edits.
+- Committed experiment structure now mirrors the active mechanism threads:
+  E05-E10 short notes live under `experiments/`; E09/E10 implementation files
+  moved there, while the old `scripts/` command paths remain compatibility
+  wrappers for docs, queues, and active SageMaker jobs.
 - Boundary labels are metadata, not the headline. Use nuisance/task-relevant
   labels to interpret whether a branch is semantically appropriate, but keep
   the primary analysis on event localization, warning signals, and
@@ -302,6 +309,21 @@ uv run python scripts/analyze_trajectory_events.py \
   pilot along the common-prefix window. Start locally on Qwen3.5 2B selected
   patch targets, then move broader hidden capture to SageMaker if the pilot is
   useful.
+- Added SageMaker support for that pilot:
+  - `sagemaker_entry.py` supports `CHAOS_ENTRYPOINT=silent_divergence`.
+  - `scripts/run_silent_divergence_panel.py` runs selected branch cases
+    model-by-model.
+  - `scripts/launch_sagemaker_panel.py` and queue dispatch support
+    `entrypoint` plus `pair_ids`.
+  - `configs/sagemaker_queue_silent_divergence_pilot_v1.json` stages Qwen3.5
+    2B/4B/9B over five replayable branch cases.
+  - `scripts/process_silent_divergence_queue.py` downloads and merges completed
+    silent-divergence artifacts.
+  - Launched `chaos-silent-div-qwen9b-20260430-001` on preprod `g6e.2xlarge`
+    at 2026-04-30 16:50 -0300.
+  - Still queued because 24 GB lanes are occupied:
+    `chaos-silent-div-qwen2b-20260430-001`,
+    `chaos-silent-div-qwen4b-20260430-001`.
 - Added `scripts/analyze_branch_prediction.py` to score simple AUROC baselines
   for branch-within-1/2/5/10-token prediction from `branch_prediction_windows.csv`.
 - The first event-mining validation found mostly `silent_logit_divergence`

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Compatibility wrapper for the E09 trajectory-events experiment."""
+"""Compatibility wrapper for the E10 silent-divergence queue processor."""
 
 from __future__ import annotations
 
@@ -10,8 +10,8 @@ from pathlib import Path
 TARGET = (
     Path(__file__).resolve().parents[1]
     / "experiments"
-    / "E09_trajectory_events"
-    / "analyze_trajectory_events.py"
+    / "E10_silent_divergence"
+    / "process_silent_divergence_queue.py"
 )
 
 runpy.run_path(str(TARGET), run_name="__main__")
