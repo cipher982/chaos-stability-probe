@@ -48,6 +48,67 @@ citations.
   measured sensitivity comes from underspecified prompts rather than
   model fragility.
 
+## Mechanistic Interpretability / SAEs / Circuits
+
+This is the lens to use for the whitespace/punctuation branch experiments.
+The useful translation is: don't only ask whether two outputs diverge; ask
+which internal residual stream states, sparse features, or feature circuits
+make the next-token branch prefer one response attractor over another.
+
+- **Anthropic 2024, "Mapping the Mind of a Large Language Model."**
+  Extracted millions of dictionary-learning features from Claude 3 Sonnet's
+  middle layer and showed that abstract internal features can be manipulated
+  causally, not just labeled post hoc. Use this as the basic SAE/features
+  anchor.
+  https://www.anthropic.com/research/mapping-mind-language-model
+- **Anthropic 2025, "Circuit Tracing: Revealing Computational Graphs in
+  Language Models."** Builds attribution graphs with cross-layer transcoders
+  to trace prompt-specific computation. This is the conceptual north star for
+  the branch-point experiments: trace why the branch token `A` beats `Cache`,
+  or ` critical` beats ` key`, not just which layer carries the difference.
+  https://transformer-circuits.pub/2025/attribution-graphs/methods.html
+- **Google DeepMind Gemma Scope / Gemma Scope 2.** Open SAE/transcoder suites
+  for Gemma-family models. Gemma Scope provides hundreds of SAEs for Gemma 2;
+  Gemma Scope 2 extends the idea with SAEs and transcoders for Gemma 3. This is
+  the most practical open path if we want feature-level analysis on Gemma
+  examples instead of Qwen examples.
+  https://deepmind.google/blog/gemma-scope-helping-the-safety-community-shed-light-on-the-inner-workings-of-language-models/
+  https://deepmind.google/models/gemma/gemma-scope/
+- **Qwen-Scope, 2026.** Qwen released residual-stream SAEs for Qwen3/Qwen3.5
+  models. The Qwen3.5 2B Base release covers all 24 residual-stream layers with
+  width-32768 top-k SAEs and the model card explicitly demos using those SAEs
+  against `Qwen/Qwen3.5-2B`; the 27B release covers all 64 residual-stream
+  layers with width-81920 top-k SAEs. This makes the Qwen 2B side of this
+  project feature-addressable without changing model family.
+  https://huggingface.co/Qwen/SAE-Res-Qwen3.5-2B-Base-W32K-L0_100
+  https://huggingface.co/Qwen/SAE-Res-Qwen3.5-27B-W80K-L0_100
+- **Sparse Crosscoders / Transcoders.** Crosscoders read/write across layers;
+  transcoders approximate dense MLP computation with sparse feature circuits.
+  These matter because our branch flips are not just "one layer lights up";
+  the interesting mechanism is how an edit-boundary signal becomes a branch
+  token preference over layers.
+  https://transformer-circuits.pub/2024/crosscoders/index.html
+  https://arxiv.org/abs/2406.11944
+- **SAE robustness caveat.** Recent work shows SAE concept labels/features can
+  themselves be fragile under tiny input perturbations, and newer masked
+  regularization work treats robustness as an explicit SAE training objective.
+  This is directly relevant: if whitespace can move the base model branch, it
+  may also move the interpreter's apparent feature story. Use activation
+  patching/replay checks as the causal guardrail before trusting feature names.
+  https://arxiv.org/abs/2505.16004
+  https://arxiv.org/abs/2604.06495
+
+Project translation:
+
+- Start with branch-token causal tests, not feature labels.
+- For each semantically inert edit, identify the first generated-token branch
+  and patch residual activations from clean to perturbed.
+- Then add SAEs at the same layer/position only after the branch is replayable
+  and causally patchable.
+- Treat "formatting feature" as a hypothesis, not a fact. The current evidence
+  supports "edit-boundary residual state can steer a branch token"; feature
+  names require SAE evidence.
+
 ## Dynamical Systems in NNs (pre-LLM precedent)
 
 If anyone says "this is just an LLM metaphor," these are the receipts that

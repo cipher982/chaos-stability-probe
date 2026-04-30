@@ -86,6 +86,33 @@ boundary into a different response attractor. This still carries the scaffold
 caveat: for reasoning/scaffold models, the high-confidence boundary may be
 "enter the scaffold" rather than "answer content is robust."
 
+The first local mechanistic-interpretability pass turns that boundary story
+into a causal test. On Qwen3.5 0.8B and 2B, token-certified formatting edits
+such as adding `(a)`, inserting a tab after a space, or wrapping a line can flip
+early branch tokens under deterministic decode. Residual activation patching
+then asks whether clean activations can rescue the clean branch token inside the
+perturbed run. Across eight local patch cases, every replayable high-signal
+case is rescuable at the late final-context residual state; the more
+interesting aligned sweep shows that the parenthesized `(a)` case also has a
+narrow edit-boundary/LCP rescue band in early layers (`rescue_fraction ~= 0.92`
+at layer 1 on Qwen3.5 0.8B). The tab-after-space case is less localized: its
+strongest rescue appears at the shared generated-prefix/final context, with
+weaker prompt-boundary rescue. That gives a better hypothesis than "there is a
+whitespace feature": tiny formatting edits can create local residual-state
+differences near the tokenization/edit boundary, and some of those differences
+survive or get amplified into low-margin branch-token choices.
+
+The first SAE pilot now exists for Qwen3.5 2B using Qwen-Scope residual-stream
+SAEs. This is still feature-ID evidence, not human-labeled feature semantics.
+For the parenthesized `(a)` case, the prompt-boundary position has almost
+disjoint top-20 SAE features between clean `" a"` and corrupt `" ("` at layer 0
+(`overlap=1/20`) and remains mostly disjoint at layer 23 (`overlap=3/20`).
+For the tab-after-space case, the final generated-prefix/final-context position
+keeps high top-20 overlap (`16-18/20`) while prompt-boundary features are much
+less overlapping (`5/20`). This matches the patching story: parenthesized
+`(a)` looks like a sharp edit-boundary representation shift; tab-after-space
+looks more distributed by the time the branch token is chosen.
+
 Quantization and compression are now supporting material, not the thesis. The
 main thesis is dynamical sensitivity: when the input changes a little, does the
 model's response trajectory stay nearby, branch, or reconverge? Output quality

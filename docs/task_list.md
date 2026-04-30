@@ -260,8 +260,9 @@ uv run python scripts/process_logit_queue.py \
 Local mech-interp seed setup:
 
 - Added `configs/prompt_pairs_mechinterp_seed.json`,
-  `scripts/analyze_branch_points.py`, and
-  `scripts/activation_patch_branch.py`.
+  `scripts/analyze_branch_points.py`, `scripts/select_patch_targets.py`,
+  `scripts/activation_patch_branch.py`, `scripts/summarize_patch_results.py`,
+  and `scripts/plot_patch_heatmap.py`.
 - Ran local Qwen3.5 0.8B and 2B thinking-off seed panels under
   `runs/mechinterp_seed/`.
 - Ran residual activation patching under `runs/mechinterp_patch/`.
@@ -269,9 +270,27 @@ Local mech-interp seed setup:
   edits can flip answer-opening/early-branch tokens, and last-layer
   final-context residual patching fully rescues the clean branch in both Qwen
   0.8B and 2B.
-- Next useful step: run a broader branch-target selector over local seed
-  outputs, then either expand patching to Qwen 4B or attach Qwen-Scope SAE
-  feature activations to the same selected branch cases.
+- Broader selector added and run:
+  `runs/mechinterp_patch/selected_patch_targets.csv`.
+- Compact patch readout:
+  `runs/mechinterp_patch/patch_summary.csv`.
+- Aligned-position sweeps added after discovering that raw same-index
+  all-position patching misaligns tokens after insertions. Use
+  `--positions aligned` for insertion/deletion prompt deltas.
+- Aligned heatmaps:
+  - `runs/mechinterp_patch_aligned/qwen35_08b__token_cert_parenthesize_word_0434.heatmap.png`
+  - `runs/mechinterp_patch_aligned/qwen35_08b__token_cert_tab_after_space_0572.heatmap.png`
+- Next useful step: attach SAE feature activations to the selected aligned
+  branch cases. Qwen-Scope now has an official Qwen3.5 2B Base residual-stream
+  SAE release that is close enough to try first on the local 2B branch cases;
+  Gemma Scope is the parallel path if we want Gemma-family feature labels.
+- Qwen-Scope SAE pilot completed for Qwen3.5 2B:
+  - `runs/mechinterp_sae/qwen35_2b__token_cert_parenthesize_word_0434__sae_features.csv`
+  - `runs/mechinterp_sae/qwen35_2b__token_cert_tab_after_space_0572__sae_features.csv`
+  - `runs/mechinterp_sae/sae_feature_delta_summary.csv`
+- Next useful step after the pilot: add feature-label lookup if Qwen-Scope or
+  Neuronpedia exposes labels for these feature IDs; otherwise keep the claim at
+  feature-overlap/delta level and avoid naming the features.
 
 Micro-perturbation work started:
 

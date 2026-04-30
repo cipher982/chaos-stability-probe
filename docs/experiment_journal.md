@@ -1703,3 +1703,92 @@ Important guardrail: `token_cert_triple_internal_space_0029` looked like a good
 late-branch example by output text, but full-forward replay at the nominal
 branch did not favor the observed corrupted branch token. Treat such cases as
 weak patching targets until the replay/branch-token metric is aligned.
+
+## 2026-04-30 Mechanistic-Interpretability Follow-Through
+
+Added a systematic patch-target selector and patch-result summarizer:
+
+- `scripts/select_patch_targets.py`
+- `scripts/summarize_patch_results.py`
+- `scripts/plot_patch_heatmap.py`
+
+Selector output:
+
+- `runs/mechinterp_patch/selected_patch_targets.csv`
+
+Additional selected patch cases completed:
+
+- `qwen35_2b`, `token_cert_blank_line_wrap_0357`
+- `qwen35_08b`, `token_cert_blank_line_wrap_0212`
+- `qwen35_08b`, `token_cert_line_wrap_0406`
+
+Patch summary:
+
+- `runs/mechinterp_patch/patch_summary.csv`
+
+All three newly selected cases were replayable and rescuable. The eight-case
+summary now shows a robust but partly expected pattern: final-context residual
+patches at late layers rescue the clean branch in every replayable high-signal
+case. That is good causal evidence that the branch preference is in the residual
+state, but it is not yet a satisfying localization story.
+
+Ran deeper position sweeps and found an important methodological guardrail:
+raw same-index all-position patching is misleading for insertion/deletion
+prompt deltas because positions after the edit boundary no longer refer to the
+same token. Updated `scripts/activation_patch_branch.py` with
+`--positions aligned`, using token alignment for equal prompt spans plus common
+generated prefixes.
+
+Aligned-position results:
+
+- `qwen35_08b`, `token_cert_parenthesize_word_0434`: strongest non-final rescue
+  is the prompt LCP/edit-boundary token (`rescue_fraction ~= 0.92` at layer 1).
+  Matched positions away from the edit boundary mostly do nothing. This supports
+  an edit-boundary residual-state mechanism rather than a vague global
+  punctuation story.
+- `qwen35_08b`, `token_cert_tab_after_space_0572`: less localized. The clean
+  branch is rescued most strongly at the shared generated-prefix/final context;
+  prompt-boundary rescue reaches about `0.60` at layer 19. This looks more like
+  a branch-bias accumulated by the shared prefix than a clean single-boundary
+  feature.
+
+Heatmaps:
+
+- `runs/mechinterp_patch_aligned/qwen35_08b__token_cert_parenthesize_word_0434.heatmap.png`
+- `runs/mechinterp_patch_aligned/qwen35_08b__token_cert_tab_after_space_0572.heatmap.png`
+
+Research-lens update: current SAE/circuit-tracing work suggests the next step
+should not be "name the whitespace feature" immediately. First keep the branch
+target causal and replayable; then inspect SAE activations at the same
+layer/position. Qwen-Scope now has an official Qwen3.5 2B Base residual-stream
+SAE release close enough to try against the local Qwen3.5 2B branch cases.
+Recent SAE robustness work warns that feature interpretations can themselves be
+brittle under tiny input perturbations, so causal patching is the guardrail
+before trusting a feature label.
+
+Implemented `scripts/extract_qwen_sae_branch_features.py` for the Qwen-Scope
+Qwen3.5 2B residual-stream SAEs. Pilot runs:
+
+- `qwen35_2b`, `token_cert_parenthesize_word_0434`, layers 0 and 23.
+- `qwen35_2b`, `token_cert_tab_after_space_0572`, layers 18 and 23.
+
+Artifacts:
+
+- `runs/mechinterp_sae/qwen35_2b__token_cert_parenthesize_word_0434__sae_features.csv`
+- `runs/mechinterp_sae/qwen35_2b__token_cert_tab_after_space_0572__sae_features.csv`
+- `runs/mechinterp_sae/sae_feature_delta_summary.csv`
+
+Readout:
+
+- Parenthesized `(a)` prompt-boundary features are almost disjoint between the
+  clean token `" a"` and corrupted token `" ("`: top-20 feature overlap is
+  `1/20` at layer 0 and `3/20` at layer 23.
+- The same parenthesized case has more overlap at the final context but large
+  branch-specific feature deltas at layer 23.
+- Tab-after-space has low prompt-boundary feature overlap (`5/20`) but much
+  higher final/generated-prefix overlap (`16-18/20`), matching the aligned
+  patching result that it is less localized to a single edit-boundary position.
+
+Keep the caveat explicit: these are Qwen-Scope feature IDs, not human-readable
+feature labels. The useful current claim is about feature-set overlap/deltas at
+causal branch positions, not named "whitespace features."

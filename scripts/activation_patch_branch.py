@@ -7,6 +7,7 @@ import argparse
 import csv
 import json
 import math
+from difflib import SequenceMatcher
 from pathlib import Path
 from typing import Any
 
@@ -135,13 +136,53 @@ def patched_logits(
         handle.remove()
 
 
-def position_pairs(mode: str, clean_len: int, corrupt_len: int, prompt_lcp: int) -> list[tuple[str, int, int]]:
+def aligned_position_pairs(
+    clean_prompt_ids: list[int],
+    corrupt_prompt_ids: list[int],
+    common_prefix_len: int,
+) -> list[tuple[str, int, int]]:
+    pairs: list[tuple[str, int, int]] = []
+    matcher = SequenceMatcher(a=clean_prompt_ids, b=corrupt_prompt_ids, autojunk=False)
+    for _tag, i1, i2, j1, j2 in matcher.get_opcodes():
+        if _tag != "equal":
+            continue
+        for clean_pos, corrupt_pos in zip(range(i1, i2), range(j1, j2), strict=True):
+            pairs.append((f"aligned_prompt_pos_{clean_pos}_to_{corrupt_pos}", clean_pos, corrupt_pos))
+    clean_prompt_len = len(clean_prompt_ids)
+    corrupt_prompt_len = len(corrupt_prompt_ids)
+    for idx in range(common_prefix_len):
+        pairs.append(
+            (
+                f"aligned_generated_prefix_pos_{idx}",
+                clean_prompt_len + idx,
+                corrupt_prompt_len + idx,
+            )
+        )
+    return pairs
+
+
+def position_pairs(
+    mode: str,
+    clean_len: int,
+    corrupt_len: int,
+    prompt_lcp: int,
+    clean_prompt_ids: list[int],
+    corrupt_prompt_ids: list[int],
+    generated_prefix_len: int,
+) -> list[tuple[str, int, int]]:
     final = ("final_context_token", clean_len - 1, corrupt_len - 1)
     changed = ("prompt_lcp_token", min(prompt_lcp, clean_len - 1), min(prompt_lcp, corrupt_len - 1))
     if mode == "final":
         return [final]
     if mode == "changed-final":
         return [changed, final] if changed != final else [final]
+    if mode == "aligned":
+        pairs = aligned_position_pairs(clean_prompt_ids, corrupt_prompt_ids, generated_prefix_len)
+        if changed not in pairs:
+            pairs.append(changed)
+        if final not in pairs:
+            pairs.append(final)
+        return pairs
     if mode == "all":
         pairs = [(f"pos_{i}", i, i) for i in range(min(clean_len, corrupt_len))]
         if final not in pairs:
@@ -168,7 +209,7 @@ def main() -> None:
     parser.add_argument("--device", default="auto")
     parser.add_argument("--dtype", default="auto", choices=["auto", "float32", "float16", "bfloat16"])
     parser.add_argument("--thinking-mode", choices=["default", "enabled", "disabled"], default="disabled")
-    parser.add_argument("--positions", choices=["final", "changed-final", "all"], default="changed-final")
+    parser.add_argument("--positions", choices=["final", "changed-final", "aligned", "all"], default="changed-final")
     parser.add_argument("--system-prompt", default="You are a concise, accurate assistant. Answer directly.")
     args = parser.parse_args()
 
@@ -210,14 +251,12 @@ def main() -> None:
     b_branch_token = int(gen_b["generated_tokens"][first_diff])
     common_prefix = gen_a["generated_tokens"][:first_diff]
 
-    clean_inputs = append_continuation(
-        tokenize_prompt(loaded, pair["prompt_a"], args.system_prompt, args.thinking_mode),
-        common_prefix,
-    )
-    corrupt_inputs = append_continuation(
-        tokenize_prompt(loaded, pair["prompt_b"], args.system_prompt, args.thinking_mode),
-        common_prefix,
-    )
+    clean_prompt_inputs = tokenize_prompt(loaded, pair["prompt_a"], args.system_prompt, args.thinking_mode)
+    corrupt_prompt_inputs = tokenize_prompt(loaded, pair["prompt_b"], args.system_prompt, args.thinking_mode)
+    clean_prompt_ids = clean_prompt_inputs["input_ids"][0].tolist()
+    corrupt_prompt_ids = corrupt_prompt_inputs["input_ids"][0].tolist()
+    clean_inputs = append_continuation(clean_prompt_inputs, common_prefix)
+    corrupt_inputs = append_continuation(corrupt_prompt_inputs, common_prefix)
     clean_len = int(clean_inputs["input_ids"].shape[1])
     corrupt_len = int(corrupt_inputs["input_ids"].shape[1])
     prompt_delta = prompt_token_payload(loaded, pair["prompt_a"], pair["prompt_b"], args.system_prompt, args.thinking_mode)
@@ -244,6 +283,9 @@ def main() -> None:
         clean_len,
         corrupt_len,
         int(prompt_delta["prompt_token_lcp"]),
+        clean_prompt_ids,
+        corrupt_prompt_ids,
+        len(common_prefix),
     ):
         for layer_idx in range(len(blocks)):
             logits = patched_logits(loaded, blocks, corrupt_inputs, clean_cache, layer_idx, clean_pos, corrupt_pos)
