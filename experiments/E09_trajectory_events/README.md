@@ -11,7 +11,6 @@ Inputs:
 Commands:
 - `uv run python scripts/analyze_trajectory_events.py RUN_DIR ... --out-dir runs/trajectory_events/NAME`
 - `uv run python scripts/build_trajectory_artifacts.py --trajectory-dir runs/trajectory_events/NAME --out-root runs/trajectory_artifacts`
-- `uv run python scripts/compare_model_branching.py --events runs/trajectory_events/NAME/trajectory_events.csv --out-dir runs/trajectory_model_comparison/NAME`
 - `uv run python scripts/analyze_branch_prediction.py runs/trajectory_events/NAME/branch_prediction_windows.csv --bootstrap-samples 200`
   bootstraps aggregate AUROC by prompt-pair group; add `--bootstrap-scope
   groups` only when per-model confidence intervals are needed.
@@ -23,6 +22,7 @@ Outputs:
 - `branch_prediction_windows.csv`
 - `branch_prediction_auc.csv`
 - `case_candidates.csv` and `recommended_cases.csv` for figure/story selection
+- `model_comparison/` with paired branch timing and Qwen ladder comparisons
 - optional HTML casebook under `runs/casebooks/...`
 
 Inspection:
@@ -36,7 +36,7 @@ Status:
 - Higher-N logit-token readout currently includes Qwen3.5 0.8B, Qwen3.5 2B,
   Qwen3.5 4B, Qwen3.5 9B, and Gemma4 E2B instruct.
 - Current output is `runs/trajectory_events/logit_token_cert_v1/`; bundled
-  branch-prediction/casebook artifacts are under
+  branch-prediction/casebook/comparison artifacts are under
   `runs/trajectory_artifacts/logit_token_cert_v1/`.
 - `branch_within_N` is a decision-window target and includes the branch
   timestep itself.
@@ -46,6 +46,9 @@ Status:
   (`0.758-0.774`), low-margin AUROC `0.746` (`0.740-0.755`).
 - Pure pre-branch-within-1 warning is weaker: centered-logit-L2 AUROC `0.649`
   (`0.638-0.661`), JS AUROC `0.620` (`0.605-0.634`).
+- Paired Qwen ladder branch timing is not monotonic: only `10.4%` of shared
+  non-control cases are monotonic earlier with size, and only `10.4%` are
+  monotonic later with size.
 
 Caveat: the warning threshold often fires at `t=0`, so use this as a branch
 risk detector, not yet a precise "silent lead time" claim. Do not call

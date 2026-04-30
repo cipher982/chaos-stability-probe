@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build E09 branch-prediction, case-selection, and casebook artifacts."""
+"""Build E09 branch-prediction, case-selection, casebook, and comparison artifacts."""
 
 from __future__ import annotations
 
@@ -26,6 +26,12 @@ def main() -> None:
     parser.add_argument("--bootstrap-samples", type=int, default=100)
     parser.add_argument("--per-archetype", type=int, default=2)
     parser.add_argument("--case-limit", type=int, default=24)
+    parser.add_argument(
+        "--comparison-model",
+        action="append",
+        default=[],
+        help="Model name to include in the cross-model branch comparison. Defaults to the Qwen ladder.",
+    )
     args = parser.parse_args()
 
     name = args.name or args.trajectory_dir.name
@@ -41,6 +47,7 @@ def main() -> None:
     selection_dir = out_root / "case_selection"
     casebook_dir = out_root / "casebook"
     figures_dir = casebook_dir / "figures"
+    comparison_dir = out_root / "model_comparison"
     branch_dir.mkdir(parents=True, exist_ok=True)
 
     run(
@@ -90,6 +97,18 @@ def main() -> None:
     if args.silent_summary:
         render_cmd.extend(["--silent-summary", str(args.silent_summary)])
     run(render_cmd)
+
+    comparison_cmd = [
+        sys.executable,
+        "scripts/compare_model_branching.py",
+        "--events",
+        str(events),
+        "--out-dir",
+        str(comparison_dir),
+    ]
+    for model in args.comparison_model:
+        comparison_cmd.extend(["--model", model])
+    run(comparison_cmd)
     print(f"Wrote E09 artifact bundle to {out_root}")
 
 

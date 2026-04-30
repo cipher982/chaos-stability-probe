@@ -95,6 +95,15 @@ supports the decision-boundary version of the story more than a generic
 "formatting changes outputs" version, but the current pre-branch warning claim
 should stay modest.
 
+The same E9 readout is a warning against turning this into a parameter-count
+story. On the 500 shared non-control Qwen ladder cases, branch timing is only
+monotonic earlier-with-size in `10.4%` of cases and monotonic later-with-size in
+another `10.4%`. Pairwise timing deltas also change sign: Qwen2B branches later
+than Qwen0.8B on average, while Qwen9 branches earlier than Qwen2B and Qwen4B
+on average. The stronger claim is mechanism typing: tiny token-certified edits
+push different models across different local branch boundaries, and "bigger"
+does not determine where those boundaries sit.
+
 The expanded scaffold-long logit pass adds the most promising mechanistic
 thread so far. Across the 20-model 512-token panel, prompt-end top-1 probability
 is strongly anti-correlated with 512-token semantic divergence (`r ~= -0.84`),
