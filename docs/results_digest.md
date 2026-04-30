@@ -109,9 +109,12 @@ disjoint top-20 SAE features between clean `" a"` and corrupt `" ("` at layer 0
 (`overlap=1/20`) and remains mostly disjoint at layer 23 (`overlap=3/20`).
 For the tab-after-space case, the final generated-prefix/final-context position
 keeps high top-20 overlap (`16-18/20`) while prompt-boundary features are much
-less overlapping (`5/20`). This matches the patching story: parenthesized
-`(a)` looks like a sharp edit-boundary representation shift; tab-after-space
-looks more distributed by the time the branch token is chosen.
+less overlapping (`5/20`). The aligned Qwen3.5 2B patch maps agree:
+parenthesized `(a)` has strong prompt-boundary rescue at layer 0
+(`rescue_fraction ~= 0.86`), while tab-after-space is dominated by the last
+shared generated-prefix/final context. This matches the patching story:
+parenthesized `(a)` looks like a sharp edit-boundary representation shift;
+tab-after-space looks more distributed by the time the branch token is chosen.
 
 Quantization and compression are now supporting material, not the thesis. The
 main thesis is dynamical sensitivity: when the input changes a little, does the

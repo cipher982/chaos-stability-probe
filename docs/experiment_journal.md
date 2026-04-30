@@ -1756,6 +1756,14 @@ Heatmaps:
 
 - `runs/mechinterp_patch_aligned/qwen35_08b__token_cert_parenthesize_word_0434.heatmap.png`
 - `runs/mechinterp_patch_aligned/qwen35_08b__token_cert_tab_after_space_0572.heatmap.png`
+- `runs/mechinterp_patch_aligned/qwen35_2b__token_cert_parenthesize_word_0434.heatmap.png`
+- `runs/mechinterp_patch_aligned/qwen35_2b__token_cert_tab_after_space_0572.heatmap.png`
+
+After the SAE pilot, ran Qwen3.5 2B aligned-position sweeps for the same two
+cases. They match the feature-overlap story: parenthesized `(a)` has strong
+prompt-boundary rescue at the edit/LCP token (`rescue_fraction ~= 0.86` at
+layer 0), while tab-after-space is again dominated by the last shared generated
+prefix/final context (`rescue_fraction=1.0` at layers 22-23).
 
 Research-lens update: current SAE/circuit-tracing work suggests the next step
 should not be "name the whitespace feature" immediately. First keep the branch

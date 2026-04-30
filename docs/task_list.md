@@ -280,6 +280,8 @@ Local mech-interp seed setup:
 - Aligned heatmaps:
   - `runs/mechinterp_patch_aligned/qwen35_08b__token_cert_parenthesize_word_0434.heatmap.png`
   - `runs/mechinterp_patch_aligned/qwen35_08b__token_cert_tab_after_space_0572.heatmap.png`
+  - `runs/mechinterp_patch_aligned/qwen35_2b__token_cert_parenthesize_word_0434.heatmap.png`
+  - `runs/mechinterp_patch_aligned/qwen35_2b__token_cert_tab_after_space_0572.heatmap.png`
 - Next useful step: attach SAE feature activations to the selected aligned
   branch cases. Qwen-Scope now has an official Qwen3.5 2B Base residual-stream
   SAE release that is close enough to try first on the local 2B branch cases;
