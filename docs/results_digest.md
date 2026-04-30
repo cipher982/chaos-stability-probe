@@ -90,10 +90,12 @@ timestep, low margin and JS are strong classifiers (`0.953` and `0.891` AUROC,
 clustered by prompt pair). The older `branch_within_1` decision-window target
 includes the branch timestep, so its `0.766` JS AUROC should not be described as
 pure one-token-ahead warning. The stricter pre-branch-within-1 target is weaker
-but still above chance for centered logit L2 (`0.649`) and JS (`0.620`). This
+but still above chance for centered logit L2 (`0.649`) and JS (`0.620`). On the
+longer shared-prefix subset (`branch_t >= 5`), strict pre-branch-within-1 drops
+to centered L2 `0.568` and JS `0.558`, while at-branch remains strong. This
 supports the decision-boundary version of the story more than a generic
-"formatting changes outputs" version, but the current pre-branch warning claim
-should stay modest.
+"formatting changes outputs" version, but genuine pre-branch lead-time warning
+is not yet a strong result.
 
 The same E9 readout is a warning against turning this into a parameter-count
 story. On the 500 shared non-control Qwen ladder cases, branch timing is only
@@ -146,16 +148,15 @@ parenthesized `(a)` looks like a sharp edit-boundary representation shift;
 tab-after-space looks more distributed by the time the branch token is chosen.
 
 The E10 hidden/logit capture has an early size-contrast hint on the same five
-branch cases, and the local Qwen3.5 2B/4B side has now been recaptured with
-runtime metadata. On those local MPS/float16 captures, Qwen4B branches earlier
-than Qwen2B on several cases (`19` vs `35` for one blank-line wrap; `3` vs `9`
-for another), both branch immediately on the parenthesized-word case, and
-Qwen2B still has one no-visible-branch case in the logged 64-step window. The
-old Qwen9 SageMaker artifact still lacks resolved device, dtype, backend
-versions, and git SHA, so Qwen9 timing should remain a caveated larger-model
-hint until it is recaptured with `run_metadata.json`. Metadata-backed Qwen2B
-and Qwen4B SageMaker recaptures are now running on separate `g5.2xlarge` lanes,
-which will let us separate local MPS/float16 quirks from model-level timing.
+branch cases, but backend/dtype matters. Local Qwen3.5 2B/4B MPS/float16
+captures and SageMaker CUDA/bfloat16 recaptures agree on several immediate
+branches but can shift branch timing materially: Qwen2B has mean absolute
+branch-t delta `4.25` over comparable cases, and Qwen4B has `8.80`, with max
+shifts of `17` and `35` tokens. The Qwen9 metadata recapture is now processed:
+on these selected CUDA cases, mean visible branch-t is `9.0` for Qwen2B
+(excluding one no-visible-branch case), `7.8` for Qwen4B, and `1.8` for Qwen9.
+That is useful for choosing intervention cases, but still too selected to call
+a scaling law.
 
 ## Trajectory-Branching Research Frame
 

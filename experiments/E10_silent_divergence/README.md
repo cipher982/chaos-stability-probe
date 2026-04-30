@@ -13,6 +13,7 @@ Commands:
 - `uv run python scripts/run_silent_divergence_panel.py --model qwen35_2b`
 - `uv run python scripts/build_silent_divergence_readout.py --capture-root runs/silent_divergence_panel/NAME --out-dir runs/rankings/NAME`
 - `uv run python scripts/process_silent_divergence_queue.py`
+- `uv run python scripts/compare_silent_divergence_backends.py --left runs/rankings/LOCAL/silent_divergence_readout.csv --right runs/rankings/SAGEMAKER/silent_divergence_readout.csv --left-label local --right-label sagemaker --out-dir runs/rankings/e10_backend_comparison`
 
 Outputs:
 - per-model capture CSVs under `runs/silent_divergence_pilot/`
@@ -25,23 +26,19 @@ Outputs:
 - raw SageMaker artifacts under `runs/sagemaker_artifacts/`
 
 Status:
-- Qwen9 SageMaker pilot completed and processed under
+- Qwen2B/Qwen4B/Qwen9 SageMaker recaptures completed and processed under
   `runs/rankings/silent_divergence_pilot_v1/`.
 - Qwen2B/Qwen4B local captures were recaptured from commit `5128d18` with
   runtime metadata under
   `runs/silent_divergence_panel/local_qwen_ladder_meta_20260430/`.
 
-Current readout: metadata-backed local Qwen2B and Qwen4B captures differ on
-the same five selected branch cases. Qwen4B branches earlier than Qwen2B on
-several cases, both branch at token 0 for the parenthesized-word case, and
-Qwen2B has one no-visible-branch case in the 64-step logged window. Qwen9
-SageMaker still branches earlier on the old artifact, but that artifact predates
-`run_metadata.json`, so keep the larger-model timing caveated.
+Current readout: metadata-backed local Qwen2B/Qwen4B captures and SageMaker
+CUDA/bfloat16 recaptures differ on the same five selected branch cases. Local
+vs SageMaker mean absolute branch-t delta is `4.25` for Qwen2B and `8.80` for
+Qwen4B, so branch timing claims need backend/dtype caveats. Under SageMaker
+CUDA/bfloat16, mean visible branch-t on the five selected cases is `9.0` for
+Qwen2B over four visible-branch cases, `7.8` for Qwen4B, and `1.8` for Qwen9.
 
-Queue state: Qwen2B and Qwen4B SageMaker metadata captures were launched at
-2026-04-30 19:40 -0300 on separate `g5.2xlarge` lanes. Qwen9 is `processed`
-but missing runtime metadata.
-
-Next: decide whether relaunching Qwen9 E10 with metadata adds enough beyond the
-local captures. Keep the original queue in `configs/`; the copy here records the
+Next: use these cases as intervention targets, not as a general Qwen scaling
+claim. Keep the original queue in `configs/`; the copy here records the
 experiment-owned config snapshot.

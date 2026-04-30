@@ -1,0 +1,51 @@
+[
+  {
+    "job_name": "chaos-activation-patch-qwen2b-20260430-001",
+    "entrypoint": "activation_patch",
+    "model": "qwen35_2b",
+    "prompt_pairs": "configs/prompt_pairs_token_certified/qwen35_2b.json",
+    "targets_json": "configs/activation_patch_targets_v1.json",
+    "max_new_tokens": 128,
+    "timeout_s": 21600,
+    "max_runtime_s": 43200,
+    "positions": "aligned",
+    "profile": "zh-ml-productionengineer",
+    "bucket": "sagemaker-us-east-1-766806801073",
+    "role_arn": "arn:aws:iam::766806801073:role/service-role/AmazonSageMaker-ExecutionRole-20210902T010917",
+    "instance_type": "ml.g5.2xlarge",
+    "thinking_mode": "disabled"
+  },
+  {
+    "job_name": "chaos-activation-patch-qwen4b-20260430-001",
+    "entrypoint": "activation_patch",
+    "model": "qwen35_4b",
+    "prompt_pairs": "configs/prompt_pairs_token_certified/qwen35_4b.json",
+    "targets_json": "configs/activation_patch_targets_v1.json",
+    "max_new_tokens": 128,
+    "timeout_s": 21600,
+    "max_runtime_s": 43200,
+    "positions": "aligned",
+    "profile": "zh-marketing-productionengineer",
+    "bucket": "066377602118-use1-zme-prod-ml-ops-sagemaker-models",
+    "role_arn": "arn:aws:iam::066377602118:role/zme-prod-use1_sagemaker_0",
+    "instance_type": "ml.g5.2xlarge",
+    "thinking_mode": "disabled",
+    "no_tags": true
+  },
+  {
+    "job_name": "chaos-activation-patch-qwen9b-20260430-001",
+    "entrypoint": "activation_patch",
+    "model": "qwen35_9b",
+    "prompt_pairs": "configs/prompt_pairs_token_certified/qwen35_9b.json",
+    "targets_json": "configs/activation_patch_targets_v1.json",
+    "max_new_tokens": 128,
+    "timeout_s": 21600,
+    "max_runtime_s": 43200,
+    "positions": "aligned",
+    "profile": "zh-marketing-preprod-aiengineer",
+    "bucket": "636347950933-use1-zmp-preprod-ml-ops-sagemaker-models",
+    "role_arn": "arn:aws:iam::636347950933:role/zmp-preprod-use1_sagemaker_0",
+    "instance_type": "ml.g6e.2xlarge",
+    "thinking_mode": "disabled"
+  }
+]

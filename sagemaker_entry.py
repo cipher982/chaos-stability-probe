@@ -34,6 +34,8 @@ def main() -> None:
         script = "scripts/run_panel.py"
     elif entrypoint == "silent_divergence":
         script = "scripts/run_silent_divergence_panel.py"
+    elif entrypoint == "activation_patch":
+        script = "scripts/run_activation_patch_panel.py"
     else:
         raise ValueError(f"Unknown CHAOS_ENTRYPOINT: {entrypoint}")
 

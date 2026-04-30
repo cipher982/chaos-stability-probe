@@ -61,7 +61,7 @@
     "profile": "zh-marketing-preprod-aiengineer",
     "bucket": "636347950933-use1-zmp-preprod-ml-ops-sagemaker-models",
     "role_arn": "arn:aws:iam::636347950933:role/zmp-preprod-use1_sagemaker_0",
-    "job_name": "chaos-silent-div-qwen9b-20260430-001",
+    "job_name": "chaos-silent-div-qwen9b-meta-20260430-001",
     "model": "qwen35_9b",
     "instance_type": "ml.g6e.2xlarge",
     "thinking_mode": "disabled"

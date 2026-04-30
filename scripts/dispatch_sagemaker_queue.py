@@ -72,6 +72,10 @@ def build_launch_cmd(job: dict[str, Any]) -> list[str]:
         cmd.extend(["--repeats", str(job["repeats"])])
     for pair_id in job.get("pair_ids", []):
         cmd.extend(["--pair-id", pair_id])
+    if "targets_csv" in job:
+        cmd.extend(["--targets-csv", job["targets_csv"]])
+    if "targets_json" in job:
+        cmd.extend(["--targets-json", job["targets_json"]])
     if job.get("sample"):
         cmd.append("--sample")
         cmd.extend(["--temperature", str(job.get("temperature", 0.7))])
@@ -90,6 +94,8 @@ def build_launch_cmd(job: dict[str, Any]) -> list[str]:
         cmd.extend(["--logit-max-steps", str(job.get("logit_max_steps", 128))])
     elif job.get("entrypoint") == "silent_divergence":
         cmd.extend(["--logit-max-steps", str(job.get("logit_max_steps", 64))])
+    if job.get("entrypoint") == "activation_patch":
+        cmd.extend(["--positions", job.get("positions", "aligned")])
     if job.get("no_tags"):
         cmd.append("--no-tags")
     return cmd

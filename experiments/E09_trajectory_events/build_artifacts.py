@@ -68,6 +68,7 @@ def write_run_metadata(args: argparse.Namespace, out_root: Path, events: Path, p
             "bootstrap_samples": args.bootstrap_samples,
             "per_archetype": args.per_archetype,
             "case_limit": args.case_limit,
+            "long_prefix_min_branch_t": args.long_prefix_min_branch_t,
             "comparison_model": args.comparison_model,
         },
         "git": git_metadata(),
@@ -84,6 +85,12 @@ def main() -> None:
     parser.add_argument("--bootstrap-samples", type=int, default=100)
     parser.add_argument("--per-archetype", type=int, default=2)
     parser.add_argument("--case-limit", type=int, default=24)
+    parser.add_argument(
+        "--long-prefix-min-branch-t",
+        type=int,
+        default=5,
+        help="Also score branch prediction on visible-branch cases with branch_t at least this value.",
+    )
     parser.add_argument(
         "--comparison-model",
         action="append",
@@ -102,6 +109,7 @@ def main() -> None:
         raise SystemExit(f"Missing {events}")
 
     branch_dir = out_root / "branch_prediction"
+    long_prefix_dir = out_root / "branch_prediction_long_prefix"
     selection_dir = out_root / "case_selection"
     casebook_dir = out_root / "casebook"
     figures_dir = casebook_dir / "figures"
@@ -121,6 +129,21 @@ def main() -> None:
             str(args.bootstrap_samples),
         ]
     )
+
+    if args.long_prefix_min_branch_t > 0:
+        run(
+            [
+                sys.executable,
+                "scripts/analyze_branch_prediction.py",
+                str(prediction_windows),
+                "--out-dir",
+                str(long_prefix_dir),
+                "--bootstrap-samples",
+                str(args.bootstrap_samples),
+                "--min-branch-t",
+                str(args.long_prefix_min_branch_t),
+            ]
+        )
 
     select_cmd = [
         sys.executable,

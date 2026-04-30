@@ -1,0 +1,26 @@
+{
+  "qwen35_2b": [
+    "token_cert_parenthesize_word_0344",
+    "token_cert_blank_line_wrap_0521",
+    "token_cert_duplicate_small_word_0125",
+    "token_cert_duplicate_small_word_0185",
+    "token_cert_tab_after_space_0192",
+    "token_cert_parenthesize_word_0230"
+  ],
+  "qwen35_4b": [
+    "token_cert_blank_line_wrap_0357",
+    "token_cert_triple_internal_space_0532",
+    "token_cert_line_wrap_0369",
+    "token_cert_parenthesize_word_0427",
+    "token_cert_double_internal_space_0135",
+    "token_cert_parenthesize_word_0525"
+  ],
+  "qwen35_9b": [
+    "token_cert_tab_after_space_0572",
+    "token_cert_line_wrap_0421",
+    "token_cert_blank_line_wrap_0212",
+    "token_cert_parenthesize_word_0097",
+    "token_cert_blank_line_wrap_0457",
+    "token_cert_blank_line_wrap_0574"
+  ]
+}

@@ -20,20 +20,25 @@ FEATURES = {
 BOOTSTRAP_KEY_COLS = ["model_name", "pair_id", "repeat"]
 
 
-def target_specs(df: pd.DataFrame) -> list[tuple[str, str, int | None]]:
-    specs: list[tuple[str, str, int | None]] = []
+def target_specs(df: pd.DataFrame) -> list[tuple[str, str, int | None, str]]:
+    specs: list[tuple[str, str, int | None, str]] = []
     if "at_branch" in df.columns:
-        specs.append(("at_branch", "at_branch", None))
+        specs.append(("at_branch", "at_branch", None, "At visible branch timestep"))
     for prefix, label in [
-        ("pre_branch_within_", "pre_branch_within"),
-        ("branch_within_", "branch_within"),
+        ("pre_branch_within_", "strict_pre_branch_warning"),
+        ("branch_within_", "branch_window_including_branch"),
     ]:
         horizons = sorted(
             int(col.removeprefix(prefix))
             for col in df.columns
             if col.startswith(prefix)
         )
-        specs.extend((f"{prefix}{horizon}", label, horizon) for horizon in horizons)
+        for horizon in horizons:
+            if prefix == "pre_branch_within_":
+                description = f"Strict pre-branch warning within {horizon} token(s); excludes branch timestep"
+            else:
+                description = f"Branch decision window within {horizon} token(s); includes branch timestep"
+            specs.append((f"{prefix}{horizon}", label, horizon, description))
     return specs
 
 
@@ -100,6 +105,12 @@ def main() -> None:
     parser.add_argument("--bootstrap-samples", type=int, default=0)
     parser.add_argument("--bootstrap-seed", type=int, default=12345)
     parser.add_argument(
+        "--min-branch-t",
+        type=int,
+        default=None,
+        help="Only score visible-branch cases whose branch_t is at least this value.",
+    )
+    parser.add_argument(
         "--bootstrap-scope",
         choices=["all", "groups"],
         default="all",
@@ -110,6 +121,11 @@ def main() -> None:
     out_dir = args.out_dir or args.prediction_windows.parent
     out_dir.mkdir(parents=True, exist_ok=True)
     df = pd.read_csv(args.prediction_windows)
+    input_rows = len(df)
+    if args.min_branch_t is not None:
+        if "branch_t" not in df.columns:
+            raise SystemExit("--min-branch-t requires a branch_t column")
+        df = df[df["branch_t"].notna() & (df["branch_t"].astype(float) >= args.min_branch_t)].copy()
 
     rows = []
     targets = target_specs(df)
@@ -118,7 +134,7 @@ def main() -> None:
         groups.extend((model, group) for model, group in df.groupby("model_name", sort=False))
 
     for group_name, group in groups:
-        for target, target_kind, horizon in targets:
+        for target, target_kind, horizon, target_description in targets:
             if target not in group:
                 continue
             labels = group[target]
@@ -130,10 +146,14 @@ def main() -> None:
                     "group": group_name,
                     "target": target,
                     "target_kind": target_kind,
+                    "target_description": target_description,
                     "horizon": horizon,
                     "feature": feature,
                     "direction": direction,
                     "auroc": value,
+                    "input_rows": int(input_rows),
+                    "filtered_rows": int(len(df)),
+                    "min_branch_t": args.min_branch_t,
                     "n_rows": int(group[[target, feature]].dropna().shape[0]),
                     "n_prompt_pairs": int(group[[col for col in BOOTSTRAP_KEY_COLS if col in group.columns]].drop_duplicates().shape[0]),
                     "positive_rate": float(labels.mean()),

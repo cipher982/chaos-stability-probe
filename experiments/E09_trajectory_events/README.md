@@ -22,7 +22,9 @@ Outputs:
 - `trajectory_events.csv`
 - `trajectory_event_summary.csv`
 - `branch_prediction_windows.csv`
-- `branch_prediction_auc.csv`
+- `branch_prediction/branch_prediction_auc.csv`
+- `branch_prediction_long_prefix/branch_prediction_auc.csv` for visible-branch
+  cases whose branch timestep is at least the configured long-prefix minimum
 - `case_candidates.csv` and `recommended_cases.csv` for figure/story selection
 - `model_comparison/` with paired branch timing and Qwen ladder comparisons
 - optional HTML casebook under `runs/casebooks/...`
@@ -41,13 +43,20 @@ Status:
   branch-prediction/casebook/comparison artifacts are under
   `runs/trajectory_artifacts/logit_token_cert_v1/`.
 - `branch_within_N` is a decision-window target and includes the branch
-  timestep itself.
+  timestep itself. In `branch_prediction_auc.csv`, this is labeled
+  `branch_window_including_branch`.
+- `pre_branch_within_N` is the strict warning target and excludes the branch
+  timestep. In `branch_prediction_auc.csv`, this is labeled
+  `strict_pre_branch_warning`.
 - At-branch classification is strong: low-margin AUROC `0.953`
   (`0.951-0.956` clustered CI), JS AUROC `0.891` (`0.885-0.898`).
 - Decision-window branch-within-1 is moderate: JS AUROC `0.766`
   (`0.758-0.774`), low-margin AUROC `0.746` (`0.740-0.755`).
 - Pure pre-branch-within-1 warning is weaker: centered-logit-L2 AUROC `0.649`
   (`0.638-0.661`), JS AUROC `0.620` (`0.605-0.634`).
+- On the long-prefix subset (`branch_t >= 5`), pure pre-branch-within-1 warning
+  weakens further: centered-logit-L2 AUROC `0.568` (`0.554-0.579`), JS AUROC
+  `0.558` (`0.545-0.570`).
 - Paired Qwen ladder branch timing is not monotonic: only `10.4%` of shared
   non-control cases are monotonic earlier with size, and only `10.4%` are
   monotonic later with size.

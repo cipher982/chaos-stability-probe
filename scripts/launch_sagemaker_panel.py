@@ -61,10 +61,12 @@ def main() -> None:
     parser.add_argument("--volume-size-gb", type=int, default=200)
     parser.add_argument("--max-runtime-s", type=int, default=8 * 60 * 60)
     parser.add_argument("--job-name", default="")
-    parser.add_argument("--entrypoint", choices=["panel", "silent_divergence"], default="panel")
+    parser.add_argument("--entrypoint", choices=["panel", "silent_divergence", "activation_patch"], default="panel")
     parser.add_argument("--model", action="append", default=[], help="Model name or ID. Repeatable.")
     parser.add_argument("--prompt-pairs", default="configs/prompt_pairs.json")
     parser.add_argument("--pair-id", action="append", dest="pair_ids", default=[])
+    parser.add_argument("--targets-csv", default="")
+    parser.add_argument("--targets-json", default="")
     parser.add_argument("--limit-pairs", type=int, default=0)
     parser.add_argument("--max-new-tokens", type=int, default=96)
     parser.add_argument("--repeats", type=int, default=1)
@@ -79,6 +81,7 @@ def main() -> None:
     parser.add_argument("--logit-top-k", type=int, default=20)
     parser.add_argument("--logit-max-steps", type=int, default=128)
     parser.add_argument("--thinking-mode", choices=["default", "enabled", "disabled"], default="default")
+    parser.add_argument("--positions", choices=["final", "changed-final", "aligned", "all"], default="aligned")
     parser.add_argument("--no-tags", action="store_true")
     parser.add_argument("--dry-run", action="store_true")
     args = parser.parse_args()
@@ -133,6 +136,14 @@ def main() -> None:
         run_args.extend(["--logit-max-steps", str(args.logit_max_steps)])
         for pair_id in args.pair_ids:
             run_args.extend(["--pair-id", pair_id])
+    if args.entrypoint == "activation_patch":
+        run_args.extend(["--positions", args.positions])
+        for pair_id in args.pair_ids:
+            run_args.extend(["--pair-id", pair_id])
+        if args.targets_csv:
+            run_args.extend(["--targets-csv", args.targets_csv])
+        if args.targets_json:
+            run_args.extend(["--targets-json", args.targets_json])
 
     sess = boto3.Session(profile_name=args.profile, region_name=args.region)
     s3 = sess.client("s3")
