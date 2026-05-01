@@ -25,7 +25,7 @@ Operational board only. Keep historical narrative out of this file; use
 
 ## Live Operations
 
-Last checked: 2026-04-30 21:13 -0300.
+Last checked: 2026-04-30 21:39 -0300.
 
 ### SageMaker Running
 
@@ -34,6 +34,9 @@ Last checked: 2026-04-30 21:13 -0300.
   - `chaos-logit-token-cert-gemma-e4b-it-20260430-001`
   - `chaos-logit-token-cert-gemma-e4b-base-20260430-001`
   - `chaos-token-micro-gemma-e2b-base-token-cert-20260430-004`
+  - `chaos-batch-det-qwen08-g6e-20260430-001` (pending)
+- ML production `g5.2xlarge`:
+  - `chaos-batch-det-qwen08-g5-20260430-001` (pending)
 - Marketing production `g5.2xlarge`:
   - `chaos-activation-patch-gemma-e2b-it-20260430-002`
 - QA `g5.2xlarge`:
@@ -77,6 +80,7 @@ new failed/stopped jobs were found in the latest active queues.
 ### Pending Processing
 
 - Process when complete:
+  - Qwen0.8B batch-determinism checks on `g6e.2xlarge` and `g5.2xlarge`
   - Qwen0.8B/Gemma E2B-IT activation-patching jobs
   - Gemma E2B base/E4B instruct/E4B base logit-token jobs
   - Gemma E2B base token-micro repair
