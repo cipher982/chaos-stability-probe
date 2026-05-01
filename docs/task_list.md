@@ -25,18 +25,13 @@ Operational board only. Keep historical narrative out of this file; use
 
 ## Live Operations
 
-Last checked: 2026-04-30 21:39 -0300.
+Last checked: 2026-04-30 22:25 -0300.
 
 ### SageMaker Running
 
 - Preprod `g6e.2xlarge`:
   - `chaos-logit-token-cert-gemma-e2b-base-20260430-001`
-  - `chaos-logit-token-cert-gemma-e4b-it-20260430-001`
-  - `chaos-logit-token-cert-gemma-e4b-base-20260430-001`
   - `chaos-token-micro-gemma-e2b-base-token-cert-20260430-004`
-  - `chaos-batch-det-qwen08-g6e-20260430-001` (pending)
-- ML production `g5.2xlarge`:
-  - `chaos-batch-det-qwen08-g5-20260430-001` (pending)
 - Marketing production `g5.2xlarge`:
   - `chaos-activation-patch-gemma-e2b-it-20260430-002`
 - QA `g5.2xlarge`:
@@ -76,14 +71,20 @@ new failed/stopped jobs were found in the latest active queues.
   - `runs/rankings/e10_backend_comparison_20260430/`
   - Qwen2B mean absolute branch-t delta local-vs-SageMaker: `4.25`.
   - Qwen4B mean absolute branch-t delta local-vs-SageMaker: `8.80`.
+- Batch-determinism checks completed and were pulled:
+  - `chaos-batch-det-qwen08-g6e-20260430-001`
+  - `chaos-batch-det-qwen08-g5-20260430-001`
+  - output: `runs/sagemaker_artifacts/chaos-batch-det-*/runs/batch_determinism.json`
 
 ### Pending Processing
 
 - Process when complete:
-  - Qwen0.8B batch-determinism checks on `g6e.2xlarge` and `g5.2xlarge`
   - Qwen0.8B/Gemma E2B-IT activation-patching jobs
-  - Gemma E2B base/E4B instruct/E4B base logit-token jobs
+  - Gemma E2B base logit-token job
   - Gemma E2B base token-micro repair
+
+- Process now:
+  - Gemma E4B instruct/base logit-token jobs completed at 22:20/22:14 -0300.
 
 ## Current Readouts
 
@@ -134,11 +135,23 @@ new failed/stopped jobs were found in the latest active queues.
 - Treat rescue fractions above 1.0 as overshoot, not better-than-perfect
   semantic recovery.
 
+### Batch Determinism
+
+`runs/sagemaker_artifacts/chaos-batch-det-*/runs/batch_determinism.json`
+
+- Qwen0.8B CUDA/bfloat16 singleton-vs-batch checks completed on both
+  `ml.g6e.2xlarge` and `ml.g5.2xlarge`.
+- Batching is faster but not token-exact:
+  - `g6e`: batch size 2/4/8 mismatched `1/8`, `3-4/8`, `5/8` prompts.
+  - `g5`: batch size 2/4/8 mismatched `3/8`, `2/8`, `5/8` prompts.
+- Do not batch science-critical branch-timing generations unless the paper
+  explicitly treats batch shape as part of the runtime condition.
+
 ## Next Actions
 
 1. Process Qwen0.8B/Gemma E2B-IT activation-patching jobs when they land.
-2. Process Gemma logit-token jobs and Gemma E2B base token-micro repair when
-   they land.
+2. Process Gemma E4B logit-token completions, then Gemma E2B base logit and
+   token-micro repair when they land.
 3. Build the paper-grade figures:
    - single-case trajectory anatomy,
    - Qwen branch-timing parallel coordinates,
