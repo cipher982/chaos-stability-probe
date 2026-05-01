@@ -37,6 +37,8 @@ Inspection:
   selected case plus a `manifest.csv`.
 - Add `--cases-from runs/trajectory_case_selection/NAME/recommended_cases.csv`
   to render the exact recommended rows from case selection.
+- `uv run python scripts/plot_e09_summary.py` writes compact AUROC and
+  model-profile PNGs under `runs/figures/e09_summary/`.
 
 Status:
 - Higher-N logit-token readout currently includes Qwen3.5 0.8B, Qwen3.5 2B,
