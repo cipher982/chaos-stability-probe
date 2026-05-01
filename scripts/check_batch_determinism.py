@@ -107,6 +107,7 @@ def main() -> None:
     parser.add_argument("--limit-pairs", type=int, default=0)
     parser.add_argument("--max-new-tokens", type=int, default=96)
     parser.add_argument("--batch-size", type=int, action="append")
+    parser.add_argument("--timeout-s", type=int, default=0, help="Accepted for SageMaker launcher compatibility.")
     parser.add_argument("--seed", type=int, default=1234)
     parser.add_argument("--device", default="auto")
     parser.add_argument("--dtype", default="auto", choices=["auto", "float32", "float16", "bfloat16"])

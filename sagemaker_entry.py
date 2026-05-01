@@ -36,10 +36,21 @@ def main() -> None:
         script = "scripts/run_silent_divergence_panel.py"
     elif entrypoint == "activation_patch":
         script = "scripts/run_activation_patch_panel.py"
+    elif entrypoint == "batch_determinism":
+        script = "scripts/check_batch_determinism.py"
     else:
         raise ValueError(f"Unknown CHAOS_ENTRYPOINT: {entrypoint}")
 
-    cmd = [sys.executable, script, "--out-root", str(out_root), *[str(arg) for arg in extra_args]]
+    if entrypoint == "batch_determinism":
+        cmd = [
+            sys.executable,
+            script,
+            "--out",
+            str(out_root / "batch_determinism.json"),
+            *[str(arg) for arg in extra_args],
+        ]
+    else:
+        cmd = [sys.executable, script, "--out-root", str(out_root), *[str(arg) for arg in extra_args]]
     print("Running:", " ".join(cmd), flush=True)
     subprocess.check_call(cmd)
 
