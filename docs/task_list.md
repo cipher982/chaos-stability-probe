@@ -25,17 +25,12 @@ Operational board only. Keep historical narrative out of this file; use
 
 ## Live Operations
 
-Last checked: 2026-04-30 22:25 -0300.
+Last checked: 2026-04-30 23:23 -0300.
 
 ### SageMaker Running
 
-- Preprod `g6e.2xlarge`:
-  - `chaos-logit-token-cert-gemma-e2b-base-20260430-001`
-  - `chaos-token-micro-gemma-e2b-base-token-cert-20260430-004`
 - Marketing production `g5.2xlarge`:
-  - `chaos-activation-patch-gemma-e2b-it-20260430-002`
-- QA `g5.2xlarge`:
-  - `chaos-activation-patch-qwen08-20260430-002`
+  - `chaos-activation-patch-gemma-e2b-it-20260430-003`
 
 Recent stopped jobs are known superseded early attempts from earlier waves; no
 new failed/stopped jobs were found in the latest active queues.
@@ -66,7 +61,7 @@ new failed/stopped jobs were found in the latest active queues.
   - `branch_window_including_branch` includes the branch timestep.
   - `strict_pre_branch_warning` excludes the branch timestep.
   - Long-prefix subset (`branch_t >= 5`) weakens strict pre-branch-within-1 to
-    centered L2 `0.568`, JS `0.558`.
+    centered L2 `0.581`, JS `0.558`.
 - E10 backend comparison was built:
   - `runs/rankings/e10_backend_comparison_20260430/`
   - Qwen2B mean absolute branch-t delta local-vs-SageMaker: `4.25`.
@@ -79,18 +74,25 @@ new failed/stopped jobs were found in the latest active queues.
   - output: `runs/rankings/activation_patch_v2/`
   - Qwen0.8B: 6/6 finite, replayable, full-or-overshoot rescues.
   - Gemma E2B-IT: job completed but patch cases failed because
-    `activation_patch_branch.py` does not yet find Gemma's transformer block
-    list.
+    `activation_patch_branch.py` did not find Gemma's transformer block list.
+- E05 Gemma E2B base token-micro repair completed and was processed:
+  - output: `runs/rankings/token_micro_v3/`
+  - Gemma E2B base is now the second-most fragile v3 model:
+    mean `0.1786`, p90 `0.3505`.
+- E06 logit-token queue completed and was processed:
+  - output: `runs/rankings/logit_token_cert_v1/`
+  - All Qwen0.8B/2B/4B/9B and Gemma E2B/E4B instruct/base rows are now present.
+- E09 trajectory artifacts were rebuilt against the complete 8-model logit
+  panel:
+  - output: `runs/trajectory_events/logit_token_cert_v1/`
+  - artifact bundle: `runs/trajectory_artifacts/logit_token_cert_v1/`
+- Gemma E2B-IT E07 was relaunched after adding Gemma4 block-path support:
+  - `chaos-activation-patch-gemma-e2b-it-20260430-003`
 
 ### Pending Processing
 
-- Process when complete:
-  - Gemma E2B base logit-token job
-  - Gemma E2B base token-micro repair
-
-- Process now:
-  - Gemma E4B instruct/base logit-token jobs completed at 22:20/22:14 -0300.
-  - Add Gemma block-path support before retrying E07 on Gemma E2B-IT.
+- Process Gemma E2B-IT E07 retry when
+  `chaos-activation-patch-gemma-e2b-it-20260430-003` completes.
 
 ## Current Readouts
 
@@ -99,6 +101,7 @@ new failed/stopped jobs were found in the latest active queues.
 `runs/rankings/token_micro_v3/combined_model_summary.csv`
 
 - OPT 6.7B: `0.2894` mean over 500 effective rows.
+- Gemma4 E2B base: `0.1786` mean over 500 effective rows.
 - Gemma4 E4B base: `0.1286` mean over 500 effective rows.
 - Qwen0.8B/2B/4B/9B thinking-off: `0.0930`, `0.0912`, `0.0855`, `0.0786`.
 - Gemma4 E4B/E2B instruct: `0.0684`, `0.0591`.
@@ -108,12 +111,18 @@ new failed/stopped jobs were found in the latest active queues.
 
 `runs/trajectory_artifacts/logit_token_cert_v1/`
 
-- At-branch AUROC is strong: low-margin `0.953`, JS `0.891`.
-- Strict pre-branch-within-1 is weaker: centered L2 `0.649`, JS `0.620`.
+- Complete 8-model panel: Qwen0.8B/2B/4B/9B plus Gemma E2B/E4B
+  instruct/base.
+- At-branch AUROC is strong: low-margin `0.947`, JS `0.883`.
+- Strict pre-branch-within-1 is weaker: centered L2 `0.661`, JS `0.618`.
 - On long-prefix cases (`branch_t >= 5`), strict pre-branch-within-1 weakens to
-  centered L2 `0.568`, JS `0.558`.
+  centered L2 `0.581`, JS `0.558`.
 - Qwen ladder branch timing is not monotonic with size; only `10.4%` of shared
   cases are monotonic earlier-with-size and `10.4%` monotonic later-with-size.
+- Gemma base models branch earlier and more often immediately than their
+  instruction-tuned siblings: immediate visible branch rate is `18.6%` for
+  Gemma E2B base and `31.6%` for Gemma E4B base, versus `0.6%`/`11.0%` for
+  E2B/E4B instruct.
 
 ### E10 Silent Divergence
 
@@ -158,15 +167,13 @@ new failed/stopped jobs were found in the latest active queues.
 
 ## Next Actions
 
-1. Process Qwen0.8B/Gemma E2B-IT activation-patching jobs when they land.
-2. Process Gemma E4B logit-token completions, then Gemma E2B base logit and
-   token-micro repair when they land.
+1. Process Gemma E2B-IT E07 retry when it lands.
+2. Compare E07 v1/v2 by mechanism type and model family before launching the
+   next causal wave.
 3. Build the paper-grade figures:
    - single-case trajectory anatomy,
    - Qwen branch-timing parallel coordinates,
    - at-branch vs strict pre-branch AUROC forest plot.
-4. Compare E07 v1/v2 by mechanism type and model family before launching the
-   next causal wave.
 
 ## Useful Commands
 

@@ -20,11 +20,20 @@ Outputs:
 - patch CSVs and heatmaps under `runs/mechinterp_patch*/`
 - merged SageMaker readouts under `runs/rankings/activation_patch_v*/`
 
-Status: active causal-intervention wave. Qwen2B/4B/9B v1 SageMaker jobs landed
-and are processed in `runs/rankings/activation_patch_v1/`; Qwen0.8B and Gemma
-E2B-IT v2 jobs are launched from `configs/activation_patch_targets_v2.json`.
-Scripts remain in `scripts/` for now because later E08 scripts import them
-directly.
+Status: active causal-intervention wave.
+- Qwen2B/4B/9B v1 SageMaker jobs are processed in
+  `runs/rankings/activation_patch_v1/`: 17/18 finite rescue cases and 16/18
+  replayable full-or-overshoot rescues.
+- Qwen0.8B v2 is processed in `runs/rankings/activation_patch_v2/`: 6/6
+  finite, replayable, full-or-overshoot rescues.
+- Gemma E2B-IT v2 job `chaos-activation-patch-gemma-e2b-it-20260430-002`
+  completed but all cases failed because Gemma4 exposes decoder blocks at
+  `model.language_model.layers`.
+- `activation_patch_branch.py` now supports that Gemma4 block path, and retry
+  `chaos-activation-patch-gemma-e2b-it-20260430-003` is running on marketing
+  production `g5.2xlarge`.
+- Scripts remain in `scripts/` for now because later E08 scripts import them
+  directly.
 
 SageMaker status: `sagemaker_entry.py` now supports
 `CHAOS_ENTRYPOINT=activation_patch` for aligned residual-patching panels.

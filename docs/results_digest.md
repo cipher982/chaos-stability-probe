@@ -1,7 +1,7 @@
 # Results Digest
 
-Last updated: 2026-04-30 after E9 logit-token processing, token-certified v3
-partial processing, and the trajectory-branching research pivot.
+Last updated: 2026-04-30 after complete E06 logit-token processing, E09
+trajectory artifact rebuild, and Gemma E2B base token-micro repair.
 
 This is the compact, talk-oriented current-state readout. The talk is a
 chaos/dynamical-systems teaching talk first; the stability probe is supporting
@@ -75,24 +75,22 @@ The completed logit probe records full-vocab KL/JS divergence, top-token
 margins, winner-rank shifts, and teacher-forced logit divergence along the same
 continuation.
 
-The first higher-N E9 logit-token readout now has five completed models:
-Qwen3.5 0.8B/2B/4B/9B thinking-off and Gemma4 E2B instruct, each with 525
+The higher-N E9 logit-token readout now has eight completed models: Qwen3.5
+0.8B/2B/4B/9B thinking-off plus Gemma4 E2B/E4B instruct/base, each with 525
 token-certified pairs. Identical controls are effectively zero. Non-control
-semantic means are `0.0873` for Qwen0.8B, `0.0872` for Qwen2B, `0.0827` for
-Qwen4B, `0.0787` for Qwen9, and `0.0589` for Gemma E2B IT. Prompt-end JS is
-lowest for Qwen2B/Qwen9/Gemma (`0.00606`, `0.00630`, `0.00637`), higher for
-Qwen4B (`0.00741`), and highest for Qwen0.8B (`0.00877`). The internal
-confidence story differs: Qwen0.8B has the lowest mean margin (`2.09`), Qwen4B
-has the highest top-1 flip rate (`0.0533`), Qwen9 is lower-flip/wider-margin,
-and Gemma has the lowest flip rate (`0.0114`) with the widest margin (`10.32`).
-On common-prefix branch windows, the metric split matters: at the actual branch
-timestep, low margin and JS are strong classifiers (`0.953` and `0.891` AUROC,
-clustered by prompt pair). The older `branch_within_1` decision-window target
-includes the branch timestep, so its `0.766` JS AUROC should not be described as
-pure one-token-ahead warning. The stricter pre-branch-within-1 target is weaker
-but still above chance for centered logit L2 (`0.649`) and JS (`0.620`). On the
+semantic means are `0.0873`, `0.0872`, `0.0827`, and `0.0787` across the Qwen
+0.8B/2B/4B/9B ladder; `0.0589` and `0.0696` for Gemma E2B/E4B instruct; and
+`0.1505` and `0.1055` for Gemma E2B/E4B base. Prompt-end metrics show the same
+recipe split: Gemma base models have much higher JS/top-1 flip/effective
+branching factor than Gemma instruct models or the Qwen ladder. On common-
+prefix branch windows, the metric split matters: at the actual branch timestep,
+low margin and JS are strong classifiers (`0.947` and `0.883` AUROC, clustered
+by prompt pair). The older `branch_within_1` decision-window target includes
+the branch timestep, so its `0.766` JS AUROC should not be described as pure
+one-token-ahead warning. The stricter pre-branch-within-1 target is weaker but
+still above chance for centered logit L2 (`0.661`) and JS (`0.618`). On the
 longer shared-prefix subset (`branch_t >= 5`), strict pre-branch-within-1 drops
-to centered L2 `0.568` and JS `0.558`, while at-branch remains strong. This
+to centered L2 `0.581` and JS `0.558`, while at-branch remains strong. This
 supports the decision-boundary version of the story more than a generic
 "formatting changes outputs" version, but genuine pre-branch lead-time warning
 is not yet a strong result.
@@ -102,9 +100,12 @@ story. On the 500 shared non-control Qwen ladder cases, branch timing is only
 monotonic earlier-with-size in `10.4%` of cases and monotonic later-with-size in
 another `10.4%`. Pairwise timing deltas also change sign: Qwen2B branches later
 than Qwen0.8B on average, while Qwen9 branches earlier than Qwen2B and Qwen4B
-on average. The stronger claim is mechanism typing: tiny token-certified edits
-push different models across different local branch boundaries, and "bigger"
-does not determine where those boundaries sit.
+on average. Gemma adds a recipe contrast: base models branch earlier and more
+immediately than their instruction-tuned siblings, with immediate visible
+branch rates of `18.6%` for E2B base and `31.6%` for E4B base versus `0.6%`
+and `11.0%` for E2B/E4B instruct. The stronger claim is mechanism typing: tiny
+token-certified edits push different models across different local branch
+boundaries, and "bigger" does not determine where those boundaries sit.
 
 The expanded scaffold-long logit pass adds the most promising mechanistic
 thread so far. Across the 20-model 512-token panel, prompt-end top-1 probability
@@ -240,10 +241,12 @@ The earlier micro sweep found that many raw character edits never survived
 tokenization or chat-template formatting as real prompt-token deltas. The v3
 reinforcement wave now uses model-specific certified prompt files: 25 identical
 controls plus 500 effective prompt-token perturbations per selected model. As
-of the 2026-04-30 19:35 -0300 processing pass, processed v3 means are:
+of the 2026-04-30 23:23 -0300 processing pass, processed v3 means are:
 
 | Model | Effective pairs | Mean 512-token semantic distance | P90 |
 | --- | ---: | ---: | ---: |
+| OPT 6.7B | 500 | 0.289 | 0.515 |
+| Gemma4 E2B base | 500 | 0.179 | 0.351 |
 | Gemma4 E4B base | 500 | 0.129 | 0.303 |
 | Qwen3.5 0.8B thinking-off | 500 | 0.093 | 0.165 |
 | Qwen3.5 2B thinking-off | 500 | 0.091 | 0.165 |
@@ -253,16 +256,14 @@ of the 2026-04-30 19:35 -0300 processing pass, processed v3 means are:
 | Gemma4 E4B instruct | 500 | 0.068 | 0.165 |
 | Gemma4 E2B instruct | 500 | 0.059 | 0.112 |
 
-This is still not the final v3 panel: Gemma4 E2B base `-003` completed but
-still produced partial raw rows with no `summary.csv`; repair job `-004` is in
-progress. OLMo3 `-004` was recoverable from raw generations, but it has only
-`152` effective non-control rows after CUDA failures near the end, so treat it
-as a partial sanity check rather than a full panel point. The safe claim is
-already useful: token-aware filtering is not a pedantic detail; it changes
-which examples are admissible evidence, and the base-vs-instruct Gemma split
-remains a high-signal recipe contrast. The token-certified Qwen ladder is
-ordered 0.8B/2B/4B/9B by decreasing mean sensitivity, but 0.8B and 2B are not
-cleanly separated by paired permutation.
+OLMo3 `-004` was recoverable from raw generations, but it has only `152`
+effective non-control rows after CUDA failures near the end, so treat it as a
+partial sanity check rather than a full panel point. The safe claim is already
+useful: token-aware filtering is not a pedantic detail; it changes which
+examples are admissible evidence, and the base-vs-instruct Gemma split remains
+a high-signal recipe contrast. The token-certified Qwen ladder is ordered
+0.8B/2B/4B/9B by decreasing mean sensitivity, but 0.8B and 2B are not cleanly
+separated by paired permutation.
 
 The next important contrast is training era/post-training recipe, but it should
 not be reduced to either "modern equals stable" or "older equals stable." A

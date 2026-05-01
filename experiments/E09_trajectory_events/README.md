@@ -40,7 +40,7 @@ Inspection:
 
 Status:
 - Higher-N logit-token readout currently includes Qwen3.5 0.8B, Qwen3.5 2B,
-  Qwen3.5 4B, Qwen3.5 9B, and Gemma4 E2B instruct.
+  Qwen3.5 4B, Qwen3.5 9B, Gemma4 E2B/E4B instruct, and Gemma4 E2B/E4B base.
 - Current output is `runs/trajectory_events/logit_token_cert_v1/`; bundled
   branch-prediction/casebook/comparison artifacts are under
   `runs/trajectory_artifacts/logit_token_cert_v1/`.
@@ -50,24 +50,28 @@ Status:
 - `pre_branch_within_N` is the strict warning target and excludes the branch
   timestep. In `branch_prediction_auc.csv`, this is labeled
   `strict_pre_branch_warning`.
-- At-branch classification is strong: low-margin AUROC `0.953`
-  (`0.951-0.956` clustered CI), JS AUROC `0.891` (`0.885-0.898`).
+- At-branch classification is strong: low-margin AUROC `0.947`
+  (`0.945-0.949` clustered CI), JS AUROC `0.883` (`0.879-0.888`).
 - Decision-window branch-within-1 is moderate: JS AUROC `0.766`
-  (`0.758-0.774`), low-margin AUROC `0.746` (`0.740-0.755`).
-- Pure pre-branch-within-1 warning is weaker: centered-logit-L2 AUROC `0.649`
-  (`0.638-0.661`), JS AUROC `0.620` (`0.605-0.634`).
+  (`0.759-0.773`), low-margin AUROC `0.747` (`0.741-0.751`).
+- Pure pre-branch-within-1 warning is weaker: centered-logit-L2 AUROC `0.661`
+  (`0.651-0.672`), JS AUROC `0.618` (`0.605-0.630`).
 - On the long-prefix subset (`branch_t >= 5`), pure pre-branch-within-1 warning
-  weakens further: centered-logit-L2 AUROC `0.568` (`0.554-0.579`), JS AUROC
-  `0.558` (`0.545-0.570`).
+  weakens further: centered-logit-L2 AUROC `0.581` (`0.570-0.589`), JS AUROC
+  `0.558` (`0.547-0.569`).
 - Effective branching factor is now tracked as a prior-art-driven diagnostic:
   use low BF plus high margin to identify concentrated basin switches, and high
   BF plus low margin to identify genuine local choice cliffs.
 - Paired Qwen ladder branch timing is not monotonic: only `10.4%` of shared
   non-control cases are monotonic earlier with size, and only `10.4%` are
   monotonic later with size.
+- Gemma base models branch earlier and more immediately than Gemma instruct:
+  immediate visible branch rates are `18.6%` for Gemma E2B base and `31.6%`
+  for Gemma E4B base, versus `0.6%` and `11.0%` for E2B/E4B instruct.
 
 Caveat: the warning threshold often fires at `t=0`, so use this as a branch
 risk detector, not yet a precise "silent lead time" claim. Do not call
 `branch_within_1` a one-token-ahead metric.
 
-Next: rerun after the newly launched Gemma base/E4B logit jobs finish.
+Next: use the rebuilt casebook and case-selection artifacts for paper figures
+and the next E07 intervention targets.

@@ -37,7 +37,13 @@ def get_path(root: Any, dotted: str) -> Any | None:
 
 
 def find_blocks(model: Any) -> tuple[str, Any]:
-    for path in ["model.layers", "model.model.layers", "transformer.h", "gpt_neox.layers"]:
+    for path in [
+        "model.language_model.layers",
+        "model.layers",
+        "model.model.layers",
+        "transformer.h",
+        "gpt_neox.layers",
+    ]:
         blocks = get_path(model, path)
         if blocks is not None:
             return path, blocks
