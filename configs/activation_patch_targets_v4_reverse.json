@@ -1,0 +1,27 @@
+{
+  "qwen35_08b": [
+    "token_cert_double_internal_space_0180",
+    "token_cert_tab_after_space_0454",
+    "token_cert_duplicate_small_word_0419"
+  ],
+  "qwen35_9b": [
+    "token_cert_line_wrap_0421",
+    "token_cert_tab_after_space_0572",
+    "token_cert_blank_line_wrap_0574"
+  ],
+  "gemma4_e2b_it": [
+    "token_cert_blank_line_wrap_0134",
+    "token_cert_parenthesize_word_0202",
+    "token_cert_parenthesize_word_0509"
+  ],
+  "gemma4_e2b_base": [
+    "token_cert_parenthesize_word_0137",
+    "token_cert_space_after_punctuation_0041",
+    "token_cert_double_internal_space_0180"
+  ],
+  "gemma4_e4b_base": [
+    "token_cert_double_internal_space_0422",
+    "token_cert_space_before_punctuation_0128",
+    "token_cert_line_wrap_0435"
+  ]
+}

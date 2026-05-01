@@ -86,6 +86,7 @@ def main() -> None:
     parser.add_argument("--logit-max-steps", type=int, default=128)
     parser.add_argument("--thinking-mode", choices=["default", "enabled", "disabled"], default="default")
     parser.add_argument("--positions", choices=["final", "changed-final", "aligned", "all"], default="aligned")
+    parser.add_argument("--patch-direction", choices=["a_to_b", "b_to_a"], default="a_to_b")
     parser.add_argument("--batch-size", type=int, action="append", default=[])
     parser.add_argument("--no-tags", action="store_true")
     parser.add_argument("--dry-run", action="store_true")
@@ -143,6 +144,7 @@ def main() -> None:
             run_args.extend(["--pair-id", pair_id])
     if args.entrypoint == "activation_patch":
         run_args.extend(["--positions", args.positions])
+        run_args.extend(["--patch-direction", args.patch_direction])
         for pair_id in args.pair_ids:
             run_args.extend(["--pair-id", pair_id])
         if args.targets_csv:

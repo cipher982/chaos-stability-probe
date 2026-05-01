@@ -41,6 +41,11 @@ Status: active causal-intervention wave.
   rescues are final-context at layer 34.
 - Gemma E4B base: 6/6 finite/full-or-overshoot rescues, 5/6 replayable; best
   positions split 3 prompt-LCP and 3 final-context.
+- Reverse-direction v4 jobs are running from
+  `configs/activation_patch_targets_v4_reverse.json` and
+  `configs/sagemaker_queue_activation_patch_v4_reverse.json`. These patch B
+  activations into clean A runs to test whether the causal branch movement is
+  directional/symmetric rather than a one-way final-state overwrite artifact.
 - Scripts remain in `scripts/` for now because later E08 scripts import them
   directly.
 

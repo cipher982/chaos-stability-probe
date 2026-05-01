@@ -25,11 +25,18 @@ Operational board only. Keep historical narrative out of this file; use
 
 ## Live Operations
 
-Last checked: 2026-04-30 23:58 -0300.
+Last checked: 2026-05-01 00:19 -0300.
 
 ### SageMaker Running
 
-No active Gemma E07 jobs after the latest processing pass.
+- Preprod `g6e.2xlarge`:
+  - `chaos-activation-patch-rev-qwen9b-20260501-001`
+  - `chaos-activation-patch-rev-gemma-e2b-base-20260501-001`
+  - `chaos-activation-patch-rev-gemma-e4b-base-20260501-001`
+- Marketing production `g5.2xlarge`:
+  - `chaos-activation-patch-rev-gemma-e2b-it-20260501-001`
+- QA `g5.2xlarge`:
+  - `chaos-activation-patch-rev-qwen08-20260501-001`
 
 Recent stopped jobs are known superseded early attempts from earlier waves; no
 new failed/stopped jobs were found in the latest active queues.
@@ -100,11 +107,15 @@ new failed/stopped jobs were found in the latest active queues.
     best rescues were final-context at layer 34.
   - Gemma E4B base: 6/6 finite/full-or-overshoot rescues, 5/6 replayable; best
     positions split 3 prompt-LCP and 3 final-context.
+- E07 v4 reverse-direction causal wave was launched as a specificity check:
+  - target config: `configs/activation_patch_targets_v4_reverse.json`
+  - queue: `configs/sagemaker_queue_activation_patch_v4_reverse.json`
+  - purpose: test whether B activations can push clean A runs toward B's branch,
+    rather than only showing that A activations can rescue A inside B.
 
 ### Pending Processing
 
-- No completed SageMaker jobs are waiting for processing in the active Gemma
-  E07 queues.
+- Process E07 v4 reverse-direction jobs when they complete.
 
 ## Current Readouts
 
@@ -186,9 +197,9 @@ new failed/stopped jobs were found in the latest active queues.
 
 ## Next Actions
 
-1. Compare E07 v1/v2/v3 by mechanism type and model family before launching the
-   next causal wave.
-2. Build the paper-grade figures:
+1. Process E07 v4 reverse-direction jobs when they land.
+2. Compare E07 v1/v2/v3/v4 by mechanism type and model family.
+3. Build the paper-grade figures:
    - single-case trajectory anatomy,
    - Qwen branch-timing parallel coordinates,
    - at-branch vs strict pre-branch AUROC forest plot.
@@ -202,6 +213,7 @@ uv run python scripts/process_silent_divergence_queue.py --queue configs/sagemak
 uv run python scripts/dispatch_sagemaker_queue.py --queue configs/sagemaker_queue_activation_patch_v1.json --profile zh-marketing-preprod-aiengineer --max-active 5
 uv run python scripts/process_activation_patch_queue.py --queue configs/sagemaker_queue_activation_patch_v1.json --out-dir runs/rankings/activation_patch_v1
 uv run python scripts/process_activation_patch_queue.py --queue configs/sagemaker_queue_activation_patch_v2.json --out-dir runs/rankings/activation_patch_v2
+uv run python scripts/process_activation_patch_queue.py --queue configs/sagemaker_queue_activation_patch_v4_reverse.json --out-dir runs/rankings/activation_patch_v4_reverse
 uv run python scripts/process_token_micro_queue.py --queue configs/sagemaker_queue_paper_repairs_v1.json --rank-dir runs/rankings/token_micro_v3 --passes 1 --sleep-s 0
 uv run python scripts/build_trajectory_artifacts.py --trajectory-dir runs/trajectory_events/logit_token_cert_v1 --silent-summary runs/rankings/silent_divergence_local_qwen_ladder_meta_20260430/silent_divergence_readout.csv
 ```

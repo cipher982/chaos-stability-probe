@@ -216,12 +216,26 @@ def main() -> None:
     parser.add_argument("--dtype", default="auto", choices=["auto", "float32", "float16", "bfloat16"])
     parser.add_argument("--thinking-mode", choices=["default", "enabled", "disabled"], default="disabled")
     parser.add_argument("--positions", choices=["final", "changed-final", "aligned", "all"], default="changed-final")
+    parser.add_argument(
+        "--patch-direction",
+        choices=["a_to_b", "b_to_a"],
+        default="a_to_b",
+        help="Patch prompt A activations into B by default; b_to_a runs the reverse intervention.",
+    )
     parser.add_argument("--system-prompt", default="You are a concise, accurate assistant. Answer directly.")
     args = parser.parse_args()
 
     args.out_dir.mkdir(parents=True, exist_ok=True)
     entry = select_model(args.models, args.model)
     pair = select_pair(args.prompt_pairs, args.pair_id)
+    original_pair_id = pair["id"]
+    if args.patch_direction == "b_to_a":
+        pair = {
+            **pair,
+            "id": f"{pair['id']}__reverse",
+            "prompt_a": pair["prompt_b"],
+            "prompt_b": pair["prompt_a"],
+        }
     device = pick_device(args.device)
     dtype = pick_dtype(device, args.dtype)
     loaded = load_model(entry, device, dtype)
@@ -302,6 +316,8 @@ def main() -> None:
                 {
                     "model_name": loaded.name,
                     "pair_id": pair["id"],
+                    "original_pair_id": original_pair_id,
+                    "patch_direction": args.patch_direction,
                     "category": pair["category"],
                     "block_path": block_path,
                     "layer": layer_idx,
@@ -330,6 +346,8 @@ def main() -> None:
     metadata = {
         "model": entry,
         "pair": pair,
+        "original_pair_id": original_pair_id,
+        "patch_direction": args.patch_direction,
         "block_path": block_path,
         "first_diff_token": first_diff,
         "a_branch_token_id": a_branch_token,

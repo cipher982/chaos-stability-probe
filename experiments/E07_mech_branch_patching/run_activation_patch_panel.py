@@ -125,6 +125,7 @@ def main() -> None:
     parser.add_argument("--max-new-tokens", type=int, default=128)
     parser.add_argument("--thinking-mode", choices=["default", "enabled", "disabled"], default="disabled")
     parser.add_argument("--positions", choices=["final", "changed-final", "aligned", "all"], default="aligned")
+    parser.add_argument("--patch-direction", choices=["a_to_b", "b_to_a"], default="a_to_b")
     parser.add_argument("--device", default="auto")
     parser.add_argument("--dtype", default="auto")
     args = parser.parse_args()
@@ -169,6 +170,8 @@ def main() -> None:
                 args.thinking_mode,
                 "--positions",
                 args.positions,
+                "--patch-direction",
+                args.patch_direction,
                 "--device",
                 args.device,
                 "--dtype",

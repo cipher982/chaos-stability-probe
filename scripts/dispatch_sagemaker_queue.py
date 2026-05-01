@@ -96,6 +96,7 @@ def build_launch_cmd(job: dict[str, Any]) -> list[str]:
         cmd.extend(["--logit-max-steps", str(job.get("logit_max_steps", 64))])
     if job.get("entrypoint") == "activation_patch":
         cmd.extend(["--positions", job.get("positions", "aligned")])
+        cmd.extend(["--patch-direction", job.get("patch_direction", "a_to_b")])
     if job.get("no_tags"):
         cmd.append("--no-tags")
     return cmd
