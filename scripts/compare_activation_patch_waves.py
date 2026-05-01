@@ -28,6 +28,29 @@ MODEL_LABELS = {
 }
 
 
+CASE_COLUMNS = [
+    "wave",
+    "model_name",
+    "model_label",
+    "pair_id",
+    "category",
+    "first_diff_token",
+    "a_branch_token",
+    "b_branch_token",
+    "replayable",
+    "best_position_class",
+    "best_position_label",
+    "best_layer",
+    "best_rescue_fraction",
+    "prompt_lcp_token_best_layer",
+    "prompt_lcp_token_best_rescue_fraction",
+    "prompt_lcp_token_best_top1_token",
+    "final_context_token_best_layer",
+    "final_context_token_best_rescue_fraction",
+    "final_context_token_best_top1_token",
+]
+
+
 def load_cases(wave_dirs: list[Path]) -> pd.DataFrame:
     frames = []
     for wave_dir in wave_dirs:
@@ -60,6 +83,9 @@ def load_cases(wave_dirs: list[Path]) -> pd.DataFrame:
     cases["best_full"] = cases["best_rescue_fraction"] >= 1.0
     cases["best_strong"] = cases["best_rescue_fraction"] >= 0.5
     cases["final_only_full"] = cases["final_full"] & ~cases["prompt_lcp_strong"]
+    cases["nontrivial_prompt_rescue"] = cases["prompt_lcp_full"] | (
+        cases["best_position_class"] == "prompt_lcp"
+    )
     return cases
 
 
@@ -87,6 +113,49 @@ def summarize(cases: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame]:
         .reset_index(name="n")
     )
     return model_summary, class_counts
+
+
+def write_case_slices(cases: pd.DataFrame, out_dir: Path) -> None:
+    cols = [col for col in CASE_COLUMNS if col in cases.columns]
+    prompt_rescue = cases[cases["nontrivial_prompt_rescue"]].copy()
+    final_only = cases[cases["final_only_full"]].copy()
+
+    prompt_rescue[cols].sort_values(
+        ["wave", "model_name", "prompt_lcp_token_best_rescue_fraction", "pair_id"],
+        ascending=[True, True, False, True],
+    ).to_csv(out_dir / "nontrivial_prompt_rescue_cases.csv", index=False)
+
+    final_only[cols].sort_values(
+        ["wave", "model_name", "final_context_token_best_rescue_fraction", "pair_id"],
+        ascending=[True, True, False, True],
+    ).to_csv(out_dir / "final_only_rescue_cases.csv", index=False)
+
+
+def print_readout(model_summary: pd.DataFrame, class_counts: pd.DataFrame, cases: pd.DataFrame) -> None:
+    print(model_summary.to_string(index=False))
+    forward = cases[~cases["wave"].str.contains("reverse", na=False)]
+    if forward.empty:
+        return
+    prompt_full = int(forward["prompt_lcp_full"].sum())
+    prompt_strong = int(forward["prompt_lcp_strong"].sum())
+    final_full = int(forward["final_full"].sum())
+    total = len(forward)
+    print()
+    print(
+        "Forward readout: "
+        f"{final_full}/{total} cases have full final-context rescue; "
+        f"{prompt_full}/{total} have full prompt-LCP rescue; "
+        f"{prompt_strong}/{total} have at least 0.5 prompt-LCP rescue."
+    )
+    best_prompt = class_counts[
+        (~class_counts["wave"].str.contains("reverse", na=False))
+        & (class_counts["best_position_class"] == "prompt_lcp")
+    ]["n"].sum()
+    print(
+        "Mechanistic contrast: "
+        f"{int(best_prompt)}/{total} selected cases are best rescued at the prompt LCP, "
+        "whereas final-context rescue is almost universal and therefore less specific."
+    )
 
 
 def plot_position_classes(model_summary: pd.DataFrame, class_counts: pd.DataFrame, out_dir: Path) -> None:
@@ -156,8 +225,9 @@ def main() -> None:
     cases.to_csv(args.out_dir / "case_level_summary.csv", index=False)
     model_summary.to_csv(args.out_dir / "model_level_summary.csv", index=False)
     class_counts.to_csv(args.out_dir / "position_class_counts.csv", index=False)
+    write_case_slices(cases, args.out_dir)
     plot_position_classes(model_summary, class_counts, args.out_dir)
-    print(model_summary.to_string(index=False))
+    print_readout(model_summary, class_counts, cases)
     print(f"Wrote activation-patch comparison artifacts to {args.out_dir}")
 
 
