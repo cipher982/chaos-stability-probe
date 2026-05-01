@@ -148,14 +148,18 @@ shared generated-prefix/final context. This matches the patching story:
 parenthesized `(a)` looks like a sharp edit-boundary representation shift;
 tab-after-space looks more distributed by the time the branch token is chosen.
 
-The first SageMaker E07 patch wave makes the causal story less anecdotal. On
-six selected token-certified branch cases each for Qwen3.5 2B/4B/9B, aligned
+The SageMaker E07 patch waves make the causal story less anecdotal. On six
+selected token-certified branch cases each for Qwen3.5 2B/4B/9B, aligned
 residual patching produced finite rescue values in 17 of 18 cases and
-replayable full-or-overshoot rescue in 16 of 18. The strongest Qwen2B/4B
-rescues are often at the prompt LCP/edit boundary, while Qwen9 in this selected
-wave is more often rescued at the final shared context. This does not prove a
-universal size law, but it does support the claim that many tiny-edit branch
-events are causally movable, not merely post-hoc output differences.
+replayable full-or-overshoot rescue in 16 of 18. Qwen0.8B and Gemma E2B
+instruct added another 12/12 replayable full-or-overshoot rescues. The Gemma
+base v3 wave produced finite full-or-overshoot rescue in 12/12 selected cases,
+with 11/12 replayable. The strongest Qwen2B/4B and Gemma E4B-base rescues are
+often at the prompt LCP/edit boundary, while Qwen9 and Gemma E2B-base in these
+selected waves are more often rescued at the final shared context. This does
+not prove a universal size law, but it does support the claim that many
+tiny-edit branch events are causally movable, not merely post-hoc output
+differences.
 
 The E10 hidden/logit capture has an early size-contrast hint on the same five
 branch cases, but backend/dtype matters. Local Qwen3.5 2B/4B MPS/float16

@@ -30,12 +30,17 @@ Status: active causal-intervention wave.
   completed but all cases failed because Gemma4 exposes decoder blocks at
   `model.language_model.layers`.
 - `activation_patch_branch.py` now supports that Gemma4 block path, and retry
-  `chaos-activation-patch-gemma-e2b-it-20260430-003` is running on marketing
-  production `g5.2xlarge`.
-- Gemma base v3 jobs are running on preprod `g6e.2xlarge` from
-  `configs/activation_patch_targets_v3.json`:
+  `chaos-activation-patch-gemma-e2b-it-20260430-003` is processed in
+  `runs/rankings/activation_patch_v2/`: 6/6 finite, replayable,
+  full-or-overshoot rescues.
+- Gemma base v3 jobs are processed in `runs/rankings/activation_patch_v3/`
+  from `configs/activation_patch_targets_v3.json`:
   - `chaos-activation-patch-gemma-e2b-base-20260430-001`
   - `chaos-activation-patch-gemma-e4b-base-20260430-001`
+- Gemma E2B base: 6/6 finite, replayable, full-or-overshoot rescues; all best
+  rescues are final-context at layer 34.
+- Gemma E4B base: 6/6 finite/full-or-overshoot rescues, 5/6 replayable; best
+  positions split 3 prompt-LCP and 3 final-context.
 - Scripts remain in `scripts/` for now because later E08 scripts import them
   directly.
 

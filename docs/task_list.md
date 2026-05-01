@@ -25,15 +25,11 @@ Operational board only. Keep historical narrative out of this file; use
 
 ## Live Operations
 
-Last checked: 2026-04-30 23:23 -0300.
+Last checked: 2026-04-30 23:58 -0300.
 
 ### SageMaker Running
 
-- Marketing production `g5.2xlarge`:
-  - `chaos-activation-patch-gemma-e2b-it-20260430-003`
-- Preprod `g6e.2xlarge`:
-  - `chaos-activation-patch-gemma-e2b-base-20260430-001`
-  - `chaos-activation-patch-gemma-e4b-base-20260430-001`
+No active Gemma E07 jobs after the latest processing pass.
 
 Recent stopped jobs are known superseded early attempts from earlier waves; no
 new failed/stopped jobs were found in the latest active queues.
@@ -89,18 +85,26 @@ new failed/stopped jobs were found in the latest active queues.
   panel:
   - output: `runs/trajectory_events/logit_token_cert_v1/`
   - artifact bundle: `runs/trajectory_artifacts/logit_token_cert_v1/`
-- Gemma E2B-IT E07 was relaunched after adding Gemma4 block-path support:
+- Gemma E2B-IT E07 retry completed and was processed:
   - `chaos-activation-patch-gemma-e2b-it-20260430-003`
+  - output: `runs/rankings/activation_patch_v2/`
+  - Gemma E2B-IT: 6/6 finite, replayable, full-or-overshoot rescues.
 - E07 v3 Gemma base causal wave was launched from the rebuilt E09 case
   selection:
   - target config: `configs/activation_patch_targets_v3.json`
   - queue: `configs/sagemaker_queue_activation_patch_v3.json`
-  - running jobs: `chaos-activation-patch-gemma-e2b-base-20260430-001`,
+  - completed jobs: `chaos-activation-patch-gemma-e2b-base-20260430-001`,
     `chaos-activation-patch-gemma-e4b-base-20260430-001`
+  - output: `runs/rankings/activation_patch_v3/`
+  - Gemma E2B base: 6/6 finite, replayable, full-or-overshoot rescues; all
+    best rescues were final-context at layer 34.
+  - Gemma E4B base: 6/6 finite/full-or-overshoot rescues, 5/6 replayable; best
+    positions split 3 prompt-LCP and 3 final-context.
 
 ### Pending Processing
 
-- Process Gemma E2B-IT retry and Gemma base v3 E07 jobs when they complete.
+- No completed SageMaker jobs are waiting for processing in the active Gemma
+  E07 queues.
 
 ## Current Readouts
 
@@ -153,8 +157,15 @@ new failed/stopped jobs were found in the latest active queues.
   full-or-overshoot rescues.
 - Qwen0.8B v2 patch wave processed from 6 selected branch cases; all 6 are
   replayable full-or-overshoot rescues.
+- Gemma E2B-IT v2 retry processed from 6 selected branch cases; all 6 are
+  replayable full-or-overshoot rescues.
+- Gemma E2B/E4B base v3 patch waves processed from 12 selected branch cases;
+  all 12 have finite full-or-overshoot rescues, with 11/12 replayable.
 - Best rescue position classes differ in this selected set:
   - Qwen0.8B: 4 prompt-LCP, 2 final-context.
+  - Gemma E2B-IT: 2 prompt-LCP, 2 generated-prefix, 2 final-context.
+  - Gemma E2B base: 6 final-context.
+  - Gemma E4B base: 3 prompt-LCP, 3 final-context.
   - Qwen2B: 3 prompt-LCP, 2 final-context, 1 aligned-prompt.
   - Qwen4B: 4 prompt-LCP, 2 final-context.
   - Qwen9: 2 prompt-LCP, 4 final-context.
@@ -175,10 +186,9 @@ new failed/stopped jobs were found in the latest active queues.
 
 ## Next Actions
 
-1. Process Gemma E2B-IT retry and Gemma base v3 E07 jobs when they land.
-2. Compare E07 v1/v2 by mechanism type and model family before launching the
+1. Compare E07 v1/v2/v3 by mechanism type and model family before launching the
    next causal wave.
-3. Build the paper-grade figures:
+2. Build the paper-grade figures:
    - single-case trajectory anatomy,
    - Qwen branch-timing parallel coordinates,
    - at-branch vs strict pre-branch AUROC forest plot.
