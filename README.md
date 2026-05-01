@@ -1,6 +1,8 @@
 # LLM Stability Probe
 
-Exploratory harness for a talk on LLMs as systems in motion.
+Exploratory harness for a talk on LLMs as systems in motion. The post-talk
+direction is BranchTrace: a branch-level debugger for LLM prompt/model
+regressions that turns divergent runs into replayable branch events.
 
 The first goal is not to estimate a formal Lyapunov exponent. It is to produce
 a defensible stability profile:
@@ -92,7 +94,7 @@ Current-state docs:
   from `talk/slide_images/`. Regenerate with
   `uv run --with Pillow python talk/qa_slides.py`.
 - `talk/companion_notes.md`: per-slide reading notes and delivery reference.
-- `docs/results_digest.md`: canonical current talk readout.
+- `docs/results_digest.md`: canonical current interpretation and tool framing.
 - `docs/experiment_index.md`: one-row-per-experiment tracker.
 - `docs/task_list.md`: operational next actions.
 

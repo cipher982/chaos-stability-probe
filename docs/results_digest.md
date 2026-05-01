@@ -1,6 +1,6 @@
 # Results Digest
 
-Last updated: 2026-05-01 after E07 reverse activation-patching controls.
+Last updated: 2026-05-01 after E07 randomized activation-patching replication.
 
 This is the compact, talk-oriented current-state readout. The talk is a
 chaos/dynamical-systems teaching talk first; the stability probe is supporting
@@ -188,23 +188,25 @@ clean-vs-corrupt branch-token gap is small, patching can overshoot far beyond
 the original clean margin. The safe claim is controllability and directionality,
 not a calibrated magnitude.
 
-The first E07 randomized held-out replication pass is already enough to reduce
-the selection-bias objection. It sampled five fresh branch cases per model from
-the E09 candidate pool, stratified across branch-timing buckets where possible.
-As of the partial 7/8-model processing pass, 34/35 held-out cases have finite
-full-or-overshoot rescue and 30/35 are replayable full-or-overshoot rescues.
-The position split is less edit-boundary-heavy than the hand-selected waves:
-9/35 best at prompt LCP, 21/35 best at final context, 4/35 best at generated
-prefix, and 1/35 best at an aligned prompt-control position. This supports a
-two-tier claim: broad branch controllability appears to replicate on held-out
-cases, while prompt-LCP/edit-boundary rescue is a meaningful subset rather than
-the universal mechanism.
+The E07 randomized held-out replication pass reduces the selection-bias
+objection. It sampled five fresh branch cases per model from the E09 candidate
+pool, stratified across branch-timing buckets where possible. Across all eight
+processed models, 39/40 held-out cases have finite full-or-overshoot rescue and
+35/40 are replayable full-or-overshoot rescues. The position split is less
+edit-boundary-heavy than the hand-selected waves: 11/40 best at prompt LCP,
+22/40 best at final context, 5/40 best at generated prefix, and 2/40 best at an
+aligned prompt-control position. This supports a two-tier claim: broad branch
+controllability replicates on held-out cases, while prompt-LCP/edit-boundary
+rescue is a meaningful subset rather than the universal mechanism.
 
 Do not describe the complementary cases as clean "late-only" mechanisms yet:
-under a strict 0.5 rescue cutoff, there are 0/42 forward cases where
+under a strict 0.5 rescue cutoff, there are 0/82 forward cases where
 final-context works while prompt-LCP, aligned-prompt, and generated-prefix
-controls all fail. The current split is better phrased as **specific
-edit-boundary rescue versus broad trajectory-state rescue**, not
+controls all fail. Across the forward waves, 80/82 selected cases have full
+final-context rescue, 41/82 have full prompt-LCP rescue, 65/82 have at least
+0.5 prompt-LCP rescue, and 51/82 have prompt-LCP rescue stronger than every
+aligned prompt-control position. The current split is better phrased as
+**specific edit-boundary rescue versus broad trajectory-state rescue**, not
 early-versus-late exclusivity.
 
 The E10 hidden/logit capture has an early size-contrast hint on the same five
@@ -267,6 +269,40 @@ token 0, if hidden/logit separation has no predictive value beyond trivial
 entropy, if branches do not persist, or if interventions cannot move the
 branch, then the trajectory frame becomes weaker and the project should retreat
 to a more modest prompt-regression / boundary-calibration tool.
+
+## Product / Tool Translation
+
+The practical tool direction is **BranchTrace**: a branch-level debugger for
+LLM behavior regressions. The research hook is not "tiny edits change outputs";
+that is already known. The useful hook is:
+
+> I changed a prompt/model/template/RAG input and an eval failed. Show me the
+> first generated decision where the old and new trajectories split, whether
+> that branch caused the failure, which prompt span likely controlled it, and
+> whether a stabilizing edit survives perturbation tests.
+
+The primary user-facing artifact should be a **Branch Card**:
+
+- prompt/model/template diff and run metadata,
+- first divergent generated token and top-k/logit-margin context,
+- replay tests for old path, new path, forced old branch, and forced new
+  branch,
+- suspected controlling prompt span or edit boundary,
+- optional open-model activation-patching evidence,
+- suggested stabilizing edit plus perturbation/fuzz pass rate.
+
+This keeps activation patching in the right role. It is an open-model X-ray
+mode and causal-confirmation badge, not the whole product. Closed APIs can
+still support behavioral branch cards when prompts, outputs, parameters, and
+run metadata were logged. APIs or servers with logprobs/top-k support stronger
+branch cards. Local Transformers-style access enables hidden-state capture and
+activation patching.
+
+The public pitch should therefore be closer to:
+
+> BranchTrace is a time-travel debugger for LLM prompt changes. It finds the
+> first token where two runs split, replays alternate futures, and turns failed
+> evals into localizable, fix-verifiable branch events.
 
 Quantization and compression are now supporting material, not the thesis. The
 main thesis is dynamical sensitivity: when the input changes a little, does the
@@ -619,9 +655,10 @@ These are useful engineering notes, not central talk material.
   exponents.
 - Model-specific chat templates and instruction tuning may dominate some
   effects.
-- Trajectory metrics require the observable generated token stream. They do not
-  apply cleanly to API models with hidden reasoning tokens unless the analysis
-  is explicitly changed to final-answer-only behavior.
+- Trajectory metrics require the observable generated token stream. Closed APIs
+  can still support behavioral branch cards if prompts, outputs, parameters,
+  and run metadata were logged; logprobs/top-k enable stronger branch analysis;
+  hidden-state and activation-patching claims require open/local model access.
 - Quantization results should be framed as sensitivity profiles of separate
   systems. Distance-from-BF16 is useful only to prevent confusing stability with
   fidelity or quality.
@@ -724,44 +761,29 @@ Interpretation:
 
 ## Current Next Work
 
-The talk is ready enough for the Learning Club framing. Further work should
-move from point-estimate stability rankings to event-level trajectory
-cartography.
+The talk is complete; further work should move from point-estimate stability
+rankings to event-level trajectory cartography, paper figures, and a practical
+BranchTrace prototype.
 
 Going forward, every new thread should have one compact row in
 `docs/experiment_index.md`, with restart details in the relevant
 `experiments/E##_*/README.md`. The main research direction is now
 mechanism-typed replication, not broad leaderboard expansion.
 
-1. Mine structured divergence events from every completed logit run: visible
-   branch token, first silent logit warning, margin/entropy at branch,
-   persistence, scaffold/content label, and final semantic divergence.
-2. Run the margin-cliff prediction analysis: while outputs are still identical,
-   predict whether a branch occurs within 1, 2, 5, or 10 tokens.
-3. Run a focused hidden-state silent-divergence pilot on Qwen3.5 2B/4B/9B and
-   selected Gemma contrasts. Save selected layers if full hidden capture is too
-   expensive.
-4. Expand residual-patching/SAE analysis by mechanism type:
-   edit-boundary shocks, accumulated branch bias, inert token deltas, and
-   replay-unstable false positives.
-5. Add negative controls: prompt-token-effective edits that do not branch, so
-   branch-localized features are not confused with generic tokenization changes.
-6. Make scaffold/content boundary extraction auditable: preserve raw text,
-   boundary span, confidence label, and score-before/after for every generation.
-7. Expand prompt-pair count before ranking more models. Treat prompt pair as the
-   statistical unit.
-8. Separate sampling controls from input-sensitivity controls. They answer
-   different questions, even when the distances are similar in magnitude.
-9. Pair perturbation divergence with responsiveness/baseline drift so collapse
-   cannot masquerade as robustness.
-10. Use matched recipe comparisons where possible: base vs instruct within the
-   same family, scaffold on vs off for the same weights, quantized vs BF16 for
-   the same model.
-11. Finish the token-certified v3 panel and rerun any timed-out partials before
-   treating it as the publishable micro-perturbation table.
-12. Keep older short-output tables as provenance, but use the 512-token
-   semantic panel, token-certified micro runs, event-level logit analysis, and
-   intervention results for new claims.
+1. Freeze E07 activation-patching expansion unless a new experiment tests a
+   specific objection. V5 reproduced broad branch controllability strongly
+   enough to pivot from more waves to synthesis.
+2. Build paper/product figures: a single-case Branch Card, Qwen branch-timing
+   parallel coordinates, at-branch versus strict pre-branch AUROC, and
+   activation-patching position-class bars.
+3. Prototype BranchTrace on existing artifacts before adding new compute:
+   generate a branch-card HTML/JSON record with first branch, margins,
+   replay/patch evidence, suspected prompt span, and caveats.
+4. Add forced-prefix replay and prompt-delta bisect as the next practical tool
+   primitive. These matter more for closed/API workflows than more hidden-state
+   patch heatmaps.
+5. Add negative controls only where they sharpen claims: prompt-token-effective
+   edits that do not branch, and branch cases where replay fails.
 
 Historical pre-result hypotheses have been superseded by the completed
 scaffold-long, Qwen thinking-off, quantization, and logit-correlation readouts.

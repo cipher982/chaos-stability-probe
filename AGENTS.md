@@ -6,13 +6,17 @@
 talk on LLM dynamical sensitivity, prompt perturbations, logit/hidden-state
 divergence, and chaos as a conceptual lens.
 
+Post-talk direction: turn the trajectory-branching work into BranchTrace, a
+branch-level debugger for LLM behavior regressions. Treat activation patching
+as open-model X-ray evidence, not the whole product.
+
 ## Audience & Tone
 
-This is **not** a research paper, symposium, thesis defense, or publication.
-The talk is a **lightweight casual presentation to the AI/ML team at work** —
-a mix of analysts, engineers, frontend folks, and data scientists who happen
-to work on AI projects. Friendly, exploratory, "look at this weird thing I
-found" energy. Some past team talks have been kinda goofy.
+The original artifact was a lightweight Learning Club talk for the AI/ML team
+at work. Keep the talk materials friendly, exploratory, and visually clear.
+The post-talk work is now more serious: paper-grade synthesis plus a practical
+BranchTrace prototype. Do not let paper cleanup make the talk sterile, and do
+not let talk energy weaken research/tool claims.
 
 Implications for agent behavior on this repo:
 
@@ -21,9 +25,9 @@ Implications for agent behavior on this repo:
   al. on my setup"). Don't strip 90% of the fun to eke out 5% more rigor.
 - Frame broken hypotheses as part of the story (the reveal is fun) rather
   than quietly deleting them.
-- Favor visually striking / conceptually surprising vizzes over
-  publication-grade ones. If a synthetic viz is clearly labeled
-  illustrative, that's fine.
+- Favor visually striking / conceptually surprising vizzes for the talk. For
+  paper/prototype work, favor replayable artifacts, exact counts, and explicit
+  caveats.
 - Be direct in writeups and docs, but don't assume a hostile reviewer.
 
 ## Build & Test
@@ -45,7 +49,8 @@ Read in this order:
 
 1. `AGENTS.md` - stable agent entry point and boundaries.
 2. `README.md` - command overview and repo layout.
-3. `docs/results_digest.md` - current talk readout and safest claims.
+3. `docs/results_digest.md` - current interpretation, tool framing, and safest
+   claims.
 4. `docs/experiment_index.md` - one-row-per-experiment tracker.
 5. `docs/task_list.md` - operational next actions.
 6. `experiments/E##_*/README.md` - experiment-specific restart notes.

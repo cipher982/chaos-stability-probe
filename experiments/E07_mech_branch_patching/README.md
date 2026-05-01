@@ -23,7 +23,7 @@ Outputs:
 - cross-wave comparison tables/figure under
   `runs/rankings/activation_patch_comparison/`
 
-Status: processed causal-intervention wave.
+Status: processed causal-intervention and replication waves.
 - Qwen2B/4B/9B v1 SageMaker jobs are processed in
   `runs/rankings/activation_patch_v1/`: 17/18 finite rescue cases and 16/18
   replayable full-or-overshoot rescues.
@@ -49,7 +49,11 @@ Status: processed causal-intervention wave.
   prompt-LCP rescue is stronger than every aligned prompt-control position.
   Treat final-context rescue as broad causal movability, and prompt-LCP rescue
   as the more specific edit-boundary mechanism signal.
-- Strict late-only cases are currently 0/42 under a 0.5 rescue cutoff after
+- Forward comparison across v1-v3 plus V5: 80/82 selected or held-out cases
+  have full final-context rescue, 41/82 have full prompt-LCP rescue, 65/82 have
+  at least 0.5 prompt-LCP rescue, and 51/82 have prompt-LCP rescue stronger
+  than every aligned prompt-control position.
+- Strict late-only cases are currently 0/82 under a 0.5 rescue cutoff after
   aligned-prompt and generated-prefix controls, so avoid phrasing the split as
   clean early-versus-late exclusivity.
 - Reverse-direction v4 jobs are processed in
@@ -64,16 +68,16 @@ Status: processed causal-intervention wave.
 - Large Qwen2B/4B reverse rescue fractions are overshoot ratios with small
   branch-gap denominators; treat them as controllability, not calibrated effect
   size.
-- V5 randomized replication is running from
+- V5 randomized replication is processed from
   `configs/activation_patch_targets_v5_replication.json` and
   `configs/sagemaker_queue_activation_patch_v5_replication.json`. It uses five
   held-out token-certified branch cases per model from the E09 candidate pool,
   stratified across branch timing buckets where available. This is the
   selection-bias check before treating E07 as paper-ready.
-- Partial V5 readout across 7/8 models: 34/35 finite full-or-overshoot rescue
-  cases and 30/35 replayable full-or-overshoot rescue cases. Best rescue
-  positions are 9 prompt-LCP, 21 final-context, 4 generated-prefix, and 1
-  aligned-prompt. Gemma E4B base remains to process.
+- V5 readout across all 8 models: 39/40 finite full-or-overshoot rescue cases
+  and 35/40 replayable full-or-overshoot rescue cases. Best rescue positions
+  are 11 prompt-LCP, 22 final-context, 5 generated-prefix, and 2
+  aligned-prompt.
 - Scripts remain in `scripts/` for now because later E08 scripts import them
   directly.
 

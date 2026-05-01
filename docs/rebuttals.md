@@ -17,6 +17,16 @@ Honest claim:
 > worth measuring. The chaos lens helps organize the phenomenon; it doesn't
 > prove anything about LLMs.
 
+Post-talk product framing:
+
+> BranchTrace is a branch-level debugger for LLM regressions. It finds the
+> first generated decision where two runs split, replays alternate futures, and
+> turns a failed eval into a localizable, fix-verifiable branch event.
+
+Activation patching is the open-model X-ray mode. The product must still be
+useful with ordinary logged prompts, outputs, parameters, and logprobs when
+available.
+
 ## What I'm Not Claiming (Say Out Loud Early)
 
 Disarms the obvious Q&A objections up front:
@@ -165,6 +175,29 @@ full generated trajectory.
 `model.generate()` returns the generated token stream we analyze. If reasoning
 text is visible, it is included in the metric. Closed API models with hidden
 reasoning would need a different final-answer-only analysis.
+
+### BranchTrace cuts off API or closed-model users.
+
+**Yes, but:** Only the activation-patching/X-ray tier requires local
+open-model access.
+
+**Response:** The useful product should have evidence tiers. Closed APIs can
+support behavioral branch cards when prompts, parameters, outputs, app metadata,
+and model versions were logged. APIs or servers with logprobs/top-k support
+stronger branch cards. Local Transformers-style access enables hidden-state
+capture and residual activation patching.
+
+### Isn't activation patching just changing the prompt?
+
+**Yes, but:** That is the right suspicion, and it is why final-context patching
+alone is not the product.
+
+**Response:** Changing the prompt changes the whole computation. A localized
+patch changes one layer/position vector while leaving the prompt, weights,
+decoding, and the rest of the run fixed. The strongest cases are not merely
+"patch late state and get late behavior"; they are prompt-LCP/edit-boundary
+cases where a tiny local representation difference causally steers a later
+branch.
 
 ### The next token depends on the whole context, not just the previous token.
 
