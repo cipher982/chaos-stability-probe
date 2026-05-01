@@ -1,7 +1,7 @@
 # Results Digest
 
-Last updated: 2026-04-30 after complete E06 logit-token processing, E09
-trajectory artifact rebuild, and Gemma E2B base token-micro repair.
+Last updated: 2026-05-01 after E07 forward activation-patching comparison
+and reverse-control launch.
 
 This is the compact, talk-oriented current-state readout. The talk is a
 chaos/dynamical-systems teaching talk first; the stability probe is supporting
@@ -160,6 +160,17 @@ selected waves are more often rescued at the final shared context. This does
 not prove a universal size law, but it does support the claim that many
 tiny-edit branch events are causally movable, not merely post-hoc output
 differences.
+
+The forward E07 comparison sharpens the caveat. Across 42 selected forward
+cases, final-context patching gives full rescue in 41/42 cases, while the
+stricter prompt-LCP/edit-boundary patch gives full rescue in 20/42 and at least
+0.5 rescue in 30/42. Final-context rescue is therefore strong evidence that the
+branch can be moved, but not very specific: it can look like overwriting the
+late trajectory state. The more interesting mechanism claim is the prompt-LCP
+subset, where the tiny edit's local prompt representation already carries
+enough causal information to flip or rescue the later branch. Reverse-direction
+v4 jobs are running to test whether this effect is symmetric/directional rather
+than a one-way overwrite artifact.
 
 The E10 hidden/logit capture has an early size-contrast hint on the same five
 branch cases, but backend/dtype matters. Local Qwen3.5 2B/4B MPS/float16
