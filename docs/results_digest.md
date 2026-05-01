@@ -164,7 +164,10 @@ differences.
 The forward E07 comparison sharpens the caveat. Across 42 selected forward
 cases, final-context patching gives full rescue in 41/42 cases, while the
 stricter prompt-LCP/edit-boundary patch gives full rescue in 20/42 and at least
-0.5 rescue in 30/42. Final-context rescue is therefore strong evidence that the
+0.5 rescue in 30/42. In 27/42 cases, prompt-LCP rescue is stronger than every
+aligned prompt-control position, so the edit-boundary signal is often localized
+rather than just a generic "patch any prompt token" effect. Final-context
+rescue is therefore strong evidence that the
 branch can be moved, but not very specific: it can look like overwriting the
 late trajectory state. The more interesting mechanism claim is the prompt-LCP
 subset, where the tiny edit's local prompt representation already carries

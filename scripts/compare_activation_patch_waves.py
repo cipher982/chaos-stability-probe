@@ -45,9 +45,14 @@ CASE_COLUMNS = [
     "prompt_lcp_token_best_layer",
     "prompt_lcp_token_best_rescue_fraction",
     "prompt_lcp_token_best_top1_token",
+    "best_aligned_prompt_rescue_fraction",
+    "prompt_lcp_minus_best_aligned_prompt",
+    "best_generated_prefix_rescue_fraction",
+    "prompt_lcp_minus_best_generated_prefix",
     "final_context_token_best_layer",
     "final_context_token_best_rescue_fraction",
     "final_context_token_best_top1_token",
+    "prompt_lcp_minus_final_context",
 ]
 
 
@@ -71,6 +76,26 @@ def load_cases(wave_dirs: list[Path]) -> pd.DataFrame:
         if col not in cases.columns:
             cases[col] = pd.NA
         cases[col] = pd.to_numeric(cases[col], errors="coerce")
+    aligned_prompt_cols = [
+        col
+        for col in cases.columns
+        if col.startswith("aligned_prompt_pos_") and col.endswith("_best_rescue_fraction")
+    ]
+    generated_prefix_cols = [
+        col
+        for col in cases.columns
+        if col.startswith("aligned_generated_prefix_pos_") and col.endswith("_best_rescue_fraction")
+    ]
+    cases["best_aligned_prompt_rescue_fraction"] = (
+        cases[aligned_prompt_cols].apply(pd.to_numeric, errors="coerce").max(axis=1)
+        if aligned_prompt_cols
+        else pd.NA
+    )
+    cases["best_generated_prefix_rescue_fraction"] = (
+        cases[generated_prefix_cols].apply(pd.to_numeric, errors="coerce").max(axis=1)
+        if generated_prefix_cols
+        else pd.NA
+    )
     if "corrupt_replay_matches_b_branch" in cases.columns:
         cases["replayable"] = cases["corrupt_replay_matches_b_branch"].fillna(False).astype(bool)
     else:
@@ -85,6 +110,19 @@ def load_cases(wave_dirs: list[Path]) -> pd.DataFrame:
     cases["final_only_full"] = cases["final_full"] & ~cases["prompt_lcp_strong"]
     cases["nontrivial_prompt_rescue"] = cases["prompt_lcp_full"] | (
         cases["best_position_class"] == "prompt_lcp"
+    )
+    cases["prompt_lcp_minus_best_aligned_prompt"] = (
+        cases["prompt_lcp_token_best_rescue_fraction"] - cases["best_aligned_prompt_rescue_fraction"]
+    )
+    cases["prompt_lcp_minus_best_generated_prefix"] = (
+        cases["prompt_lcp_token_best_rescue_fraction"] - cases["best_generated_prefix_rescue_fraction"]
+    )
+    cases["prompt_lcp_minus_final_context"] = (
+        cases["prompt_lcp_token_best_rescue_fraction"]
+        - cases["final_context_token_best_rescue_fraction"]
+    )
+    cases["prompt_lcp_beats_other_prompt_positions"] = (
+        cases["prompt_lcp_minus_best_aligned_prompt"] > 0
     )
     return cases
 
@@ -101,6 +139,14 @@ def summarize(cases: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame]:
             best_strong=("best_strong", "sum"),
             prompt_lcp_full=("prompt_lcp_full", "sum"),
             prompt_lcp_strong=("prompt_lcp_strong", "sum"),
+            prompt_lcp_beats_other_prompt_positions=(
+                "prompt_lcp_beats_other_prompt_positions",
+                "sum",
+            ),
+            mean_prompt_lcp_minus_best_aligned_prompt=(
+                "prompt_lcp_minus_best_aligned_prompt",
+                "mean",
+            ),
             final_full=("final_full", "sum"),
             final_strong=("final_strong", "sum"),
             final_only_full=("final_only_full", "sum"),
@@ -138,6 +184,7 @@ def print_readout(model_summary: pd.DataFrame, class_counts: pd.DataFrame, cases
         return
     prompt_full = int(forward["prompt_lcp_full"].sum())
     prompt_strong = int(forward["prompt_lcp_strong"].sum())
+    prompt_specific = int(forward["prompt_lcp_beats_other_prompt_positions"].sum())
     final_full = int(forward["final_full"].sum())
     total = len(forward)
     print()
@@ -145,7 +192,8 @@ def print_readout(model_summary: pd.DataFrame, class_counts: pd.DataFrame, cases
         "Forward readout: "
         f"{final_full}/{total} cases have full final-context rescue; "
         f"{prompt_full}/{total} have full prompt-LCP rescue; "
-        f"{prompt_strong}/{total} have at least 0.5 prompt-LCP rescue."
+        f"{prompt_strong}/{total} have at least 0.5 prompt-LCP rescue; "
+        f"{prompt_specific}/{total} have prompt-LCP rescue stronger than every aligned prompt-control position."
     )
     best_prompt = class_counts[
         (~class_counts["wave"].str.contains("reverse", na=False))

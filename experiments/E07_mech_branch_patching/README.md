@@ -45,9 +45,10 @@ Status: active causal-intervention wave.
 - Gemma E4B base: 6/6 finite/full-or-overshoot rescues, 5/6 replayable; best
   positions split 3 prompt-LCP and 3 final-context.
 - Forward comparison across v1-v3: 41/42 selected cases have full final-context
-  rescue, but only 20/42 have full prompt-LCP rescue. Treat final-context
-  rescue as broad causal movability, and prompt-LCP rescue as the more specific
-  edit-boundary mechanism signal.
+  rescue, but only 20/42 have full prompt-LCP rescue. In 27/42 cases,
+  prompt-LCP rescue is stronger than every aligned prompt-control position.
+  Treat final-context rescue as broad causal movability, and prompt-LCP rescue
+  as the more specific edit-boundary mechanism signal.
 - Reverse-direction v4 jobs are running from
   `configs/activation_patch_targets_v4_reverse.json` and
   `configs/sagemaker_queue_activation_patch_v4_reverse.json`, including the
