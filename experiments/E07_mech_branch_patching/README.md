@@ -49,6 +49,9 @@ Status: active causal-intervention wave.
   prompt-LCP rescue is stronger than every aligned prompt-control position.
   Treat final-context rescue as broad causal movability, and prompt-LCP rescue
   as the more specific edit-boundary mechanism signal.
+- Strict late-only cases are currently 0/42 under a 0.5 rescue cutoff after
+  aligned-prompt and generated-prefix controls, so avoid phrasing the split as
+  clean early-versus-late exclusivity.
 - Reverse-direction v4 jobs are running from
   `configs/activation_patch_targets_v4_reverse.json` and
   `configs/sagemaker_queue_activation_patch_v4_reverse.json`, including the

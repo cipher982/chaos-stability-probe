@@ -107,7 +107,7 @@ def load_cases(wave_dirs: list[Path]) -> pd.DataFrame:
     cases["final_strong"] = cases["final_context_token_best_rescue_fraction"] >= 0.5
     cases["best_full"] = cases["best_rescue_fraction"] >= 1.0
     cases["best_strong"] = cases["best_rescue_fraction"] >= 0.5
-    cases["final_only_full"] = cases["final_full"] & ~cases["prompt_lcp_strong"]
+    cases["final_full_low_prompt_lcp"] = cases["final_full"] & ~cases["prompt_lcp_strong"]
     cases["nontrivial_prompt_rescue"] = cases["prompt_lcp_full"] | (
         cases["best_position_class"] == "prompt_lcp"
     )
@@ -123,6 +123,12 @@ def load_cases(wave_dirs: list[Path]) -> pd.DataFrame:
     )
     cases["prompt_lcp_beats_other_prompt_positions"] = (
         cases["prompt_lcp_minus_best_aligned_prompt"] > 0
+    )
+    cases["strict_late_only_full"] = (
+        cases["final_full"]
+        & (cases["prompt_lcp_token_best_rescue_fraction"] < 0.5)
+        & (cases["best_aligned_prompt_rescue_fraction"] < 0.5)
+        & (cases["best_generated_prefix_rescue_fraction"] < 0.5)
     )
     return cases
 
@@ -149,7 +155,8 @@ def summarize(cases: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame]:
             ),
             final_full=("final_full", "sum"),
             final_strong=("final_strong", "sum"),
-            final_only_full=("final_only_full", "sum"),
+            final_full_low_prompt_lcp=("final_full_low_prompt_lcp", "sum"),
+            strict_late_only_full=("strict_late_only_full", "sum"),
         )
         .reset_index()
     )
@@ -164,17 +171,29 @@ def summarize(cases: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame]:
 def write_case_slices(cases: pd.DataFrame, out_dir: Path) -> None:
     cols = [col for col in CASE_COLUMNS if col in cases.columns]
     prompt_rescue = cases[cases["nontrivial_prompt_rescue"]].copy()
-    final_only = cases[cases["final_only_full"]].copy()
+    prompt_specific = cases[cases["prompt_lcp_beats_other_prompt_positions"]].copy()
+    low_prompt_lcp_final = cases[cases["final_full_low_prompt_lcp"]].copy()
+    strict_late_only = cases[cases["strict_late_only_full"]].copy()
 
     prompt_rescue[cols].sort_values(
         ["wave", "model_name", "prompt_lcp_token_best_rescue_fraction", "pair_id"],
         ascending=[True, True, False, True],
     ).to_csv(out_dir / "nontrivial_prompt_rescue_cases.csv", index=False)
 
-    final_only[cols].sort_values(
+    prompt_specific[cols].sort_values(
+        ["wave", "model_name", "prompt_lcp_minus_best_aligned_prompt", "pair_id"],
+        ascending=[True, True, False, True],
+    ).to_csv(out_dir / "prompt_specific_cases.csv", index=False)
+
+    low_prompt_lcp_final[cols].sort_values(
         ["wave", "model_name", "final_context_token_best_rescue_fraction", "pair_id"],
         ascending=[True, True, False, True],
-    ).to_csv(out_dir / "final_only_rescue_cases.csv", index=False)
+    ).to_csv(out_dir / "low_prompt_lcp_final_rescue_cases.csv", index=False)
+
+    strict_late_only[cols].sort_values(
+        ["wave", "model_name", "final_context_token_best_rescue_fraction", "pair_id"],
+        ascending=[True, True, False, True],
+    ).to_csv(out_dir / "strict_late_only_rescue_cases.csv", index=False)
 
 
 def print_readout(model_summary: pd.DataFrame, class_counts: pd.DataFrame, cases: pd.DataFrame) -> None:
@@ -203,6 +222,12 @@ def print_readout(model_summary: pd.DataFrame, class_counts: pd.DataFrame, cases
         "Mechanistic contrast: "
         f"{int(best_prompt)}/{total} selected cases are best rescued at the prompt LCP, "
         "whereas final-context rescue is almost universal and therefore less specific."
+    )
+    strict_late_only = int(forward["strict_late_only_full"].sum())
+    print(
+        "Late-only check: "
+        f"{strict_late_only}/{total} cases are strict late-only under the 0.5 rescue cutoff "
+        "after aligned-prompt and generated-prefix controls."
     )
 
 

@@ -175,6 +175,13 @@ enough causal information to flip or rescue the later branch. Reverse-direction
 v4 jobs are running to test whether this effect is symmetric/directional rather
 than a one-way overwrite artifact.
 
+Do not describe the complementary cases as clean "late-only" mechanisms yet:
+under a strict 0.5 rescue cutoff, there are 0/42 forward cases where
+final-context works while prompt-LCP, aligned-prompt, and generated-prefix
+controls all fail. The current split is better phrased as **specific
+edit-boundary rescue versus broad trajectory-state rescue**, not
+early-versus-late exclusivity.
+
 The E10 hidden/logit capture has an early size-contrast hint on the same five
 branch cases, but backend/dtype matters. Local Qwen3.5 2B/4B MPS/float16
 captures and SageMaker CUDA/bfloat16 recaptures agree on several immediate
