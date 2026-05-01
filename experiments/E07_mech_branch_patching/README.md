@@ -32,6 +32,10 @@ Status: active causal-intervention wave.
 - `activation_patch_branch.py` now supports that Gemma4 block path, and retry
   `chaos-activation-patch-gemma-e2b-it-20260430-003` is running on marketing
   production `g5.2xlarge`.
+- Gemma base v3 jobs are running on preprod `g6e.2xlarge` from
+  `configs/activation_patch_targets_v3.json`:
+  - `chaos-activation-patch-gemma-e2b-base-20260430-001`
+  - `chaos-activation-patch-gemma-e4b-base-20260430-001`
 - Scripts remain in `scripts/` for now because later E08 scripts import them
   directly.
 

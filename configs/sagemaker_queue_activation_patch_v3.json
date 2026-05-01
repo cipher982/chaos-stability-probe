@@ -1,0 +1,34 @@
+[
+  {
+    "job_name": "chaos-activation-patch-gemma-e2b-base-20260430-001",
+    "entrypoint": "activation_patch",
+    "model": "gemma4_e2b_base",
+    "prompt_pairs": "configs/prompt_pairs_token_certified/gemma4_e2b_base.json",
+    "targets_json": "configs/activation_patch_targets_v3.json",
+    "max_new_tokens": 128,
+    "timeout_s": 21600,
+    "max_runtime_s": 43200,
+    "positions": "aligned",
+    "profile": "zh-marketing-preprod-aiengineer",
+    "bucket": "636347950933-use1-zmp-preprod-ml-ops-sagemaker-models",
+    "role_arn": "arn:aws:iam::636347950933:role/zmp-preprod-use1_sagemaker_0",
+    "instance_type": "ml.g6e.2xlarge",
+    "thinking_mode": "disabled"
+  },
+  {
+    "job_name": "chaos-activation-patch-gemma-e4b-base-20260430-001",
+    "entrypoint": "activation_patch",
+    "model": "gemma4_e4b_base",
+    "prompt_pairs": "configs/prompt_pairs_token_certified/gemma4_e4b_base.json",
+    "targets_json": "configs/activation_patch_targets_v3.json",
+    "max_new_tokens": 128,
+    "timeout_s": 21600,
+    "max_runtime_s": 43200,
+    "positions": "aligned",
+    "profile": "zh-marketing-preprod-aiengineer",
+    "bucket": "636347950933-use1-zmp-preprod-ml-ops-sagemaker-models",
+    "role_arn": "arn:aws:iam::636347950933:role/zmp-preprod-use1_sagemaker_0",
+    "instance_type": "ml.g6e.2xlarge",
+    "thinking_mode": "disabled"
+  }
+]

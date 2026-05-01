@@ -31,6 +31,9 @@ Last checked: 2026-04-30 23:23 -0300.
 
 - Marketing production `g5.2xlarge`:
   - `chaos-activation-patch-gemma-e2b-it-20260430-003`
+- Preprod `g6e.2xlarge`:
+  - `chaos-activation-patch-gemma-e2b-base-20260430-001`
+  - `chaos-activation-patch-gemma-e4b-base-20260430-001`
 
 Recent stopped jobs are known superseded early attempts from earlier waves; no
 new failed/stopped jobs were found in the latest active queues.
@@ -88,11 +91,16 @@ new failed/stopped jobs were found in the latest active queues.
   - artifact bundle: `runs/trajectory_artifacts/logit_token_cert_v1/`
 - Gemma E2B-IT E07 was relaunched after adding Gemma4 block-path support:
   - `chaos-activation-patch-gemma-e2b-it-20260430-003`
+- E07 v3 Gemma base causal wave was launched from the rebuilt E09 case
+  selection:
+  - target config: `configs/activation_patch_targets_v3.json`
+  - queue: `configs/sagemaker_queue_activation_patch_v3.json`
+  - running jobs: `chaos-activation-patch-gemma-e2b-base-20260430-001`,
+    `chaos-activation-patch-gemma-e4b-base-20260430-001`
 
 ### Pending Processing
 
-- Process Gemma E2B-IT E07 retry when
-  `chaos-activation-patch-gemma-e2b-it-20260430-003` completes.
+- Process Gemma E2B-IT retry and Gemma base v3 E07 jobs when they complete.
 
 ## Current Readouts
 
@@ -167,7 +175,7 @@ new failed/stopped jobs were found in the latest active queues.
 
 ## Next Actions
 
-1. Process Gemma E2B-IT E07 retry when it lands.
+1. Process Gemma E2B-IT retry and Gemma base v3 E07 jobs when they land.
 2. Compare E07 v1/v2 by mechanism type and model family before launching the
    next causal wave.
 3. Build the paper-grade figures:
