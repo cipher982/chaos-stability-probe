@@ -23,7 +23,7 @@ Outputs:
 - cross-wave comparison tables/figure under
   `runs/rankings/activation_patch_comparison/`
 
-Status: active causal-intervention wave.
+Status: processed causal-intervention wave.
 - Qwen2B/4B/9B v1 SageMaker jobs are processed in
   `runs/rankings/activation_patch_v1/`: 17/18 finite rescue cases and 16/18
   replayable full-or-overshoot rescues.
@@ -52,12 +52,18 @@ Status: active causal-intervention wave.
 - Strict late-only cases are currently 0/42 under a 0.5 rescue cutoff after
   aligned-prompt and generated-prefix controls, so avoid phrasing the split as
   clean early-versus-late exclusivity.
-- Reverse-direction v4 jobs are running from
+- Reverse-direction v4 jobs are processed in
+  `runs/rankings/activation_patch_v4_reverse/` from
   `configs/activation_patch_targets_v4_reverse.json` and
   `configs/sagemaker_queue_activation_patch_v4_reverse.json`, including the
-  prompt-LCP-heavy Qwen2B/4B cases. These patch B activations into clean A runs
-  to test whether the causal branch movement is directional/symmetric rather
-  than a one-way final-state overwrite artifact.
+  prompt-LCP-heavy Qwen2B/4B cases. These patch B activations into clean A runs.
+- Reverse comparison: 21/21 matched cases have full-or-overshoot rescue in both
+  directions; 19/21 are replayable in both directions; 12/21 have full
+  prompt-LCP rescue in both directions. Two Qwen9B reverse cases did not replay
+  the reverse branch, so keep them out of the strongest replay-clean count.
+- Large Qwen2B/4B reverse rescue fractions are overshoot ratios with small
+  branch-gap denominators; treat them as controllability, not calibrated effect
+  size.
 - Scripts remain in `scripts/` for now because later E08 scripts import them
   directly.
 

@@ -1,7 +1,6 @@
 # Results Digest
 
-Last updated: 2026-05-01 after E07 forward activation-patching comparison
-and reverse-control launch.
+Last updated: 2026-05-01 after E07 reverse activation-patching controls.
 
 This is the compact, talk-oriented current-state readout. The talk is a
 chaos/dynamical-systems teaching talk first; the stability probe is supporting
@@ -171,9 +170,23 @@ rescue is therefore strong evidence that the
 branch can be moved, but not very specific: it can look like overwriting the
 late trajectory state. The more interesting mechanism claim is the prompt-LCP
 subset, where the tiny edit's local prompt representation already carries
-enough causal information to flip or rescue the later branch. Reverse-direction
-v4 jobs are running to test whether this effect is symmetric/directional rather
-than a one-way overwrite artifact.
+enough causal information to flip or rescue the later branch.
+
+The E07 reverse-control wave closes the biggest obvious specificity gap. We
+patched B activations into clean A runs for 21 matched cases across
+Qwen0.8B/2B/4B/9B and Gemma E2B/E4B variants. All 21 matched cases have
+full-or-overshoot rescue in both directions, and 19/21 are replayable in both
+directions. Full prompt-LCP rescue is bidirectional in 12/21 matched cases, and
+the best rescue position class agrees in 16/21. That strengthens the causal
+branch-control story: these are usually not one-way "restore the clean answer"
+artifacts. Two Qwen9B reverse cases did not replay the reverse branch cleanly,
+so keep them out of the strongest replay-clean causal count.
+
+Do not overinterpret the huge Qwen2B/Qwen4B reverse rescue fractions as literal
+effect sizes. They are logit-margin rescue ratios; when the original
+clean-vs-corrupt branch-token gap is small, patching can overshoot far beyond
+the original clean margin. The safe claim is controllability and directionality,
+not a calibrated magnitude.
 
 Do not describe the complementary cases as clean "late-only" mechanisms yet:
 under a strict 0.5 rescue cutoff, there are 0/42 forward cases where

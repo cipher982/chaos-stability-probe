@@ -168,6 +168,81 @@ def summarize(cases: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame]:
     return model_summary, class_counts
 
 
+def write_directional_comparison(cases: pd.DataFrame, out_dir: Path) -> None:
+    reverse = cases[cases["wave"].str.contains("reverse", na=False)].copy()
+    forward = cases[~cases["wave"].str.contains("reverse", na=False)].copy()
+    if reverse.empty or forward.empty:
+        return
+
+    reverse["base_pair_id"] = reverse["pair_id"].str.removesuffix("__reverse")
+    forward["base_pair_id"] = forward["pair_id"]
+
+    keep = [
+        "wave",
+        "model_name",
+        "model_label",
+        "base_pair_id",
+        "category",
+        "replayable",
+        "best_position_class",
+        "best_layer",
+        "best_rescue_fraction",
+        "prompt_lcp_token_best_rescue_fraction",
+        "final_context_token_best_rescue_fraction",
+        "best_full",
+        "prompt_lcp_full",
+        "prompt_lcp_strong",
+        "prompt_lcp_beats_other_prompt_positions",
+    ]
+    directional = forward[keep].merge(
+        reverse[keep],
+        on=["model_name", "model_label", "base_pair_id"],
+        suffixes=("_forward", "_reverse"),
+        how="inner",
+    )
+    if directional.empty:
+        return
+
+    directional["bidirectional_replayable"] = (
+        directional["replayable_forward"] & directional["replayable_reverse"]
+    )
+    directional["bidirectional_full"] = (
+        directional["best_full_forward"] & directional["best_full_reverse"]
+    )
+    directional["bidirectional_prompt_lcp_full"] = (
+        directional["prompt_lcp_full_forward"] & directional["prompt_lcp_full_reverse"]
+    )
+    directional["bidirectional_prompt_lcp_strong"] = (
+        directional["prompt_lcp_strong_forward"] & directional["prompt_lcp_strong_reverse"]
+    )
+    directional["best_class_agrees"] = (
+        directional["best_position_class_forward"] == directional["best_position_class_reverse"]
+    )
+    directional["reverse_minus_forward_best_rescue"] = (
+        directional["best_rescue_fraction_reverse"] - directional["best_rescue_fraction_forward"]
+    )
+    directional.to_csv(out_dir / "directional_case_comparison.csv", index=False)
+
+    model_summary = (
+        directional.groupby(["model_name", "model_label"], dropna=False)
+        .agg(
+            matched_cases=("base_pair_id", "count"),
+            bidirectional_replayable=("bidirectional_replayable", "sum"),
+            bidirectional_full=("bidirectional_full", "sum"),
+            bidirectional_prompt_lcp_full=("bidirectional_prompt_lcp_full", "sum"),
+            bidirectional_prompt_lcp_strong=("bidirectional_prompt_lcp_strong", "sum"),
+            best_class_agrees=("best_class_agrees", "sum"),
+            mean_forward_best=("best_rescue_fraction_forward", "mean"),
+            mean_reverse_best=("best_rescue_fraction_reverse", "mean"),
+            mean_reverse_minus_forward=(
+                "reverse_minus_forward_best_rescue",
+                "mean",
+            ),
+        )
+        .reset_index()
+    )
+    model_summary.to_csv(out_dir / "directional_model_summary.csv", index=False)
+
 def write_case_slices(cases: pd.DataFrame, out_dir: Path) -> None:
     cols = [col for col in CASE_COLUMNS if col in cases.columns]
     prompt_rescue = cases[cases["nontrivial_prompt_rescue"]].copy()
@@ -196,7 +271,12 @@ def write_case_slices(cases: pd.DataFrame, out_dir: Path) -> None:
     ).to_csv(out_dir / "strict_late_only_rescue_cases.csv", index=False)
 
 
-def print_readout(model_summary: pd.DataFrame, class_counts: pd.DataFrame, cases: pd.DataFrame) -> None:
+def print_readout(
+    model_summary: pd.DataFrame,
+    class_counts: pd.DataFrame,
+    cases: pd.DataFrame,
+    out_dir: Path,
+) -> None:
     print(model_summary.to_string(index=False))
     forward = cases[~cases["wave"].str.contains("reverse", na=False)]
     if forward.empty:
@@ -229,6 +309,18 @@ def print_readout(model_summary: pd.DataFrame, class_counts: pd.DataFrame, cases
         f"{strict_late_only}/{total} cases are strict late-only under the 0.5 rescue cutoff "
         "after aligned-prompt and generated-prefix controls."
     )
+
+    directional_path = out_dir / "directional_case_comparison.csv"
+    if directional_path.exists():
+        directional = pd.read_csv(directional_path)
+        matched = len(directional)
+        if matched:
+            print(
+                "Directional readout: "
+                f"{int(directional['bidirectional_full'].sum())}/{matched} matched cases have full-or-overshoot rescue "
+                f"in both directions; {int(directional['bidirectional_prompt_lcp_full'].sum())}/{matched} have full "
+                "prompt-LCP rescue in both directions."
+            )
 
 
 def plot_position_classes(model_summary: pd.DataFrame, class_counts: pd.DataFrame, out_dir: Path) -> None:
@@ -299,8 +391,9 @@ def main() -> None:
     model_summary.to_csv(args.out_dir / "model_level_summary.csv", index=False)
     class_counts.to_csv(args.out_dir / "position_class_counts.csv", index=False)
     write_case_slices(cases, args.out_dir)
+    write_directional_comparison(cases, args.out_dir)
     plot_position_classes(model_summary, class_counts, args.out_dir)
-    print_readout(model_summary, class_counts, cases)
+    print_readout(model_summary, class_counts, cases, args.out_dir)
     print(f"Wrote activation-patch comparison artifacts to {args.out_dir}")
 
 

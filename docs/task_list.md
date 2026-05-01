@@ -25,23 +25,17 @@ Operational board only. Keep historical narrative out of this file; use
 
 ## Live Operations
 
-Last checked: 2026-05-01 00:26 -0300.
+Last checked: 2026-05-01 10:25 -0300.
 
 ### SageMaker Running
 
-- Preprod `g6e.2xlarge`:
-  - `chaos-activation-patch-rev-qwen9b-20260501-001` - training
-  - `chaos-activation-patch-rev-gemma-e2b-base-20260501-001` - training
-  - `chaos-activation-patch-rev-gemma-e4b-base-20260501-001` - training
-  - `chaos-activation-patch-rev-qwen2b-20260501-001` - pending
-  - `chaos-activation-patch-rev-qwen4b-20260501-001` - pending
-- Marketing production `g5.2xlarge`:
-  - `chaos-activation-patch-rev-gemma-e2b-it-20260501-001` - training
-- QA `g5.2xlarge`:
-  - `chaos-activation-patch-rev-qwen08-20260501-001` - training
+No active reverse-control jobs remain. The full E07 v4 reverse queue completed
+and was processed.
 
-Recent stopped jobs are known superseded early attempts from earlier waves; no
-new failed/stopped jobs were found in the latest active queues.
+No failed SageMaker jobs were found in the latest scan. The only recent stopped
+job surfaced outside the reverse queue was
+`chaos-token-micro-qwen4b-thinkoff-20260430-001`, already superseded by later
+completed Qwen4B token-micro jobs.
 
 ### Newly Processed
 
@@ -116,10 +110,20 @@ new failed/stopped jobs were found in the latest active queues.
     prompt-LCP forward-rescue models.
   - purpose: test whether B activations can push clean A runs toward B's branch,
     rather than only showing that A activations can rescue A inside B.
+- E07 v4 reverse-direction causal wave completed and was processed:
+  - output: `runs/rankings/activation_patch_v4_reverse/`
+  - reverse wave: 21/21 finite full-or-overshoot rescue cases, 19/21 replayable
+    full-or-overshoot cases.
+  - matched forward/reverse comparison:
+    `runs/rankings/activation_patch_comparison/directional_case_comparison.csv`
+  - directional readout: 21/21 matched cases have full-or-overshoot rescue in
+    both directions; 12/21 have full prompt-LCP rescue in both directions.
+  - caveat: two Qwen9B reverse cases did not replay the branch, so count them
+    as broad patchability evidence, not replay-clean causal examples.
 
 ### Pending Processing
 
-- Process E07 v4 reverse-direction jobs when they complete.
+- None from the current SageMaker queues.
 
 ## Current Readouts
 
@@ -201,12 +205,13 @@ new failed/stopped jobs were found in the latest active queues.
 
 ## Next Actions
 
-1. Process E07 v4 reverse-direction jobs when they land.
-2. Compare E07 v1/v2/v3/v4 by mechanism type and model family.
-3. Build the paper-grade figures:
+1. Build the paper-grade figures:
    - single-case trajectory anatomy,
    - Qwen branch-timing parallel coordinates,
    - at-branch vs strict pre-branch AUROC forest plot.
+2. Decide whether to run a broader, randomly selected activation-patching
+   replication wave before treating E07 as paper-ready.
+3. Start paper outline once figures and caveats are frozen.
 
 ## Useful Commands
 
