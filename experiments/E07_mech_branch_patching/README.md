@@ -70,6 +70,10 @@ Status: processed causal-intervention wave.
   held-out token-certified branch cases per model from the E09 candidate pool,
   stratified across branch timing buckets where available. This is the
   selection-bias check before treating E07 as paper-ready.
+- Partial V5 readout across 7/8 models: 34/35 finite full-or-overshoot rescue
+  cases and 30/35 replayable full-or-overshoot rescue cases. Best rescue
+  positions are 9 prompt-LCP, 21 final-context, 4 generated-prefix, and 1
+  aligned-prompt. Gemma E4B base remains to process.
 - Scripts remain in `scripts/` for now because later E08 scripts import them
   directly.
 

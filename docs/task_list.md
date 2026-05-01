@@ -25,24 +25,18 @@ Operational board only. Keep historical narrative out of this file; use
 
 ## Live Operations
 
-Last checked: 2026-05-01 10:34 -0300.
+Last checked: 2026-05-01 11:03 -0300.
 
 ### SageMaker Running
 
 E07 v5 randomized replication is running.
 
 - Preprod `g6e.2xlarge`:
-  - `chaos-activation-patch-rep-qwen4b-20260501-001` - downloading
-  - `chaos-activation-patch-rep-qwen9b-20260501-001` - downloading
-  - `chaos-activation-patch-rep-gemma-e2b-it-20260501-001` - downloading
-  - `chaos-activation-patch-rep-gemma-e2b-base-20260501-001` - pending
-  - `chaos-activation-patch-rep-gemma-e4b-it-20260501-001` - pending
+  - `chaos-activation-patch-rep-gemma-e4b-base-20260501-001` - pending
 - Marketing production `g5.2xlarge`:
-  - `chaos-activation-patch-rep-qwen2b-20260501-001` - downloading
+  - none active in the v5 queue.
 - QA `g5.2xlarge`:
-  - `chaos-activation-patch-rep-qwen08-20260501-001` - downloading
-- Queued, not yet launched:
-  - `chaos-activation-patch-rep-gemma-e4b-base-20260501-001`
+  - none active in the v5 queue.
 
 No failed SageMaker jobs were found in the latest scan. The only recent stopped
 job surfaced outside the reverse queue was
@@ -138,12 +132,21 @@ completed Qwen4B token-micro jobs.
   - selection: five held-out token-certified branch cases per model from the
     E09 candidate pool, stratified across immediate/early/mid/long branch
     timing where available.
-  - launched: 7/8 jobs; Gemma E4B base is waiting for a preprod `g6e` slot.
+  - launched: 8/8 jobs.
+- E07 v5 randomized replication is partially processed:
+  - output: `runs/rankings/activation_patch_v5_replication/`
+  - processed models: Qwen0.8B/2B/4B/9B and Gemma E2B/E4B instruct plus Gemma
+    E2B base.
+  - current processed summary: 34/35 finite full-or-overshoot rescue cases,
+    30/35 replayable full-or-overshoot rescue cases.
+  - current position split: 9 prompt-LCP best, 21 final-context best, 4
+    generated-prefix best, 1 aligned-prompt best.
+  - remaining: Gemma E4B base is launched but not yet complete.
 
 ### Pending Processing
 
-- Launch remaining E07 v5 Gemma E4B base when a preprod `g6e` slot opens.
-- Process E07 v5 replication jobs when they complete.
+- Process E07 v5 Gemma E4B base when it completes, then rerun
+  `scripts/compare_activation_patch_waves.py`.
 
 ## Current Readouts
 

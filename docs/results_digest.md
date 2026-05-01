@@ -188,6 +188,18 @@ clean-vs-corrupt branch-token gap is small, patching can overshoot far beyond
 the original clean margin. The safe claim is controllability and directionality,
 not a calibrated magnitude.
 
+The first E07 randomized held-out replication pass is already enough to reduce
+the selection-bias objection. It sampled five fresh branch cases per model from
+the E09 candidate pool, stratified across branch-timing buckets where possible.
+As of the partial 7/8-model processing pass, 34/35 held-out cases have finite
+full-or-overshoot rescue and 30/35 are replayable full-or-overshoot rescues.
+The position split is less edit-boundary-heavy than the hand-selected waves:
+9/35 best at prompt LCP, 21/35 best at final context, 4/35 best at generated
+prefix, and 1/35 best at an aligned prompt-control position. This supports a
+two-tier claim: broad branch controllability appears to replicate on held-out
+cases, while prompt-LCP/edit-boundary rescue is a meaningful subset rather than
+the universal mechanism.
+
 Do not describe the complementary cases as clean "late-only" mechanisms yet:
 under a strict 0.5 rescue cutoff, there are 0/42 forward cases where
 final-context works while prompt-LCP, aligned-prompt, and generated-prefix

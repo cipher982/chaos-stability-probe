@@ -15,6 +15,7 @@ DEFAULT_WAVES = [
     Path("runs/rankings/activation_patch_v2"),
     Path("runs/rankings/activation_patch_v3"),
     Path("runs/rankings/activation_patch_v4_reverse"),
+    Path("runs/rankings/activation_patch_v5_replication"),
 ]
 
 MODEL_LABELS = {
