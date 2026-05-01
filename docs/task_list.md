@@ -75,16 +75,22 @@ new failed/stopped jobs were found in the latest active queues.
   - `chaos-batch-det-qwen08-g6e-20260430-001`
   - `chaos-batch-det-qwen08-g5-20260430-001`
   - output: `runs/sagemaker_artifacts/chaos-batch-det-*/runs/batch_determinism.json`
+- E07 v2 activation-patching completed and was processed:
+  - output: `runs/rankings/activation_patch_v2/`
+  - Qwen0.8B: 6/6 finite, replayable, full-or-overshoot rescues.
+  - Gemma E2B-IT: job completed but patch cases failed because
+    `activation_patch_branch.py` does not yet find Gemma's transformer block
+    list.
 
 ### Pending Processing
 
 - Process when complete:
-  - Qwen0.8B/Gemma E2B-IT activation-patching jobs
   - Gemma E2B base logit-token job
   - Gemma E2B base token-micro repair
 
 - Process now:
   - Gemma E4B instruct/base logit-token jobs completed at 22:20/22:14 -0300.
+  - Add Gemma block-path support before retrying E07 on Gemma E2B-IT.
 
 ## Current Readouts
 
@@ -128,7 +134,10 @@ new failed/stopped jobs were found in the latest active queues.
 - Qwen2B/4B/9B v1 patch wave processed from 18 selected branch cases.
 - Finite rescue exists for 17/18 cases; 16/18 are replayable
   full-or-overshoot rescues.
+- Qwen0.8B v2 patch wave processed from 6 selected branch cases; all 6 are
+  replayable full-or-overshoot rescues.
 - Best rescue position classes differ in this selected set:
+  - Qwen0.8B: 4 prompt-LCP, 2 final-context.
   - Qwen2B: 3 prompt-LCP, 2 final-context, 1 aligned-prompt.
   - Qwen4B: 4 prompt-LCP, 2 final-context.
   - Qwen9: 2 prompt-LCP, 4 final-context.
