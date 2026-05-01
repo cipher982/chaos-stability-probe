@@ -25,7 +25,7 @@ Operational board only. Keep historical narrative out of this file; use
 
 ## Live Operations
 
-Last checked: 2026-04-30 20:22 -0300.
+Last checked: 2026-04-30 21:13 -0300.
 
 ### SageMaker Running
 
@@ -34,14 +34,13 @@ Last checked: 2026-04-30 20:22 -0300.
   - `chaos-logit-token-cert-gemma-e4b-it-20260430-001`
   - `chaos-logit-token-cert-gemma-e4b-base-20260430-001`
   - `chaos-token-micro-gemma-e2b-base-token-cert-20260430-004`
-  - `chaos-activation-patch-qwen9b-20260430-001`
-- ML production `g5.2xlarge`:
-  - `chaos-activation-patch-qwen2b-20260430-001`
 - Marketing production `g5.2xlarge`:
-  - `chaos-activation-patch-qwen4b-20260430-001`
+  - `chaos-activation-patch-gemma-e2b-it-20260430-002`
+- QA `g5.2xlarge`:
+  - `chaos-activation-patch-qwen08-20260430-002`
 
-No failed/stopped `chaos-*` jobs found in the last 8 hours across preprod, ML
-production, marketing production, or QA.
+Recent stopped jobs are known superseded early attempts from earlier waves; no
+new failed/stopped jobs were found in the latest active queues.
 
 ### Newly Processed
 
@@ -54,6 +53,12 @@ production, marketing production, or QA.
   branch cases:
   - target config: `configs/activation_patch_targets_v1.json`
   - queue: `configs/sagemaker_queue_activation_patch_v1.json`
+- E07 Qwen2B/4B/9B activation-patching jobs completed and were processed:
+  - output: `runs/rankings/activation_patch_v1/`
+  - summary: 17/18 finite rescue cases; 16/18 replayable full-or-overshoot rescues.
+- E07 v2 activation-patching jobs were launched for Qwen0.8B and Gemma E2B-IT:
+  - target config: `configs/activation_patch_targets_v2.json`
+  - queue: `configs/sagemaker_queue_activation_patch_v2.json`
 - E05 paper repair completed and was processed:
   - `chaos-token-micro-opt-6p7b-20260430-004`
   - Output: `runs/rankings/token_micro_v3/`
@@ -72,7 +77,7 @@ production, marketing production, or QA.
 ### Pending Processing
 
 - Process when complete:
-  - Qwen2B/4B/9B activation-patching jobs
+  - Qwen0.8B/Gemma E2B-IT activation-patching jobs
   - Gemma E2B base/E4B instruct/E4B base logit-token jobs
   - Gemma E2B base token-micro repair
 
@@ -111,17 +116,31 @@ production, marketing production, or QA.
   over four visible-branch cases, `7.8` for Qwen4B, and `1.8` for Qwen9.
   Treat this as case-selection evidence, not a general scaling law.
 
+### E07 Mechanistic Branch Patching
+
+`runs/rankings/activation_patch_v1/`
+
+- Qwen2B/4B/9B v1 patch wave processed from 18 selected branch cases.
+- Finite rescue exists for 17/18 cases; 16/18 are replayable
+  full-or-overshoot rescues.
+- Best rescue position classes differ in this selected set:
+  - Qwen2B: 3 prompt-LCP, 2 final-context, 1 aligned-prompt.
+  - Qwen4B: 4 prompt-LCP, 2 final-context.
+  - Qwen9: 2 prompt-LCP, 4 final-context.
+- Treat rescue fractions above 1.0 as overshoot, not better-than-perfect
+  semantic recovery.
+
 ## Next Actions
 
-1. Process Qwen2B/4B/9B activation-patching jobs when they land.
+1. Process Qwen0.8B/Gemma E2B-IT activation-patching jobs when they land.
 2. Process Gemma logit-token jobs and Gemma E2B base token-micro repair when
    they land.
 3. Build the paper-grade figures:
    - single-case trajectory anatomy,
    - Qwen branch-timing parallel coordinates,
    - at-branch vs strict pre-branch AUROC forest plot.
-4. After E07 patching lands, decide whether to expand by mechanism type or
-   model family.
+4. Compare E07 v1/v2 by mechanism type and model family before launching the
+   next causal wave.
 
 ## Useful Commands
 
@@ -130,6 +149,8 @@ uv run python scripts/sagemaker_status.py --prefix chaos --max-results 20 --deta
 uv run python scripts/process_logit_queue.py --queue configs/sagemaker_queue_logit_token_cert_v1.json --out-dir runs/rankings/logit_token_cert_v1
 uv run python scripts/process_silent_divergence_queue.py --queue configs/sagemaker_queue_silent_divergence_pilot_v1.json --out-dir runs/rankings/silent_divergence_pilot_v1
 uv run python scripts/dispatch_sagemaker_queue.py --queue configs/sagemaker_queue_activation_patch_v1.json --profile zh-marketing-preprod-aiengineer --max-active 5
+uv run python scripts/process_activation_patch_queue.py --queue configs/sagemaker_queue_activation_patch_v1.json --out-dir runs/rankings/activation_patch_v1
+uv run python scripts/process_activation_patch_queue.py --queue configs/sagemaker_queue_activation_patch_v2.json --out-dir runs/rankings/activation_patch_v2
 uv run python scripts/process_token_micro_queue.py --queue configs/sagemaker_queue_paper_repairs_v1.json --rank-dir runs/rankings/token_micro_v3 --passes 1 --sleep-s 0
 uv run python scripts/build_trajectory_artifacts.py --trajectory-dir runs/trajectory_events/logit_token_cert_v1 --silent-summary runs/rankings/silent_divergence_local_qwen_ladder_meta_20260430/silent_divergence_readout.csv
 ```

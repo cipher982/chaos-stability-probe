@@ -1,0 +1,36 @@
+[
+  {
+    "job_name": "chaos-activation-patch-qwen08-20260430-002",
+    "entrypoint": "activation_patch",
+    "model": "qwen35_08b",
+    "prompt_pairs": "configs/prompt_pairs_token_certified/qwen35_08b.json",
+    "targets_json": "configs/activation_patch_targets_v2.json",
+    "max_new_tokens": 128,
+    "timeout_s": 21600,
+    "max_runtime_s": 43200,
+    "positions": "aligned",
+    "profile": "zh-qa-aiengineer",
+    "bucket": "947470032858-use1-zmp-qa-ml-ops-sagemaker-models",
+    "role_arn": "arn:aws:iam::947470032858:role/zmp-qa-use1_sagemaker_0",
+    "instance_type": "ml.g5.2xlarge",
+    "thinking_mode": "disabled",
+    "no_tags": true
+  },
+  {
+    "job_name": "chaos-activation-patch-gemma-e2b-it-20260430-002",
+    "entrypoint": "activation_patch",
+    "model": "gemma4_e2b_it",
+    "prompt_pairs": "configs/prompt_pairs_token_certified/gemma4_e2b_it.json",
+    "targets_json": "configs/activation_patch_targets_v2.json",
+    "max_new_tokens": 128,
+    "timeout_s": 21600,
+    "max_runtime_s": 43200,
+    "positions": "aligned",
+    "profile": "zh-marketing-productionengineer",
+    "bucket": "066377602118-use1-zme-prod-ml-ops-sagemaker-models",
+    "role_arn": "arn:aws:iam::066377602118:role/zme-prod-use1_sagemaker_0",
+    "instance_type": "ml.g5.2xlarge",
+    "thinking_mode": "disabled",
+    "no_tags": true
+  }
+]

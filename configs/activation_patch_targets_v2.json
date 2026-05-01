@@ -1,0 +1,18 @@
+{
+  "qwen35_08b": [
+    "token_cert_parenthesize_word_0434",
+    "token_cert_parenthesize_word_0211",
+    "token_cert_tab_after_space_0454",
+    "token_cert_double_internal_space_0180",
+    "token_cert_parenthesize_word_0061",
+    "token_cert_duplicate_small_word_0419"
+  ],
+  "gemma4_e2b_it": [
+    "token_cert_parenthesize_word_0518",
+    "token_cert_parenthesize_word_0097",
+    "token_cert_blank_line_wrap_0357",
+    "token_cert_parenthesize_word_0202",
+    "token_cert_blank_line_wrap_0134",
+    "token_cert_parenthesize_word_0509"
+  ]
+}
