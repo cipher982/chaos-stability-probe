@@ -15,10 +15,13 @@ Commands:
 - `uv run python scripts/run_activation_patch_panel.py --targets-json configs/activation_patch_targets_v1.json ...`
 - `uv run python scripts/summarize_patch_results.py`
 - `uv run python scripts/process_activation_patch_queue.py --queue configs/sagemaker_queue_activation_patch_v1.json --out-dir runs/rankings/activation_patch_v1`
+- `uv run python scripts/compare_activation_patch_waves.py`
 
 Outputs:
 - patch CSVs and heatmaps under `runs/mechinterp_patch*/`
 - merged SageMaker readouts under `runs/rankings/activation_patch_v*/`
+- cross-wave comparison tables/figure under
+  `runs/rankings/activation_patch_comparison/`
 
 Status: active causal-intervention wave.
 - Qwen2B/4B/9B v1 SageMaker jobs are processed in
