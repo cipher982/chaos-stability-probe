@@ -4,6 +4,16 @@
     "token_cert_tab_after_space_0454",
     "token_cert_duplicate_small_word_0419"
   ],
+  "qwen35_2b": [
+    "token_cert_tab_after_space_0192",
+    "token_cert_duplicate_small_word_0185",
+    "token_cert_blank_line_wrap_0521"
+  ],
+  "qwen35_4b": [
+    "token_cert_double_internal_space_0135",
+    "token_cert_parenthesize_word_0525",
+    "token_cert_parenthesize_word_0427"
+  ],
   "qwen35_9b": [
     "token_cert_line_wrap_0421",
     "token_cert_tab_after_space_0572",

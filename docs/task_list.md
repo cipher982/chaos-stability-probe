@@ -25,18 +25,20 @@ Operational board only. Keep historical narrative out of this file; use
 
 ## Live Operations
 
-Last checked: 2026-05-01 00:19 -0300.
+Last checked: 2026-05-01 00:26 -0300.
 
 ### SageMaker Running
 
 - Preprod `g6e.2xlarge`:
-  - `chaos-activation-patch-rev-qwen9b-20260501-001`
-  - `chaos-activation-patch-rev-gemma-e2b-base-20260501-001`
-  - `chaos-activation-patch-rev-gemma-e4b-base-20260501-001`
+  - `chaos-activation-patch-rev-qwen9b-20260501-001` - training
+  - `chaos-activation-patch-rev-gemma-e2b-base-20260501-001` - training
+  - `chaos-activation-patch-rev-gemma-e4b-base-20260501-001` - training
+  - `chaos-activation-patch-rev-qwen2b-20260501-001` - pending
+  - `chaos-activation-patch-rev-qwen4b-20260501-001` - pending
 - Marketing production `g5.2xlarge`:
-  - `chaos-activation-patch-rev-gemma-e2b-it-20260501-001`
+  - `chaos-activation-patch-rev-gemma-e2b-it-20260501-001` - training
 - QA `g5.2xlarge`:
-  - `chaos-activation-patch-rev-qwen08-20260501-001`
+  - `chaos-activation-patch-rev-qwen08-20260501-001` - training
 
 Recent stopped jobs are known superseded early attempts from earlier waves; no
 new failed/stopped jobs were found in the latest active queues.
@@ -110,6 +112,8 @@ new failed/stopped jobs were found in the latest active queues.
 - E07 v4 reverse-direction causal wave was launched as a specificity check:
   - target config: `configs/activation_patch_targets_v4_reverse.json`
   - queue: `configs/sagemaker_queue_activation_patch_v4_reverse.json`
+  - expanded to include Qwen2B/4B because those were the strongest
+    prompt-LCP forward-rescue models.
   - purpose: test whether B activations can push clean A runs toward B's branch,
     rather than only showing that A activations can rescue A inside B.
 
