@@ -25,12 +25,24 @@ Operational board only. Keep historical narrative out of this file; use
 
 ## Live Operations
 
-Last checked: 2026-05-01 10:25 -0300.
+Last checked: 2026-05-01 10:34 -0300.
 
 ### SageMaker Running
 
-No active reverse-control jobs remain. The full E07 v4 reverse queue completed
-and was processed.
+E07 v5 randomized replication is running.
+
+- Preprod `g6e.2xlarge`:
+  - `chaos-activation-patch-rep-qwen4b-20260501-001` - downloading
+  - `chaos-activation-patch-rep-qwen9b-20260501-001` - downloading
+  - `chaos-activation-patch-rep-gemma-e2b-it-20260501-001` - downloading
+  - `chaos-activation-patch-rep-gemma-e2b-base-20260501-001` - pending
+  - `chaos-activation-patch-rep-gemma-e4b-it-20260501-001` - pending
+- Marketing production `g5.2xlarge`:
+  - `chaos-activation-patch-rep-qwen2b-20260501-001` - downloading
+- QA `g5.2xlarge`:
+  - `chaos-activation-patch-rep-qwen08-20260501-001` - downloading
+- Queued, not yet launched:
+  - `chaos-activation-patch-rep-gemma-e4b-base-20260501-001`
 
 No failed SageMaker jobs were found in the latest scan. The only recent stopped
 job surfaced outside the reverse queue was
@@ -120,10 +132,18 @@ completed Qwen4B token-micro jobs.
     both directions; 12/21 have full prompt-LCP rescue in both directions.
   - caveat: two Qwen9B reverse cases did not replay the branch, so count them
     as broad patchability evidence, not replay-clean causal examples.
+- E07 v5 randomized replication wave was launched to test selection bias:
+  - target config: `configs/activation_patch_targets_v5_replication.json`
+  - queue: `configs/sagemaker_queue_activation_patch_v5_replication.json`
+  - selection: five held-out token-certified branch cases per model from the
+    E09 candidate pool, stratified across immediate/early/mid/long branch
+    timing where available.
+  - launched: 7/8 jobs; Gemma E4B base is waiting for a preprod `g6e` slot.
 
 ### Pending Processing
 
-- None from the current SageMaker queues.
+- Launch remaining E07 v5 Gemma E4B base when a preprod `g6e` slot opens.
+- Process E07 v5 replication jobs when they complete.
 
 ## Current Readouts
 
@@ -209,8 +229,8 @@ completed Qwen4B token-micro jobs.
    - single-case trajectory anatomy,
    - Qwen branch-timing parallel coordinates,
    - at-branch vs strict pre-branch AUROC forest plot.
-2. Decide whether to run a broader, randomly selected activation-patching
-   replication wave before treating E07 as paper-ready.
+2. Process E07 v5 replication. If it broadly reproduces v1-v4, stop launching
+   activation-patching waves and pivot to paper figures/writing.
 3. Start paper outline once figures and caveats are frozen.
 
 ## Useful Commands
@@ -223,6 +243,7 @@ uv run python scripts/dispatch_sagemaker_queue.py --queue configs/sagemaker_queu
 uv run python scripts/process_activation_patch_queue.py --queue configs/sagemaker_queue_activation_patch_v1.json --out-dir runs/rankings/activation_patch_v1
 uv run python scripts/process_activation_patch_queue.py --queue configs/sagemaker_queue_activation_patch_v2.json --out-dir runs/rankings/activation_patch_v2
 uv run python scripts/process_activation_patch_queue.py --queue configs/sagemaker_queue_activation_patch_v4_reverse.json --out-dir runs/rankings/activation_patch_v4_reverse
+uv run python scripts/process_activation_patch_queue.py --queue configs/sagemaker_queue_activation_patch_v5_replication.json --out-dir runs/rankings/activation_patch_v5_replication
 uv run python scripts/process_token_micro_queue.py --queue configs/sagemaker_queue_paper_repairs_v1.json --rank-dir runs/rankings/token_micro_v3 --passes 1 --sleep-s 0
 uv run python scripts/build_trajectory_artifacts.py --trajectory-dir runs/trajectory_events/logit_token_cert_v1 --silent-summary runs/rankings/silent_divergence_local_qwen_ladder_meta_20260430/silent_divergence_readout.csv
 ```

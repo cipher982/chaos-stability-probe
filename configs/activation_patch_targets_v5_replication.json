@@ -1,0 +1,58 @@
+{
+  "qwen35_08b": [
+    "token_cert_line_wrap_0237",
+    "token_cert_line_wrap_0421",
+    "token_cert_blank_line_wrap_0484",
+    "token_cert_triple_internal_space_0136",
+    "token_cert_double_internal_space_0189"
+  ],
+  "qwen35_2b": [
+    "token_cert_line_wrap_0378",
+    "token_cert_parenthesize_word_0144",
+    "token_cert_line_wrap_0573",
+    "token_cert_tab_after_space_0179",
+    "token_cert_blank_line_wrap_0566"
+  ],
+  "qwen35_4b": [
+    "token_cert_parenthesize_word_0385",
+    "token_cert_parenthesize_word_0468",
+    "token_cert_parenthesize_word_0191",
+    "token_cert_double_internal_space_0119",
+    "token_cert_duplicate_punctuation_0182"
+  ],
+  "qwen35_9b": [
+    "token_cert_parenthesize_word_0105",
+    "token_cert_blank_line_wrap_0547",
+    "token_cert_tab_after_space_0364",
+    "token_cert_parenthesize_word_0570",
+    "token_cert_duplicate_small_word_0175"
+  ],
+  "gemma4_e2b_it": [
+    "token_cert_parenthesize_word_0395",
+    "token_cert_double_internal_space_0322",
+    "token_cert_triple_internal_space_0077",
+    "token_cert_double_internal_space_0076",
+    "token_cert_double_internal_space_0234"
+  ],
+  "gemma4_e2b_base": [
+    "token_cert_blank_line_wrap_0012",
+    "token_cert_blank_line_wrap_0089",
+    "token_cert_triple_internal_space_0077",
+    "token_cert_blank_line_wrap_0212",
+    "token_cert_line_wrap_0114"
+  ],
+  "gemma4_e4b_it": [
+    "token_cert_parenthesize_word_0447",
+    "token_cert_line_wrap_0034",
+    "token_cert_line_wrap_0353",
+    "token_cert_blank_line_wrap_0298",
+    "token_cert_duplicate_small_word_0356"
+  ],
+  "gemma4_e4b_base": [
+    "token_cert_double_internal_space_0322",
+    "token_cert_tab_after_space_0186",
+    "token_cert_line_wrap_0474",
+    "token_cert_blank_line_wrap_0475",
+    "token_cert_parenthesize_word_0439"
+  ]
+}

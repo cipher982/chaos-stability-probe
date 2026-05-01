@@ -64,6 +64,12 @@ Status: processed causal-intervention wave.
 - Large Qwen2B/4B reverse rescue fractions are overshoot ratios with small
   branch-gap denominators; treat them as controllability, not calibrated effect
   size.
+- V5 randomized replication is running from
+  `configs/activation_patch_targets_v5_replication.json` and
+  `configs/sagemaker_queue_activation_patch_v5_replication.json`. It uses five
+  held-out token-certified branch cases per model from the E09 candidate pool,
+  stratified across branch timing buckets where available. This is the
+  selection-bias check before treating E07 as paper-ready.
 - Scripts remain in `scripts/` for now because later E08 scripts import them
   directly.
 
