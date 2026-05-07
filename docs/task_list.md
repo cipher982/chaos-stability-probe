@@ -134,21 +134,126 @@ Readout:
 
 ## Next Actions
 
-1. Build a Branch Card artifact from an existing high-signal case:
-   first branch, margins/top-k, replay/patch evidence, suspected prompt span,
-   caveats, and stable-fix placeholder.
-2. Build paper/product figures:
-   single-case trajectory anatomy,
-   Qwen branch-timing parallel coordinates,
-   at-branch vs strict pre-branch AUROC,
-   E07 best rescue position classes.
-3. Add forced-prefix replay and prompt-delta bisect before more hidden-state
-   patching. These are the practical primitives for API/server workflows.
-4. Add focused negative controls:
-   prompt-token-effective edits that do not branch,
-   and replay-unstable branch cases.
-5. Start a compact paper outline only after the first Branch Card and figures
-   exist.
+Planning spec with Codex review: `docs/branchtrace_spec_20260506.md`. Until a
+Phase is complete, all work goes through that spec; do not open a new plan.
+
+### Phase 0.5 — OTHER/imm audit (completed 2026-05-07)
+
+**Result: 3-regime taxonomy survives; rename OTHER/imm regime.**
+
+All 30 immediate-branch cases have `first_diff_token=0` (tokenization
+shift at start of prompt) and full rescue at the last prompt position
+(30/30). EDIT/imm = "token-0 edit representation also works"; OTHER/imm
+= "only last-prompt-position works." No multi-boundary to redefine LCP
+around, so no headline bump. Rename the regime from "prompt-position-
+shifted" to **"prompt-accumulation"** — the edit's effect only becomes
+a sufficient handle after it has propagated through the prompt to the
+final position. Last-prompt-position at branch_t=0 is a near-proxy for
+final-context.
+
+Headline stays 41/82 edit-boundary + 27/82 trajectory-migration +
+14/82 prompt-accumulation. Pre-registered gen-prefix test stands at
+50/52.
+
+### Phase 1 — BranchTrace v1, one hero card (active)
+
+1. Claim `E11_branchtrace_card` row in `docs/experiment_index.md`.
+2. Scaffold `branchtrace/` package: `schema.py`, `loaders/stability_run.py`,
+   `loaders/logit_run.py`, `loaders/patch_wave.py`, `build_card.py`,
+   `render_card.py`, `cli.py`. Jinja2 for HTML, Pydantic for schema.
+3. Build hero Branch Card JSON from existing artifacts for
+   `qwen35_2b__token_cert_parenthesize_word_0434`:
+   - logit/trajectory: `runs/trajectory_events/logit_token_cert_v1/`
+     and `runs/sagemaker_artifacts/chaos-logit-token-cert-qwen2b-thinkoff-*/`
+   - patch evidence: `runs/mechinterp_patch_aligned/qwen35_2b__token_cert_parenthesize_word_0434.*`
+     and `runs/rankings/activation_patch_v2/`
+   - required fields: full runtime env metadata, artifact sha256s,
+     `source` tag on every block (observed|derived|not_run),
+     `selection_provenance.pool` set to `hand_selected_v2`.
+4. Render static HTML; smoke test locally.
+5. Commit as `E11_branchtrace_card/` with short restart README.
+
+### Phase 2 — second archetype card
+
+6. Build a Branch Card for a long-prefix / silent case, e.g.
+   `gemma4_e4b_base__token_cert_blank_line_wrap_0212` from
+   `runs/trajectory_artifacts/logit_token_cert_v1/case_selection/recommended_cases.csv`.
+7. Confirm schema handles `silent_logit_divergence` events and long
+   common prefixes without special-casing.
+
+### Phase 3 — forced-prefix replay (local only, kill criteria pre-committed)
+
+8. Implement `branchtrace replay --mode forced-prefix` in local
+   Transformers. API adapters out of scope for v1.
+9. Run replay on both hero cards plus ~20 E07 prompt-LCP-rescue cases.
+10. Apply kill criteria from spec §9:
+    - <30% forced-prefix flips → demote replay; paper stays
+      activation-patching-centered.
+    - 30-70% → keep as a secondary primitive; note overlap.
+    - >70% → note redundancy with patching for this subset; keep
+      patching for the rest.
+11. Record outcome in `experiments/E11_branchtrace_card/README.md`.
+
+### Phase 4 — paper draft (6-8pp workshop)
+
+**Venue committed: NeurIPS interp workshop** (expert confirmed this is
+both more honest and more likely to land than BlackboxNLP given the
+evidence). BlackboxNLP remains the fallback only if the tool gets much
+cleaner than expected; do not draft for both venues.
+
+**Center of gravity: three-regime taxonomy from Opus deep-dive 2026-05-07.**
+Thesis line: "Token-certified tiny edits induce branch events that are
+causally localizable, and the locus depends on whether the edit's effect
+has been integrated into generated context. Three regimes: edit-boundary
+rescue (41/82), trajectory-migration rescue (27/82, generated-prefix
+rescues 25/27), and prompt-position-shifted rescue (14/82, multi-boundary
+edits). Strict late-only rescue is 0/82 — a continuum of downstream
+causal handles, not late overwrites."
+
+12. Rebuild figures from existing CSVs via scripts under
+    `experiments/E##_*/`:
+    - **Three-regime rescue figure (NEW, central):** per-case scatter or
+      bar set showing prompt-LCP / generated-prefix / aligned-prompt /
+      final-context rescue fractions, faceted by regime (EDIT-silent,
+      EDIT-imm, OTHER-silent / trajectory-migration, OTHER-imm /
+      prompt-shifted). Source: `runs/rankings/activation_patch_comparison/case_level_summary.csv`.
+    - E07 best rescue position classes (existing:
+      `runs/rankings/activation_patch_comparison/e07_best_rescue_position_classes.png`;
+      re-emit for paper sizing).
+    - Pre-registered gen-prefix figure: 50/52 silent cases with full
+      generated-prefix rescue, split EDIT-silent 25/25 vs OTHER-silent
+      25/27.
+    - Soft edit-integration-time figure: prompt-LCP full rate vs
+      gen-prefix full rate binned by branch_t (0-2, 3-5, 6-10, 11-25, 26+)
+      on silent cases.
+    - at-branch vs strict pre-branch AUROC bars from
+      `runs/trajectory_events/logit_token_cert_v1/branch_prediction_auc.csv`
+      — supporting/contextual result, NOT central.
+    - Branch Card figure (hero case, small inset).
+    - Negative-control table: prompt-token-effective edits with no
+      branch (pull from E05 token-certified).
+13. Commit claims to three-regime framing. Do NOT sell early-vs-late
+    causality (0/82 blocks it) or basin-switch/cliff-slip (not in data).
+14. Write ethics / licenses / data release section.
+15. Limitations section must explicitly call out: 0/82 strict late-only
+    as continuum-not-dichotomy evidence; backend/dtype branch-timing
+    shifts (E10 mean 4.25 on Qwen2B); scaffold confound (E03);
+    selection provenance (42 hand-selected vs 40 held-out V5);
+    prompt-pair is statistical unit; OTHER/imm may be LCP-definition
+    artifact (see Phase 0.5 audit).
+
+### Phase 5 — release
+
+16. Tag `branchtrace v0.1`; ship cards + minimal README.
+17. Submit paper. Third blog post optional.
+
+### Explicit non-goals (v1)
+
+- No OpenAI / Anthropic API replay adapters.
+- No `branchtrace bisect` prompt-delta binary search.
+- No new SageMaker waves.
+- No broad model leaderboard expansion.
+- No standalone PyPI polish.
 
 ## Useful Commands
 
