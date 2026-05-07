@@ -540,23 +540,23 @@ mechanistic signatures, yielding a three-regime taxonomy (folded into
 
 1. **Pre-registered gen-prefix test.** Report clean: "In silent-divergence
    cases, we predicted generated-prefix full rescue. Observed: 50/52."
-2. **OTHER/imm parenthesize audit (completed 2026-05-07).** Result is
-   clean but NOT an LCP-definition win. All 30 immediate-branch cases
-   have `first_diff_token=0` (tokenization shifts from the very start
-   of the prompt), so there is no multi-boundary edit to redefine LCP
-   around. Across all 30 immediate cases, the **last prompt position
-   fully rescues (30/30)** — regardless of regime. The EDIT/imm vs
-   OTHER/imm split is "token-0 edit representation *also* works"
-   (EDIT/imm 16/30) vs "only the last-prompt-position handle works"
-   (OTHER/imm 14/30). OTHER/imm is therefore best described as a
-   **prompt-accumulation** case: the edit's effect becomes a sufficient
-   causal handle only after it has propagated through the prompt to
-   the final position. Last-prompt-position for immediate branches is
-   a near-proxy for final-context (same timestep for branch_t=0).
-   Implication: the three-regime taxonomy survives, but OTHER/imm's
-   prose should read "prompt-accumulation rescue" rather than
-   "prompt-position-shifted rescue." Headline stays 41/82; no
-   re-classification win.
+2. **OTHER/imm audit (completed 2026-05-07).** Result: 3-regime taxonomy
+   stands, regime renamed. The `first_diff_token` column in
+   `case_level_summary.csv` is the *generated* branch_t (=0 for all
+   immediate cases by definition), not the prompt-LCP position; the
+   actual prompt-LCP position varies per case (e.g., 21 for qwen08b
+   parenthesize 0434). Across all 30 immediate-branch cases, the **last
+   prompt position fully rescues (30/30)** — regardless of regime.
+   EDIT/imm = "prompt-LCP position ALSO rescues fully" (16/30).
+   OTHER/imm = "prompt-LCP position is partial (median 0.62); only the
+   last-prompt-position handle rescues fully" (14/30). Last-prompt-
+   position at branch_t=0 is a near-proxy for final-context (same
+   timestep). OTHER/imm is therefore best described as
+   **prompt-accumulation**: the edit representation at its own
+   boundary position is insufficient, but the edit's effect has
+   accumulated through the prompt by the final-position such that
+   patching there rescues. No LCP-redefinition headline bump; no
+   multi-boundary carve. Headline stays 41/82.
 3. **Soft edit-integration-time figure.** Bin silent cases by branch_t
    (0-2, 3-5, 6-10, 11-25, 26+); plot prompt-LCP full rate vs gen-prefix
    full rate. Currently prompt-LCP falls 60%→40% while gen-prefix stays

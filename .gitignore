@@ -1,5 +1,6 @@
 .venv/
 runs/
+cards/
 __pycache__/
 *.pyc
 .DS_Store

@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Branch Card — {{ card.id }}</title>
+<style>
+  :root {
+    --ink: #111;
+    --muted: #666;
+    --line: #e1e4e8;
+    --accent: #0b6fff;
+    --good: #0a7f3b;
+    --warn: #b15500;
+    --bad: #a8141a;
+    --bg: #fafbfc;
+    --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Monaco, Consolas, monospace;
+  }
+  html { background: #fff; color: var(--ink); }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+         max-width: 940px; margin: 28px auto; padding: 0 20px; line-height: 1.45; }
+  h1 { font-size: 1.35rem; margin: 0 0 0.2em; }
+  h2 { font-size: 1.05rem; margin: 1.4em 0 0.3em; border-bottom: 1px solid var(--line); padding-bottom: 0.2em; }
+  .meta { color: var(--muted); font-size: 0.9rem; }
+  .regime-pill { display: inline-block; padding: 2px 8px; border-radius: 10px;
+                 font-size: 0.78rem; font-weight: 600; letter-spacing: 0.02em;
+                 background: #eef4fc; color: var(--accent); }
+  .regime-pill.edit_boundary { background: #e1f3e6; color: var(--good); }
+  .regime-pill.trajectory_migration { background: #fff0de; color: var(--warn); }
+  .regime-pill.prompt_accumulation { background: #fce8ea; color: var(--bad); }
+
+  .kv { display: grid; grid-template-columns: 180px 1fr; gap: 2px 14px; font-size: 0.92rem; }
+  .kv dt { color: var(--muted); }
+  .kv dd { margin: 0; font-family: var(--mono); }
+
+  pre, code { font-family: var(--mono); font-size: 0.88rem; }
+  pre.prompt { background: var(--bg); border: 1px solid var(--line); border-radius: 4px;
+               padding: 8px 10px; white-space: pre-wrap; word-break: break-word; }
+  .diff { padding: 8px 10px; background: var(--bg); border: 1px solid var(--line); border-radius: 4px;
+          white-space: pre-wrap; }
+  .diff .a::before { content: "A: "; color: var(--muted); }
+  .diff .b::before { content: "B: "; color: var(--muted); }
+  .diff .a, .diff .b { display: block; }
+
+  .branch-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .branch-box { border: 1px solid var(--line); border-radius: 4px; padding: 8px 10px; background: var(--bg); }
+  .branch-box .tok { font-family: var(--mono); font-size: 1.1rem; font-weight: 600; }
+
+  table.patch { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+  table.patch th, table.patch td { border-bottom: 1px solid var(--line); padding: 6px 8px; text-align: left; }
+  table.patch td.n { font-family: var(--mono); text-align: right; }
+  .bar { background: #eef4fc; display: inline-block; height: 8px; vertical-align: middle; border-radius: 2px; }
+  .bar.full { background: var(--good); }
+  .bar.strong { background: #8fbf4a; }
+  .bar.mid { background: #e6a23b; }
+  .bar.weak { background: #d47070; }
+
+  ul.caveats li { margin-bottom: 0.2em; }
+  .artifact-list { font-size: 0.85rem; color: var(--muted); }
+  .artifact-list code { font-size: 0.82rem; background: #f4f5f6; padding: 1px 4px; border-radius: 2px; }
+  details { margin-top: 1em; }
+  summary { cursor: pointer; color: var(--accent); font-size: 0.9rem; }
+  .heatmap { max-width: 100%; margin-top: 0.6em; border: 1px solid var(--line); }
+</style>
+</head>
+<body>
+
+<h1>Branch Card — <code>{{ card.id }}</code></h1>
+<div class="meta">
+  schema <code>{{ card.schema_version }}</code>
+  · generated {{ card.generated_at }}
+  · regime <span class="regime-pill {{ card.patch_evidence.regime }}">{{ card.patch_evidence.regime | replace('_', ' ') }}</span>
+</div>
+
+<h2>Edit</h2>
+<div class="diff">
+  <span class="a">{{ card.edit.visible_diff_span.a }}</span>
+  <span class="b">{{ card.edit.visible_diff_span.b }}</span>
+</div>
+<dl class="kv">
+  <dt>kind</dt>            <dd>{{ card.edit.kind }}</dd>
+  <dt>token-LCP</dt>       <dd>{{ card.edit.prompt_token_lcp }}</dd>
+  <dt>token edit dist</dt> <dd>{{ card.edit.prompt_token_edit_distance }} ({{ card.edit.prompt_token_delta_kind }})</dd>
+  <dt>token Δ (b − a)</dt> <dd>{{ card.edit.prompt_input_token_delta }}</dd>
+</dl>
+
+<h2>Runs</h2>
+<div class="branch-row">
+  <div class="branch-box">
+    <div class="meta">run A — <code>{{ card.run_a.model_id }}</code></div>
+    <pre class="prompt">{{ card.run_a.prompt_text }}</pre>
+    <div class="meta">generated ({{ card.run_a.generated_token_count }} tokens, decode {{ 'sample' if card.run_a.decode.do_sample else 'argmax' }})</div>
+    <pre class="prompt">{{ card.run_a.generated_text[:480] }}{% if card.run_a.generated_text|length > 480 %}…{% endif %}</pre>
+  </div>
+  <div class="branch-box">
+    <div class="meta">run B — <code>{{ card.run_b.model_id }}</code></div>
+    <pre class="prompt">{{ card.run_b.prompt_text }}</pre>
+    <div class="meta">generated ({{ card.run_b.generated_token_count }} tokens, decode {{ 'sample' if card.run_b.decode.do_sample else 'argmax' }})</div>
+    <pre class="prompt">{{ card.run_b.generated_text[:480] }}{% if card.run_b.generated_text|length > 480 %}…{% endif %}</pre>
+  </div>
+</div>
+
+<h2>Branch</h2>
+<div class="branch-row">
+  <div class="branch-box">
+    <div class="meta">A first-divergent token</div>
+    <div class="tok">{{ card.branch.branch_token_a.text | e }}</div>
+    <dl class="kv">
+      <dt>id</dt><dd>{{ card.branch.branch_token_a.id }}</dd>
+      {% if card.branch.branch_token_a.top1_margin is not none %}<dt>min margin</dt><dd>{{ '%.3f' % card.branch.branch_token_a.top1_margin }}</dd>{% endif %}
+    </dl>
+  </div>
+  <div class="branch-box">
+    <div class="meta">B first-divergent token</div>
+    <div class="tok">{{ card.branch.branch_token_b.text | e }}</div>
+    <dl class="kv">
+      <dt>id</dt><dd>{{ card.branch.branch_token_b.id }}</dd>
+      {% if card.branch.branch_token_b.top1_margin is not none %}<dt>min margin</dt><dd>{{ '%.3f' % card.branch.branch_token_b.top1_margin }}</dd>{% endif %}
+    </dl>
+  </div>
+</div>
+<dl class="kv">
+  <dt>event kind</dt>             <dd>{{ card.branch.event_kind }}</dd>
+  <dt>branch_t</dt>               <dd>{{ card.branch.branch_t }}</dd>
+  <dt>common prefix (toks)</dt>   <dd>{{ card.branch.common_prefix_tokens }}</dd>
+  {% if card.branch.branch_token_a.js_vs_other is not none %}
+  <dt>JS vs other</dt>            <dd>{{ '%.3f' % card.branch.branch_token_a.js_vs_other }}</dd>{% endif %}
+  {% if card.branch.branch_token_a.effective_branching_factor is not none %}
+  <dt>branching factor</dt>       <dd>{{ '%.2f' % card.branch.branch_token_a.effective_branching_factor }}</dd>{% endif %}
+</dl>
+
+<h2>Patch evidence</h2>
+<table class="patch">
+  <thead><tr><th>position class</th><th>rescue fraction</th><th></th><th>note</th></tr></thead>
+  <tbody>
+    {% for row in patch_rows %}
+    <tr>
+      <td>{{ row.label }}</td>
+      <td class="n">{{ row.val }}</td>
+      <td><span class="bar {{ row.band }}" style="width: {{ row.bar_px }}px"></span></td>
+      <td class="meta">{{ row.note }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+<div class="meta" style="margin-top:6px">
+  best position class <code>{{ card.patch_evidence.best_position_class }}</code>
+  at layer {{ card.patch_evidence.best_layer }}
+  ({{ '%.3f' % card.patch_evidence.best_rescue_fraction }}).
+  wave: <code>{{ card.patch_evidence.wave }}</code>.
+</div>
+{% if heatmap_data_uri %}
+<details open>
+  <summary>patch heatmap (layer × position)</summary>
+  <img class="heatmap" src="{{ heatmap_data_uri }}" alt="patch rescue heatmap">
+</details>
+{% endif %}
+
+<h2>Replay</h2>
+<dl class="kv">
+  <dt>A deterministic reproduces branch-A</dt>
+  <dd>{{ card.replay.deterministic_reproducible_a }}</dd>
+  <dt>B deterministic reproduces branch-B</dt>
+  <dd>{{ card.replay.deterministic_reproducible_b }}</dd>
+  <dt>forced-prefix A → B branch</dt>
+  <dd>{{ card.replay.forced_prefix_a_flips_to_b_branch_token if card.replay.forced_prefix_a_flips_to_b_branch_token is not none else '(not run — Phase 3)' }}</dd>
+  <dt>forced-prefix B → A branch</dt>
+  <dd>{{ card.replay.forced_prefix_b_flips_to_a_branch_token if card.replay.forced_prefix_b_flips_to_a_branch_token is not none else '(not run — Phase 3)' }}</dd>
+</dl>
+
+<h2>Suspected controlling span</h2>
+<dl class="kv">
+  <dt>token indices (A)</dt><dd>{{ card.suspected_controlling_span.token_indices_a }}</dd>
+  <dt>token indices (B)</dt><dd>{{ card.suspected_controlling_span.token_indices_b }}</dd>
+  <dt>confidence</dt>       <dd>{{ card.suspected_controlling_span.confidence }}</dd>
+  <dt>method</dt>           <dd>{{ card.suspected_controlling_span.method }}</dd>
+</dl>
+
+<h2>Selection provenance</h2>
+<dl class="kv">
+  <dt>pool</dt>      <dd>{{ card.selection_provenance.pool }}</dd>
+  <dt>wave</dt>      <dd>{{ card.selection_provenance.wave }}</dd>
+  <dt>archetype</dt> <dd>{{ card.selection_provenance.archetype }}</dd>
+</dl>
+
+<h2>Runtime</h2>
+<dl class="kv">
+  <dt>torch</dt>         <dd>{{ card.run_a.runtime.torch }}</dd>
+  <dt>dtype</dt>         <dd>{{ card.run_a.runtime.dtype }}</dd>
+  <dt>device</dt>        <dd>{{ card.run_a.runtime.device }}</dd>
+  <dt>seed (A)</dt>      <dd>{{ card.run_a.runtime.seed }}</dd>
+  <dt>system prompt</dt> <dd>{{ card.run_a.runtime.system_prompt }}</dd>
+  <dt>max_new_tokens</dt><dd>{{ card.run_a.decode.max_new_tokens }}</dd>
+  <dt>decode</dt>        <dd>{% if card.run_a.decode.do_sample %}sample T={{ card.run_a.decode.temperature }} top_p={{ card.run_a.decode.top_p }}{% else %}argmax (do_sample=False){% endif %}</dd>
+</dl>
+
+<h2>Caveats</h2>
+<ul class="caveats">
+{% for c in card.caveats %}<li>{{ c }}</li>{% endfor %}
+</ul>
+
+<h2>Artifacts</h2>
+<ul class="artifact-list">
+{% for key, ref in card.artifacts.items() %}
+  <li><code>{{ key }}</code>: <code>{{ ref.path }}</code> — sha256 <code>{{ ref.sha256[:12] }}…</code> · {{ ref.size_bytes }} B</li>
+{% endfor %}
+</ul>
+
+</body>
+</html>
