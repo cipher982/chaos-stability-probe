@@ -69,6 +69,9 @@
   schema <code>{{ card.schema_version }}</code>
   · generated {{ card.generated_at }}
   · regime <span class="regime-pill {{ card.patch_evidence.regime }}">{{ card.patch_evidence.regime | replace('_', ' ') }}</span>
+  {% if card.patch_evidence.regime_basis and card.patch_evidence.regime_basis != 'primary_82_case_panel' %}
+  · <span class="meta">basis: {{ card.patch_evidence.regime_basis | replace('_', ' ') }}</span>
+  {% endif %}
 </div>
 
 <h2>Edit</h2>
@@ -144,6 +147,7 @@
 </table>
 <div class="meta" style="margin-top:6px">
   best position class <code>{{ card.patch_evidence.best_position_class }}</code>
+  (label <code>{{ card.patch_evidence.best_position_label }}</code>)
   at layer {{ card.patch_evidence.best_layer }}
   ({{ '%.3f' % card.patch_evidence.best_rescue_fraction }}).
   wave: <code>{{ card.patch_evidence.wave }}</code>.

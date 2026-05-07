@@ -13,6 +13,14 @@ from typing import Literal
 from pydantic import BaseModel, Field
 
 Source = Literal["observed", "derived", "not_run"]
+Regime = Literal["edit_boundary", "trajectory_migration", "prompt_accumulation"]
+EventKind = Literal["silent_logit_divergence", "immediate_visible_branch"]
+PositionClass = Literal[
+    "prompt_lcp",
+    "aligned_prompt_control",
+    "generated_prefix",
+    "final_context",
+]
 
 
 class Runtime(BaseModel):
@@ -67,7 +75,7 @@ class BranchTokenSide(BaseModel):
 class Branch(BaseModel):
     source: Source = "observed"
     branch_t: int
-    event_kind: str  # "silent_logit_divergence" | "immediate_visible_branch"
+    event_kind: EventKind
     silent_logit_lead: float | None = None
     common_prefix_tokens: int
     branch_token_a: BranchTokenSide
@@ -77,17 +85,19 @@ class Branch(BaseModel):
 
 
 class Replay(BaseModel):
-    source: Source = "not_run"
+    deterministic_source: Source = "observed"
     deterministic_reproducible_a: bool | None = None
     deterministic_reproducible_b: bool | None = None
+    forced_prefix_source: Source = "not_run"
     forced_prefix_a_flips_to_b_branch_token: bool | None = None
     forced_prefix_b_flips_to_a_branch_token: bool | None = None
 
 
 class PatchEvidence(BaseModel):
     source: Source
-    regime: str | None = None  # "edit_boundary" | "trajectory_migration" | "prompt_accumulation"
-    best_position_class: str | None = None
+    regime: Regime | None = None
+    regime_basis: Literal["primary_82_case_panel", "local_aligned_borderline"] | None = None
+    best_position_class: PositionClass | None = None
     best_position_label: str | None = None
     best_layer: int | None = None
     best_rescue_fraction: float | None = None

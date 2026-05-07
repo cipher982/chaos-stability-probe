@@ -49,10 +49,25 @@ def _artifact(path: Path | None, repo_root: Path) -> ArtifactRef | None:
     )
 
 
+def _position_class_from_label(label: str | None) -> str | None:
+    if not label:
+        return None
+    if label == "prompt_lcp_token":
+        return "prompt_lcp"
+    if label == "final_context_token":
+        return "final_context"
+    if label == "generated_prefix_token":
+        return "generated_prefix"
+    if label.startswith("aligned_prompt_pos_"):
+        return "aligned_prompt_control"
+    return None
+
+
 def _run_side(
     gen_row: dict,
     metadata: dict,
     run_dir: Path,
+    repo_root: Path,
     prompt_text: str,
     prompt_token_ids: list[int],
 ) -> RunSide:
@@ -86,7 +101,7 @@ def _run_side(
         generated_text=gen_row.get("generated_text", ""),
         generated_token_ids=gen_row.get("generated_tokens", []),
         generated_token_count=gen_row.get("generated_token_count", 0),
-        run_dir=str(run_dir),
+        run_dir=str(run_dir.relative_to(repo_root)) if run_dir.is_absolute() else str(run_dir),
     )
 
 
@@ -163,15 +178,11 @@ def build_hero_qwen2b_parenthesize_0434(repo_root: Path) -> BranchCard:
         else None
     )
 
-    # --- Regime assignment (local-aligned case; use prompt_lcp_full threshold).
-    plcp_full = plcp_rescue >= 1.0
+    # --- Regime assignment — local-aligned case; use shared loader rule.
     event_kind = str(ev["event_kind"])
-    if plcp_full:
-        regime = "edit_boundary"
-    elif event_kind == "immediate_visible_branch":
-        regime = "prompt_accumulation"
-    else:
-        regime = "trajectory_migration"
+    regime = patch_wave.infer_regime(
+        {"prompt_lcp_full": plcp_rescue >= 1.0}, event_kind
+    )
 
     heatmap_path = aligned_csv.with_suffix(".heatmap.png")
 
@@ -182,6 +193,7 @@ def build_hero_qwen2b_parenthesize_0434(repo_root: Path) -> BranchCard:
         gen_a,
         metadata,
         sagemaker_root,
+        repo_root,
         prompt_a_text,
         prompt_tokens.get("prompt_token_ids_a", []),
     )
@@ -189,6 +201,7 @@ def build_hero_qwen2b_parenthesize_0434(repo_root: Path) -> BranchCard:
         gen_b,
         metadata,
         sagemaker_root,
+        repo_root,
         prompt_b_text,
         prompt_tokens.get("prompt_token_ids_b", []),
     )
@@ -243,16 +256,19 @@ def build_hero_qwen2b_parenthesize_0434(repo_root: Path) -> BranchCard:
     )
 
     replay = Replay(
-        source="observed",
+        deterministic_source="observed",
         deterministic_reproducible_a=bool(aligned_json.get("clean_replay_top1_token_id") == aligned_json["a_branch_token_id"]),
         deterministic_reproducible_b=bool(aligned_json.get("corrupt_replay_matches_b_branch")),
+        forced_prefix_source="not_run",
     )
 
+    best_pos_label = str(best_rescue_row["position_label"]) if best_rescue_row is not None else None
     patch = PatchEvidence(
         source="observed",
         regime=regime,
-        best_position_class=str(best_rescue_row["position_label"]) if best_rescue_row is not None else None,
-        best_position_label=str(best_rescue_row["position_label"]) if best_rescue_row is not None else None,
+        regime_basis="local_aligned_borderline",
+        best_position_class=_position_class_from_label(best_pos_label),
+        best_position_label=best_pos_label,
         best_layer=int(best_rescue_row["layer"]) if best_rescue_row is not None else None,
         best_rescue_fraction=float(best_rescue_row["rescue_fraction"]) if best_rescue_row is not None else None,
         prompt_lcp_rescue_fraction=plcp_rescue,
