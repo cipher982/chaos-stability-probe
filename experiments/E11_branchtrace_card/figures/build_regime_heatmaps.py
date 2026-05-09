@@ -64,17 +64,16 @@ WAVES = {
     "activation_patch_v5_replication",
 }
 
-CANON_COLS = [
-    "prompt_early",
-    "pre_lcp",
-    "prompt_LCP",
-    "post_lcp",
-    "prompt_late",
-    "final_context",
-    "gen_prefix",
-]
-CANON_COLS_SHORT = ["early", "pre", "LCP", "post", "late", "final", "gen"]
+# Canonical x-axis: signed integer offsets in tokens relative to the edit
+# point, plus two special columns. offset = token_index - prompt_token_lcp.
+# offset 0 is the edit token itself. Negative = before edit. Positive = after.
+OFFSET_RANGE = list(range(-5, 6))  # -5..+5 inclusive
+EDIT_COL_INDEX = OFFSET_RANGE.index(0)
+CANON_COLS = [f"off_{o:+d}" for o in OFFSET_RANGE] + ["final", "gen"]
+CANON_COLS_SHORT = [str(o) for o in OFFSET_RANGE] + ["final", "gen"]
 N_DEPTH = 24
+FINAL_COL_INDEX = len(OFFSET_RANGE)  # 11
+GEN_COL_INDEX = FINAL_COL_INDEX + 1  # 12
 
 MODEL_ORDER = [
     "qwen35_08b",
@@ -170,28 +169,19 @@ def canonicalize_case(case_csv: Path, prompt_token_lcp: int | None) -> np.ndarra
         return None  # type: ignore[return-value]
     layers = np.sort(df["layer"].unique())
     L_max = int(layers.max())
-    # Build a (L, col) grid in native depth
     native = np.full((len(layers), len(CANON_COLS)), np.nan, dtype=np.float64)
 
-    # Parse aligned positions
-    aligned = []  # (start, end, label)
+    # Parse aligned prompt positions (each label covers [s, e] inclusive)
+    aligned = []
     for lbl in df["position_label"].unique():
         m = ALIGNED_RE.match(lbl)
         if m:
             aligned.append((int(m.group(1)), int(m.group(2)), lbl))
-    aligned.sort()
-
-    # Determine prompt last position (max window-end across aligned_*)
-    if aligned:
-        prompt_last_idx = max(end for _, end, _ in aligned)
-    else:
-        prompt_last_idx = None
 
     def rescue_by_layer(label: str) -> np.ndarray | None:
         sub = df[df["position_label"] == label]
         if sub.empty:
             return None
-        # index by layer
         out = np.full(len(layers), np.nan)
         for _, r in sub.iterrows():
             li = int(np.searchsorted(layers, r["layer"]))
@@ -201,66 +191,42 @@ def canonicalize_case(case_csv: Path, prompt_token_lcp: int | None) -> np.ndarra
 
     lcp = prompt_token_lcp
 
-    # prompt_early: mean over aligned positions with end < lcp - 1
-    if lcp is not None and aligned:
-        early_labels = [lbl for (s, e, lbl) in aligned if e < lcp - 1]
-        if early_labels:
-            stacks = [rescue_by_layer(l) for l in early_labels]
-            stacks = [s for s in stacks if s is not None]
+    # Map each aligned position window to integer offsets relative to LCP.
+    # If a window spans multiple token indices, take every covered index.
+    # For each (offset, layer) cell, average across windows that hit it.
+    if lcp is not None:
+        # offset -> list of label rescue arrays
+        per_offset: dict[int, list[np.ndarray]] = {o: [] for o in OFFSET_RANGE}
+        for s, e, lbl in aligned:
+            arr = rescue_by_layer(lbl)
+            if arr is None:
+                continue
+            for tok_idx in range(s, e + 1):
+                off = tok_idx - lcp
+                if off in per_offset:
+                    per_offset[off].append(arr)
+
+        # prompt_LCP override: dedicated label if present
+        plcp = rescue_by_layer("prompt_lcp_token")
+        if plcp is not None:
+            per_offset[0] = [plcp]
+
+        for i, off in enumerate(OFFSET_RANGE):
+            stacks = per_offset[off]
             if stacks:
-                native[:, 0] = np.nanmean(np.vstack(stacks), axis=0)
+                native[:, i] = np.nanmean(np.vstack(stacks), axis=0)
 
-    # pre_lcp: aligned_prompt_pos_{lcp-1}_to_{lcp-1} if present else nearest earlier (single window)
-    if lcp is not None and aligned:
-        target_label = f"aligned_prompt_pos_{lcp-1}_to_{lcp-1}"
-        if target_label in df["position_label"].values:
-            v = rescue_by_layer(target_label)
-            if v is not None:
-                native[:, 1] = v
-        else:
-            # nearest earlier — pick aligned with end == greatest e < lcp-1
-            candidates = [(s, e, lbl) for (s, e, lbl) in aligned if e < lcp - 1]
-            if candidates:
-                candidates.sort(key=lambda t: t[1], reverse=True)
-                v = rescue_by_layer(candidates[0][2])
-                if v is not None:
-                    native[:, 1] = v
-
-    # prompt_LCP
-    v = rescue_by_layer("prompt_lcp_token")
-    if v is not None:
-        native[:, 2] = v
-
-    # post_lcp: window with start == lcp + 1
-    if lcp is not None and aligned:
-        post_candidates = [lbl for (s, e, lbl) in aligned if s == lcp + 1]
-        if post_candidates:
-            v = rescue_by_layer(post_candidates[0])
-            if v is not None:
-                native[:, 3] = v
-
-    # prompt_late: last 3 prompt positions (by window end), excluding final_context_token
-    if prompt_last_idx is not None and aligned:
-        threshold = prompt_last_idx - 2  # last 3: prompt_last_idx, -1, -2
-        late_labels = [lbl for (s, e, lbl) in aligned if e >= threshold]
-        if late_labels:
-            stacks = [rescue_by_layer(l) for l in late_labels]
-            stacks = [s for s in stacks if s is not None]
-            if stacks:
-                native[:, 4] = np.nanmean(np.vstack(stacks), axis=0)
-
-    # final_context
+    # final_context: last prompt position
     v = rescue_by_layer("final_context_token")
     if v is not None:
-        native[:, 5] = v
+        native[:, FINAL_COL_INDEX] = v
 
-    # gen_prefix: first generated token position (the branch token itself).
-    # CSVs use "aligned_generated_prefix_pos_0"; fallback to legacy "generated_prefix_token".
+    # gen: first generated token position (the branch token itself)
     v = rescue_by_layer("aligned_generated_prefix_pos_0")
     if v is None:
         v = rescue_by_layer("generated_prefix_token")
     if v is not None:
-        native[:, 6] = v
+        native[:, GEN_COL_INDEX] = v
 
     # Rescale layers 0..L_max to 24 canonical depth bins
     canonical = np.full((N_DEPTH, len(CANON_COLS)), np.nan)
@@ -359,16 +325,28 @@ def draw_heatmap(ax, grid: np.ndarray, title: str, *, vmin=0.0, vmax=1.0,
         vmax=vmax,
         interpolation="nearest",
     )
-    # Guide lines for prompt_LCP (col 2) and final_context (col 5)
-    for c in (2, 5):
-        ax.axvline(c, color="white" if dark else "#333333", alpha=0.35, lw=0.8, ls="--")
+    # Anchor lines: edit point at offset 0, divider between prompt range and
+    # special (final, gen) columns.
+    edge = "white" if dark else "#000000"
+    edge_alpha = 0.70 if dark else 0.85
+    ax.axvline(EDIT_COL_INDEX, color=edge, alpha=edge_alpha, lw=1.4)
+    ax.axvline(FINAL_COL_INDEX - 0.5, color=edge, alpha=0.35, lw=0.8, ls=":")
+    ax.text(
+        EDIT_COL_INDEX,
+        N_DEPTH - 0.4,
+        "edit",
+        color=edge,
+        fontsize=8,
+        ha="center",
+        va="bottom",
+    )
     ax.set_yticks(pretty_depth_ticks())
     ax.set_yticklabels([str(d) for d in pretty_depth_ticks()])
     if show_ylabels:
         ax.set_ylabel("residual-stream depth", fontsize=11)
     if show_xlabels:
         ax.set_xticks(pretty_col_ticks())
-        ax.set_xticklabels(CANON_COLS_SHORT, rotation=0, ha="center", fontsize=10)
+        ax.set_xticklabels(CANON_COLS_SHORT, rotation=0, ha="center", fontsize=9)
     else:
         ax.set_xticks(pretty_col_ticks())
         ax.set_xticklabels([""] * len(CANON_COLS))
@@ -383,9 +361,9 @@ REGIME_COLORS = {
     "prompt_accumulation": "#e45a5a",
 }
 REGIME_SUBTITLES = {
-    "edit_boundary": "early @ LCP",
-    "trajectory_migration": "prompt-weak; late final-context rescue",
-    "prompt_accumulation": "late final-context + prompt_late",
+    "edit_boundary": "bright at offset 0, early depth",
+    "trajectory_migration": "prompt columns suppressed; late final-context only",
+    "prompt_accumulation": "bright at late prompt (+3..+5) + final-context",
 }
 
 
@@ -423,7 +401,7 @@ def annotate_peak(ax, grid: np.ndarray, *, exclude_final_context: bool = True):
     """
     g = grid.copy()
     if exclude_final_context:
-        g[:, CANON_COLS.index("final_context")] = np.nan
+        g[:, FINAL_COL_INDEX] = np.nan
     if np.all(np.isnan(g)):
         return
     flat_idx = np.nanargmax(g)
@@ -450,9 +428,9 @@ def triptych(per_case: list[dict], out_path: Path, *, dark: bool = True):
         plt.style.use("dark_background")
     else:
         plt.style.use("default")
-    fig = plt.figure(figsize=(16.8, 6.6))
+    fig = plt.figure(figsize=(17.0, 7.2))
     gs = fig.add_gridspec(
-        1, 4, width_ratios=[1.0, 1.0, 1.0, 0.05], wspace=0.3
+        1, 4, width_ratios=[1.0, 1.0, 1.0, 0.05], wspace=0.32
     )
     axes = [fig.add_subplot(gs[0, i]) for i in range(3)]
     cax = fig.add_subplot(gs[0, 3])
@@ -462,15 +440,33 @@ def triptych(per_case: list[dict], out_path: Path, *, dark: bool = True):
         grid, n = regime_mean(per_case, regime)
         sub = REGIME_SUBTITLES[regime]
         pretty = regime.replace("_", "-")
-        # Per-case full-rescue evidence strip to defend the regime name
-        gp_full, gp_tot = per_case_column_full_count(per_case, regime, "gen_prefix")
-        plcp_full, plcp_tot = per_case_column_full_count(per_case, regime, "prompt_LCP")
-        per_case_line = (
-            f"per-case full rescue:  LCP {plcp_full}/{plcp_tot}  ·  gen {gp_full}/{gp_tot}"
-        )
-        title = f"{pretty}\n{sub}   (n={n})\n{per_case_line}"
+        title = f"{pretty}\n{sub}   (n={n})"
         im = draw_heatmap(ax, grid, title, dark=dark, show_ylabels=True)
         annotate_peak(ax, grid, exclude_final_context=True)
+        # Per-case full-rescue stats as corner annotation, not title wall.
+        gp_full, gp_tot = per_case_column_full_count(per_case, regime, "gen")
+        plcp_full, plcp_tot = per_case_column_full_count(per_case, regime, "off_+0")
+        corner = (
+            f"per-case full rescue\n"
+            f"  edit: {plcp_full}/{plcp_tot}\n"
+            f"   gen: {gp_full}/{gp_tot}"
+        )
+        ax.text(
+            0.02,
+            0.98,
+            corner,
+            transform=ax.transAxes,
+            color=text_color,
+            fontsize=8,
+            va="top",
+            ha="left",
+            family="monospace",
+            bbox=dict(
+                facecolor=("#000000aa" if dark else "#ffffffcc"),
+                edgecolor="none",
+                pad=2.5,
+            ),
+        )
         ax.title.set_fontsize(12)
         ax.title.set_color(REGIME_COLORS[regime])
     fig.suptitle(
@@ -483,6 +479,18 @@ def triptych(per_case: list[dict], out_path: Path, *, dark: bool = True):
     cbar.set_label("rescue fraction (clipped at 1.0)", color=text_color, fontsize=10)
     cbar.ax.yaxis.set_tick_params(color=text_color)
     plt.setp(cbar.ax.get_yticklabels(), color=text_color)
+    fig.text(
+        0.5,
+        -0.04,
+        "Columns run left-to-right along the prompt, then into generation. "
+        "The edit point is the first token where prompts A and B differ (vertical line). "
+        "Brighter = splicing clean activations at that (depth, position) restores A's branch token.",
+        ha="center",
+        va="top",
+        color=text_color,
+        fontsize=9,
+        wrap=True,
+    )
     fig.savefig(out_path, dpi=300, bbox_inches="tight", facecolor=fig.get_facecolor())
     plt.close(fig)
     plt.style.use("default")
@@ -605,7 +613,7 @@ def main():
         grid, n = regime_mean(per_case, regime)
         d, col, val = argmax_cell(grid)
         masked = grid.copy()
-        masked[:, CANON_COLS.index("final_context")] = np.nan
+        masked[:, FINAL_COL_INDEX] = np.nan
         d2, col2, val2 = argmax_cell(masked)
         print(
             f"  {regime:>22s} (n={n:3d}): "
