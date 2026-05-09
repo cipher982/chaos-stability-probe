@@ -8,13 +8,18 @@ import sys
 from pathlib import Path
 
 from . import SCHEMA_VERSION
-from .build_card import build_hero_qwen2b_parenthesize_0434
+from .build_card import (
+    build_hero_qwen2b_parenthesize_0434,
+    build_silent_gemma_e2b_blank_line_wrap_0212,
+)
 
 
 def _cmd_build(args: argparse.Namespace) -> int:
     repo = Path(args.repo_root).resolve()
     if args.hero == "qwen2b_parenthesize_0434":
         card = build_hero_qwen2b_parenthesize_0434(repo)
+    elif args.hero == "gemma_e2b_blank_line_wrap_0212":
+        card = build_silent_gemma_e2b_blank_line_wrap_0212(repo)
     else:
         raise SystemExit(f"Unknown --hero: {args.hero!r}")
 
@@ -46,7 +51,10 @@ def main(argv: list[str] | None = None) -> int:
     b.add_argument(
         "--hero",
         default="qwen2b_parenthesize_0434",
-        help="Hero case shortcut (v1 supports qwen2b_parenthesize_0434).",
+        help=(
+            "Hero case shortcut. Supported: qwen2b_parenthesize_0434, "
+            "gemma_e2b_blank_line_wrap_0212."
+        ),
     )
     b.add_argument("--repo-root", default=".")
     b.add_argument("--out", required=True)

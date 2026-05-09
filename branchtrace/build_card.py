@@ -116,6 +116,252 @@ def _diff_spans(prompt_a: str, prompt_b: str) -> dict:
     return {"a": prompt_a[lo:hi_a], "b": prompt_b[lo:hi_b]}
 
 
+_POSITION_CLASS_PATTERNS = (
+    ("prompt_lcp_token", "prompt_lcp"),
+    ("final_context_token", "final_context"),
+    ("generated_prefix_token", "generated_prefix"),
+)
+
+
+def _wave_best_for_class(df: pd.DataFrame, position_class: str) -> tuple[float, int | None, str | None]:
+    """Return (best_rescue_fraction, best_layer, best_position_label) within a class."""
+    if position_class == "prompt_lcp":
+        mask = df["position_label"] == "prompt_lcp_token"
+    elif position_class == "final_context":
+        mask = df["position_label"] == "final_context_token"
+    elif position_class == "generated_prefix":
+        mask = df["position_label"].str.startswith("aligned_generated_prefix_pos_", na=False)
+    elif position_class == "aligned_prompt_control":
+        mask = df["position_label"].str.startswith("aligned_prompt_pos_", na=False)
+    else:
+        return 0.0, None, None
+    sub = df[mask]
+    if sub.empty:
+        return 0.0, None, None
+    row = sub.loc[sub["rescue_fraction"].idxmax()]
+    return float(row["rescue_fraction"]), int(row["layer"]), str(row["position_label"])
+
+
+def build_silent_gemma_e2b_blank_line_wrap_0212(repo_root: Path) -> BranchCard:
+    """Phase 2 hero: silent / long-prefix / trajectory_migration regime.
+
+    gemma4_e2b_base pair token_cert_blank_line_wrap_0212. Silent logit
+    divergence at branch_t=45, 45-token shared prefix. Patch-wave coverage
+    from the held-out V5 replication SageMaker run. Best rescue via
+    generated_prefix position, not prompt_lcp — confirms the schema handles
+    regimes outside edit_boundary without special-casing.
+    """
+    model_name = "gemma4_e2b_base"
+    pair_id = "token_cert_blank_line_wrap_0212"
+
+    # --- Generations + metadata (SageMaker logit run)
+    logit_root = (
+        repo_root
+        / "runs/sagemaker_artifacts/chaos-logit-token-cert-gemma-e2b-base-20260430-001/runs/gemma4_e2b_base"
+    )
+    metadata = stability_run.load_metadata(logit_root)
+    gen_a, gen_b = stability_run.find_pair(logit_root, pair_id, repeat=0)
+    prompt_tokens = stability_run.load_prompt_tokens(logit_root, pair_id)
+    if prompt_tokens is None:
+        raise ValueError(f"prompt_tokens row not found for {pair_id!r}")
+
+    # --- Trajectory event
+    events_csv = repo_root / "runs/trajectory_events/logit_token_cert_v1/trajectory_events.csv"
+    ev = logit_run.load_trajectory_row(events_csv, model_name, pair_id, repeat=0)
+    if ev is None:
+        raise ValueError(f"trajectory event row not found for {model_name}/{pair_id}")
+
+    # --- Patch wave (SageMaker V5 replication)
+    wave_dir = (
+        repo_root
+        / "runs/sagemaker_artifacts/chaos-activation-patch-rep-gemma-e2b-base-20260501-001/runs/gemma4_e2b_base"
+    )
+    wave_json_path = wave_dir / f"{model_name}__{pair_id}.json"
+    wave_csv_path = wave_dir / f"{model_name}__{pair_id}.csv"
+    wave_json = json.loads(wave_json_path.read_text())
+    wave_df = pd.read_csv(wave_csv_path, low_memory=False)
+
+    plcp_rescue, plcp_layer, _ = _wave_best_for_class(wave_df, "prompt_lcp")
+    final_rescue, _, _ = _wave_best_for_class(wave_df, "final_context")
+    gp_rescue, _, gp_label = _wave_best_for_class(wave_df, "generated_prefix")
+    ap_rescue, _, _ = _wave_best_for_class(wave_df, "aligned_prompt_control")
+
+    # Aligned-prompt full-count (number of aligned prompt positions with rescue >= 1.0).
+    ap_mask = wave_df["position_label"].str.startswith("aligned_prompt_pos_", na=False)
+    ap_by_label = (
+        wave_df[ap_mask].groupby("position_label")["rescue_fraction"].max()
+    )
+    ap_full = int((ap_by_label >= 1.0).sum())
+
+    best_row = wave_df.loc[wave_df["rescue_fraction"].idxmax()]
+    best_label = str(best_row["position_label"])
+    best_class = _position_class_from_label(best_label) or (
+        "generated_prefix" if best_label.startswith("aligned_generated_prefix_pos_") else None
+    )
+
+    # --- Regime via shared loader rule (trajectory_migration for silent + not prompt_lcp_full).
+    event_kind = str(ev["event_kind"])
+    regime = patch_wave.infer_regime(
+        {"prompt_lcp_full": plcp_rescue >= 1.0}, event_kind
+    )
+
+    # --- Run sides
+    prompt_a_text = wave_json["pair"]["prompt_a"]
+    prompt_b_text = wave_json["pair"]["prompt_b"]
+    run_a = _run_side(
+        gen_a,
+        metadata,
+        logit_root,
+        repo_root,
+        prompt_a_text,
+        prompt_tokens.get("prompt_token_ids_a", []),
+    )
+    run_b = _run_side(
+        gen_b,
+        metadata,
+        logit_root,
+        repo_root,
+        prompt_b_text,
+        prompt_tokens.get("prompt_token_ids_b", []),
+    )
+
+    # --- Edit
+    pd_block = wave_json.get("prompt_delta", {})
+    edit = Edit(
+        source="derived",
+        kind=ev["category"].replace("micro_", ""),
+        prompt_token_edit_distance=int(ev["prompt_token_edit_distance"]),
+        prompt_token_delta_kind=pd_block.get("prompt_token_delta_kind"),
+        prompt_token_lcp=int(pd_block.get("prompt_token_lcp", 0)),
+        prompt_input_token_delta=int(pd_block.get("prompt_input_token_delta", 0)),
+        visible_diff_span=_diff_spans(prompt_a_text, prompt_b_text),
+    )
+
+    # --- Branch tokens
+    margin = float(ev["branch_min_margin_logit"]) if pd.notna(ev["branch_min_margin_logit"]) else None
+    js = float(ev["branch_js"]) if pd.notna(ev["branch_js"]) else None
+    bf = (
+        float(ev["branch_max_effective_branching_factor"])
+        if pd.notna(ev["branch_max_effective_branching_factor"])
+        else None
+    )
+    branch_a = BranchTokenSide(
+        id=int(wave_json["a_branch_token_id"]),
+        text=str(wave_json["a_branch_token"]),
+        top1_margin=margin,
+        js_vs_other=js,
+        effective_branching_factor=bf,
+    )
+    branch_b = BranchTokenSide(
+        id=int(wave_json["b_branch_token_id"]),
+        text=str(wave_json["b_branch_token"]),
+        top1_margin=margin,
+        js_vs_other=js,
+        effective_branching_factor=bf,
+    )
+
+    branch = Branch(
+        source="observed",
+        branch_t=int(ev["branch_t"]),
+        event_kind=event_kind,
+        silent_logit_lead=(
+            float(ev["silent_logit_lead"])
+            if pd.notna(ev.get("silent_logit_lead"))
+            else None
+        ),
+        common_prefix_tokens=int(ev["common_prefix_tokens"]),
+        branch_token_a=branch_a,
+        branch_token_b=branch_b,
+    )
+
+    replay = Replay(
+        deterministic_source="observed",
+        deterministic_reproducible_a=bool(
+            wave_json.get("clean_replay_top1_token_id") == wave_json["a_branch_token_id"]
+        ),
+        deterministic_reproducible_b=bool(wave_json.get("corrupt_replay_matches_b_branch")),
+        forced_prefix_source="not_run",
+    )
+
+    patch = PatchEvidence(
+        source="observed",
+        regime=regime,
+        regime_basis="primary_82_case_panel",
+        best_position_class=best_class,
+        best_position_label=best_label,
+        best_layer=int(best_row["layer"]),
+        best_rescue_fraction=float(best_row["rescue_fraction"]),
+        prompt_lcp_rescue_fraction=plcp_rescue,
+        prompt_lcp_best_layer=plcp_layer,
+        final_context_rescue_fraction=final_rescue,
+        generated_prefix_rescue_fraction=gp_rescue,
+        aligned_prompt_control_max=ap_rescue,
+        aligned_prompt_full_count=ap_full,
+        wave="activation_patch_v5_replication",
+        heatmap_path=None,
+    )
+
+    # --- Suspected controlling span: generated-prefix position, not prompt_lcp.
+    # gp_label is e.g. "aligned_generated_prefix_pos_44"; parse position if present.
+    gp_pos: int | None = None
+    if gp_label and gp_label.startswith("aligned_generated_prefix_pos_"):
+        try:
+            gp_pos = int(gp_label.rsplit("_", 1)[-1])
+        except ValueError:
+            gp_pos = None
+    span_indices = [gp_pos] if gp_pos is not None else []
+    span = SuspectedControllingSpan(
+        source="derived",
+        token_indices_a=span_indices,
+        token_indices_b=span_indices,
+        confidence="trajectory_state",
+        method="best_rescue_position_generated_prefix",
+    )
+
+    provenance = SelectionProvenance(
+        source="observed",
+        wave="activation_patch_v5_replication",
+        pool="heldout_v5",
+        archetype="silent_long_prefix_trajectory_migration",
+    )
+
+    caveats = [
+        f"Silent logit divergence at branch_t={int(ev['branch_t'])} with {int(ev['common_prefix_tokens'])}-token shared prefix; visible outputs diverge later.",
+        f"Regime is trajectory_migration: prompt_lcp rescue only {plcp_rescue:.2f}; best handle is {best_class} ({best_row['rescue_fraction']:.2f}).",
+        "Backend/dtype shifts branch timing (E10); cross-backend comparisons need matched runtime metadata.",
+        "Patch wave is held-out V5 replication (heldout_v5 pool), not the hand-selected V1-V2 set.",
+    ]
+
+    artifacts: dict[str, ArtifactRef] = {}
+    for key, p in {
+        "generations_jsonl": logit_root / "generations.jsonl",
+        "logit_probes_jsonl": logit_root / "logit_probes.jsonl",
+        "metadata_json": logit_root / "metadata.json",
+        "trajectory_events_csv": events_csv,
+        "patch_wave_csv": wave_csv_path,
+        "patch_wave_json": wave_json_path,
+    }.items():
+        ref = _artifact(p, repo_root)
+        if ref is not None:
+            artifacts[key] = ref
+
+    return BranchCard(
+        schema_version="branchcard/0.1",
+        id=f"{model_name}__{pair_id}",
+        generated_at=datetime.now(timezone.utc),
+        run_a=run_a,
+        run_b=run_b,
+        edit=edit,
+        branch=branch,
+        replay=replay,
+        patch_evidence=patch,
+        suspected_controlling_span=span,
+        selection_provenance=provenance,
+        caveats=caveats,
+        artifacts=artifacts,
+    )
+
+
 def build_hero_qwen2b_parenthesize_0434(repo_root: Path) -> BranchCard:
     """Build the Phase 1 hero card: qwen35_2b token_cert_parenthesize_word_0434.
 

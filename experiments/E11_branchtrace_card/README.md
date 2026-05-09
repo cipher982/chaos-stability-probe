@@ -101,5 +101,9 @@ uv run python -m branchtrace.cli render \
 
 ## Next action
 
-Phase 1: scaffold `branchtrace/schema.py` and `branchtrace/loaders/` and
-emit the hero card JSON. HTML render last.
+Phase 3 (forced-prefix replay) per spec §9 + kill criteria. Phase 1
+hero (`cards/qwen35_2b__parenthesize_word_0434.*`) and Phase 2 silent
+hero (`cards/gemma4_e2b_base__blank_line_wrap_0212.*`) are committed.
+Phase 2 regime = trajectory_migration; best rescue is
+`generated_prefix` (1.33×), not prompt_lcp — schema handled the
+silent / long-prefix path without special-casing.
