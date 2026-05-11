@@ -101,9 +101,23 @@ uv run python -m branchtrace.cli render \
 
 ## Next action
 
-Phase 3 (forced-prefix replay) per spec §9 + kill criteria. Phase 1
-hero (`cards/qwen35_2b__parenthesize_word_0434.*`) and Phase 2 silent
-hero (`cards/gemma4_e2b_base__blank_line_wrap_0212.*`) are committed.
-Phase 2 regime = trajectory_migration; best rescue is
-`generated_prefix` (1.33×), not prompt_lcp — schema handled the
-silent / long-prefix path without special-casing.
+Phase 3 minimal run complete (2026-05-10):
+`scripts/run_forced_prefix_replay.py` →
+`runs/forced_prefix_replay/phase3_qwen2b/{summary.csv,detail.jsonl}`.
+11 qwen35_2b cases with local branches + 1 no-local-branch (MPS vs
+SageMaker backend drift). Post-force free-decode of 10 tokens, measured
+by token-LCP vs A's continuation.
+
+Preliminary by regime (N too small to claim):
+
+  edit_boundary        mean rejoin 8.0 / 10  (n=8)
+  prompt_accumulation  mean rejoin 10 / 10   (n=1)
+  trajectory_migration mean rejoin 5.0 / 10  (n=2, split 10 & 0)
+
+Caveats: token-LCP under-counts semantically-identical rejoins that pick
+different surface tokens (e.g. 0344 continues same topic in 2 tokens
+then diverges lexically, rejoin=2). Expanding to more models or adding
+a logprob-of-suffix metric are options if the paper needs it; for now
+this is a support figure.
+
+Phase 4 (paper draft) is next.
