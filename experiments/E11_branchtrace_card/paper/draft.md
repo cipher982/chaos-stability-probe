@@ -1,10 +1,14 @@
 # Three Patching Signatures of Branch Events under Token-Certified Prompt Edits
 
-**Status:** plain-prose rev 3, 2026-05-12. Target: NeurIPS
-interpretability workshop, 6-8 pages. Rev 3 applies a second expert
-review: wrong-donor patching control added, denominators disambiguated,
-§3.2 honesty tightened, ceremonial vocabulary cut, internal experiment
-codes removed from main text.
+**Status:** rev 4 submission-cleanup, 2026-05-12. Target: NeurIPS
+interpretability workshop, 6-8 pages. Rev 4 applies the third expert
+review: prompt-LCP definition tightened, aligned-prompt controls
+labeled sampled explicitly, §3.2 reframed as "reserved-wave rule
+transfer", rule-of-three iid caveat added, abstract/conclusion
+softened, held-out summary merged into §3.2, reverse-direction moved
+to §4 exploratory with branch prediction and forced-prefix replay,
+§3 trimmed to six subsections, denominator-flow table added at §3.1,
+all three wrong-donor matches tabulated in §3.5.
 
 ---
 
@@ -21,7 +25,8 @@ For each pair we ask a concrete question: which residual-stream
 positions, if patched from the unedited run into the edited run, make
 the edited model pick the original next token? We find three
 recurring patching signatures. **Boundary rescue** (41/82): patching
-the first different prompt token is enough. **Generated-prefix rescue
+the first differing prompt token (the "prompt-LCP" position) is
+enough. **Generated-prefix rescue
 after silent divergence** (27/82): the top-1 pick does not change
 until several tokens in, and some position in the shared generated
 prefix is enough to restore the original token. **Tokenization-shift
@@ -37,8 +42,8 @@ held-out wave, 29/30 had full generated-prefix rescue, against 21/22
 on the curated waves. A donor-specificity control on qwen35_2b (three
 random donors per case, same position and layer) matched the target
 branch token in 10/10 self-patches and only 3/30 wrong-donor patches,
-so the signature positions carry branch-specific information rather
-than generic perturbation. We release **Branch Cards**, a JSON + HTML
+arguing against a purely generic-perturbation explanation at least
+for this one-model control. We release **Branch Cards**, a JSON + HTML
 audit format for per-case evidence, with two example cards.
 
 ---
@@ -60,10 +65,13 @@ edited model and recover the original token?**
 
 For each pair we patch four kinds of positions, one at a time:
 
-- **prompt-LCP**: the prompt token immediately after the first
-  position where the two prompt token sequences differ.
-- **aligned-prompt controls**: every other aligned prompt position,
-  as a non-LCP baseline.
+- **prompt-LCP** (for "longest common prefix"): the first prompt
+  token at which A and A′ differ. If both prompts share the first
+  *k* tokens, this is the token at index *k*.
+- **aligned-prompt controls**: sampled non-boundary positions from
+  the shared prompt region (positions inside the common prefix, not
+  the prompt-LCP position itself). Controls are a sample, not an
+  exhaustive sweep.
 - **generated-prefix**: any generated token that both runs produced
   the same before the branch.
 - **final-context**: the last position before the model picks the
@@ -218,12 +226,39 @@ context at 1.0 and generated-prefix empty (immediate branches have
 no shared generated prefix). Source:
 `runs/rankings/activation_patch_comparison/case_level_summary.csv`.
 
-### 3.2 Discovery-to-replication check
+**Denominator reference.** Several headline numbers use different
+denominators; we list them together here to keep the paper's counts
+legible.
 
-We fixed the decision rule on the curated waves before running the
-held-out wave analysis end-to-end. One signature has a cleanly
-falsifiable numeric prediction: silent-divergence cases should have
-some generated-prefix position that fully rescues.
+| Quantity | Number | Denominator |
+|---|---|---|
+| primary panel | 82 | — |
+| silent-divergence cases | 52 | of 82 |
+| silent cases with full gen-prefix rescue | 50 | of 52 silent |
+| generated-prefix signature (prompt-LCP partial) | 27 | of 82 |
+| boundary signature | 41 | of 82 |
+| tokenization-shift-immediate signature | 14 | of 82 |
+| strict assayed late-only | 0 | of 82 |
+| held-out (V5) cases | 40 | of 82 |
+| reverse-direction matched cases | 21 | subset of discovery |
+| donor-specificity control (qwen35_2b) | 10 | cases × 3 donors |
+
+### 3.2 Reserved-wave rule transfer
+
+We chose the signature decision rule by looking at the curated
+waves. The held-out wave (V5) had been run through SageMaker before
+we wrote the rule down, so the patch CSVs for both waves existed
+when we formalized the signatures. What V5 did *not* see was the
+rule, the signature labels, or any hand-selection — V5 cases are a
+randomized sample from the token-certified pair set.
+
+So this is a reserved-wave rule-transfer check, not preregistration
+and not a held-out prediction in the strict prospective sense. The
+question it answers is: does the rule we chose on the curated cases
+describe the randomized held-out cases without adjustment?
+
+One signature has a concrete numeric test: in silent-divergence
+cases, some generated-prefix position should fully rescue.
 
 - **Curated (discovery).** 22 silent cases; 21 with full generated-
   prefix rescue.
@@ -231,24 +266,26 @@ some generated-prefix position that fully rescues.
   rescue.
 - **Combined.** 50 of 52 silent cases.
 
-This is not preregistration. The V5 results existed before we
-wrote down the rule. It is a discovery-to-replication split: the
-rule was chosen on one set of cases, and it describes the other set
-just as well. We state that plainly.
+**Held-out summary.** Across all 40 V5 cases, 39/40 had metric full
+rescue at some position and 36/40 had strict replay. The signature
+distribution matches discovery within resampling noise.
 
-The caveat: the generated-prefix position class includes several
-positions within a case. "Some generated-prefix position rescues" is
-a weaker claim than "a specific generated-prefix position rescues."
-We report the rate at which *any* such position rescues; we do not
-claim the same index across cases.
+The caveat on the 50/52 number: the generated-prefix position class
+includes several positions within a case. "Some generated-prefix
+position rescues" is a weaker claim than "a specific generated-prefix
+position rescues." We report the rate at which *any* such position
+rescues; we do not claim the same index across cases.
 
 ### 3.3 Strict assayed late-only rescue: 0 of 82
 
 We defined this case as: no prompt-side position rescues (neither
 prompt-LCP nor any aligned-prompt control has full rescue at any
 layer), and some late position does. Zero cases in our panel fit.
-By the rule of three on 0/82, the upper 95% bound on the rate in
-this panel's distribution is 3/82 ≈ 3.7%.
+Applying the rule-of-three heuristic to 0/82 gives an upper 95%
+bound of about 3.7%, under the assumption that cases are
+independent draws from the panel's distribution. Our pairs are not
+iid — multiple pairs per edit kind and per model share structure —
+so the bound is heuristic, not a formal confidence interval.
 
 "Assayed" is load-bearing. Aligned-prompt controls are sampled,
 not exhaustive. We rule out strict late-only *among tested*
@@ -278,34 +315,28 @@ run's own activation) rescued 10 of 10 cases strictly. Wrong-donor
 patches rescued 3 of 30. Median rescue_fraction: 1.00 for
 self-patch, 0.00 for wrong-donor.
 
-Three donor strict-matches is not zero, but the shape of those
-cases is telling. In two of the three, the wrong-donor activation
-pushed top-1 to A's branch token at the prompt-LCP position for a
-*boundary-rescue* case whose branch token is a common continuation
-word. That is consistent with prompt-LCP positions being sensitive
-to a range of donor activations when the branch token itself is a
-predictable completion, and with strict replay still failing in 27
-of 30 wrong-donor trials.
+Three donor strict-matches is not zero, so we list all three:
+
+| Target case | Sig | Pos / layer | Target A-token | Donor A-token |
+|---|---|---|---|---|
+| blank_line_wrap_0521 | boundary | prompt_lcp / L3 | `Retry` | ` ensure` |
+| parenthesize_word_0344 | boundary | prompt_lcp / L0 | `Quality` | ` established` |
+| line_wrap_0378 | boundary | prompt_lcp / L1 | `Retry` | ` ensure` |
+
+All three are boundary-rescue cases patched at the prompt-LCP
+position, and in each the target's A-token (`Retry`, `Quality`) is a
+common continuation word that the recipient context already favors.
+Two of the three use the same donor case. The pattern is consistent
+with prompt-LCP positions being sensitive to a range of donor
+activations when the target branch token itself is a predictable
+completion, rather than with the signature failing. Strict replay
+still fails in 27 of 30 wrong-donor trials.
 
 We ran this check on only one model. Treat it as a rule-out: if the
 signatures had been trivially satisfiable by any donor, strict
 replay would have been much higher than 3/30.
 
-### 3.6 Held-out summary
-
-Across the 40-case held-out wave: 39 of 40 had metric full rescue
-at some position, and 36 of 40 had strict replay. The signature
-distribution matches discovery within resampling noise.
-
-### 3.7 Reverse-direction controls (supportive)
-
-Twenty-one discovery cases ran with A and A′ swapped. In at least
-one direction, all 21 had metric full rescue. In both directions,
-19 had strict replay. The best-position class agreed between
-directions in 16. We present this as supportive rather than as
-decisive evidence of symmetry; 16 of 21 is a middling rate.
-
-### 3.8 Failures and edge cases
+### 3.6 Failures and edge cases
 
 - Two silent cases (of 52) do not reach full generated-prefix
   rescue. Both have at most one shared generated token before the
@@ -321,26 +352,32 @@ decisive evidence of symmetry; 16 of 21 is a middling rate.
 
 ## 4. Additional checks
 
-Two auxiliary signals line up with the patching story. Neither is
-strong enough to headline.
+Three exploratory signals line up with the patching story. None is
+used to define or validate signatures; we include them because they
+point the same direction from different angles.
+
+**Reverse-direction patching.** Twenty-one discovery cases ran with
+A and A′ swapped. In at least one direction, all 21 had metric full
+rescue. In both directions, 19 had strict replay. The best-position
+class agreed between directions in 16. Supportive rather than
+decisive; 16 of 21 is a middling agreement rate.
 
 **Branch prediction from trajectory signals.** Across 52 silent
 cases, two features — low top-1 margin and high JS divergence with
 the other run — detect the branch at or just before it commits
 (at-branch AUROC 0.947 and 0.883 respectively). Strict pre-branch
 (one token before the visible pick) AUROC drops into the 0.6–0.7
-range. Branches are detectable close in time; we do not claim any
-of this localizes mechanism.
+range. Branches are detectable close in time; this says nothing
+about mechanism.
 
-**Forced-prefix replay.** We ran a black-box analog on 11
-qwen35_2b cases: force A′ through A's pre-branch tokens and A's
-branch token, free-decode 10 more tokens, and measure the token
-LCP with A's continuation. Mean rejoin by signature: 8.0 for
-boundary (n=8), 5.0 for gen-prefix silent (n=2, split between 10
-and 0), 10 for tok-shift (n=1). With n = 11 this is a continuity
-check consistent with patching, not a result. The metric
-under-counts cases where the forced continuation stays on A's
-topic but picks different surface tokens.
+**Forced-prefix replay.** A black-box analog on 11 qwen35_2b cases:
+force A′ through A's pre-branch tokens and A's branch token,
+free-decode 10 more tokens, measure token LCP with A's continuation.
+Mean rejoin by signature: 8.0 for boundary (n=8), 5.0 for gen-prefix
+silent (n=2, split between 10 and 0), 10 for tok-shift (n=1). With
+n = 11 this is a continuity check, not a result. The metric
+under-counts cases where the forced continuation stays on A's topic
+but picks different surface tokens.
 
 ---
 
@@ -443,9 +480,9 @@ boundary, generated-prefix-after-silent, and tokenization-shift-
 immediate. No case in the panel is strictly late-only; every case
 has at least one prompt-side position that rescues. A rule fixed
 on the curated waves transfers to the held-out wave with the same
-signature rates, and a small donor-specificity check rules out the
-trivial "any activation at the signature position rescues"
-explanation. We release Branch Cards as an audit format for
+signature rates. A small donor-specificity check on one model makes
+a purely generic-perturbation account unlikely, though it does not
+settle the question. We release Branch Cards as an audit format for
 per-case evidence.
 
 ---

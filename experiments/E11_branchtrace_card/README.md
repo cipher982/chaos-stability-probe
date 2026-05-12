@@ -120,24 +120,28 @@ then diverges lexically, rejoin=2). Expanding to more models or adding
 a logprob-of-suffix metric are options if the paper needs it; for now
 this is a support figure.
 
-Phase 4 draft rev 3: `paper/draft.md` (2026-05-12).
-Plain-prose rewrite applying second-pass expert review. Added
-donor-specificity control (§3.5):
-`scripts/run_wrong_donor_control.py` →
-`runs/wrong_donor_control/qwen2b/donor_control.csv`. On 10 qwen35_2b
-cases whose best position was strict-replayable, self-patch matched
-A's branch token 10/10 times; wrong-donor patches matched 3/30.
-Median rescue_fraction 1.00 vs 0.00. Rules out "any activation at
-the signature position rescues."
+Phase 4 rev 4: `paper/draft.md` (2026-05-12) — submission-cleanup.
+Third expert pass verdict: "submission-ready after cleanup, not
+after new science."
 
-Style: cut ceremonial vocabulary (operational, assayed, materially,
-sufficient handles) outside formal definitions; stripped internal
-experiment codes (E03/E09/E10) from main text; collapsed §4
-auxiliary checks to two short paragraphs; §3.2 honest about V5
-timing (not preregistration, discovery-to-replication check);
-disambiguated 27/82 (signature count) vs 50/52 (silent cases with
-gen-prefix rescue across signatures); labeled 0/82 bound as rule of
-three (3.7% upper 95%).
+Applied: prompt-LCP defined unambiguously (first differing prompt
+token at index k); aligned-prompt controls labeled sampled
+non-boundary; §3.2 reframed as "reserved-wave rule transfer" with
+explicit note that V5 patch CSVs existed before the rule was
+written, so the transfer check is not prospective preregistration;
+rule-of-three given explicit iid caveat (pairs aren't iid); abstract
+softened ("arguing against a purely generic-perturbation explanation
+at least for this one-model control"); conclusion softened
+("makes a purely generic-perturbation account unlikely, though it
+does not settle the question"); held-out summary merged into §3.2;
+reverse-direction moved to §4 exploratory; §3 trimmed to six
+subsections; denominator-flow table added at §3.1; all three
+wrong-donor strict-replay matches tabulated in §3.5 with target /
+donor token pairs and the "common continuation word" pattern
+discussed.
 
-Next: build Fig 1, screenshot Fig 3 hero, fill 2025-2026 citations
-before submission.
+Still TODO before submission: Fig 2 (Branch Card hero screenshot);
+real citations (Vig, Meng, Heimersheim/Nanda, Zhang/Nanda, Geiger
+for patching; Sclar, Cao, PromptEval, POSIX, Errica, Pecher for
+prompt sensitivity; Bogdan for Thought Anchors); optional final
+prose readthrough.
