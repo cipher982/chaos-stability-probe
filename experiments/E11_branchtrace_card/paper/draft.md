@@ -473,17 +473,21 @@ before submission.)
 
 ## 8. Conclusion
 
-Token-certified tiny prompt edits produce branch events that can
-be undone by patching a residual-stream position. Across 82 cases
-and 8 open models, rescue handles fall into three signatures:
-boundary, generated-prefix-after-silent, and tokenization-shift-
-immediate. No case in the panel is strictly late-only; every case
-has at least one prompt-side position that rescues. A rule fixed
-on the curated waves transfers to the held-out wave with the same
-signature rates. A small donor-specificity check on one model makes
-a purely generic-perturbation account unlikely, though it does not
-settle the question. We release Branch Cards as an audit format for
-per-case evidence.
+Greedy LLMs branch on formatting edits, and the branch is causally
+committed at a specific, findable residual-stream position. Across
+82 token-certified cases on 8 open models we identify three
+distinct patching signatures — boundary, generated-prefix-after-
+silent, tokenization-shift-immediate — and find **zero cases** in
+the panel where only a late, post-prompt handle rescues. The rule
+we derived on the curated waves predicts the randomized held-out
+wave's signature rates with no adjustment. The obvious "maybe the
+model just overwrites context late" story does not describe these
+branches. The obvious "the edit itself is always the handle" story
+does not describe them either. Both endpoints are there in the
+data, connected by a middle regime where the branch is already
+latent in shared generated context before it becomes visible. We
+release Branch Cards as an audit format so others can inspect and
+reproduce the per-case evidence.
 
 ---
 
