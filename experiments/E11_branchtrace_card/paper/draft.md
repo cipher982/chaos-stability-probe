@@ -14,10 +14,10 @@ all three wrong-donor matches tabulated in §3.5.
 
 ## Abstract
 
-Tiny formatting edits can change a greedy LLM's continuation. Changing
-a space, a newline, or a bracket is enough to make the model branch to
-a different first word and, sometimes, a different answer. The patch
-that undoes the branch is not always at the edited token.
+Tiny formatting edits can change a greedy LLM's continuation. A
+space, newline, or bracket change is enough to branch the model
+onto a different first word, and sometimes a different answer. The
+patch that undoes the branch is not always at the edited token.
 
 We study 82 token-certified prompt pairs across eight open models
 (Qwen 3.5 at 0.8B to 9B, Gemma 4 at E2B and E4B, base and instruct).
@@ -55,8 +55,8 @@ runtime, and the seed, and you get the same tokens out. But prompts
 that look equivalent to a person — the same sentence with or without
 an extra blank line, for example — are not equivalent to the
 tokenizer. Under greedy decoding, these small formatting edits
-reliably cause generations to diverge at some token and stay
-different after.
+reliably push the generation onto a different token, and it stays
+different from there.
 
 This paper asks a concrete question: **when a tiny prompt edit makes
 the model pick a different next token at position t*, where in the
@@ -107,10 +107,10 @@ cases.
 
 We treat this clustering as **operational** rather than
 mechanistic. We are classifying *where in the forward pass a branch
-can be undone*, not recovering a circuit. Different patch grids,
-different models, or different edit families would likely find
-different signatures. The signatures are useful descriptions, not
-discovered mechanisms.
+can be undone*, not recovering a circuit. A different patch grid,
+model set, or edit family would likely surface different
+signatures. The signatures are useful descriptions, not discovered
+mechanisms.
 
 **Contributions.**
 
@@ -118,8 +118,7 @@ discovered mechanisms.
   across eight open models, with a deterministic decision rule.
 - A discovery-to-replication split: the rule fixed on the curated
   waves predicts the held-out wave's signature distribution (silent
-  full-rescue rate: discovery 21/22, held-out 29/30, combined 50/52
-  out of 52 silent cases).
+  full-rescue rate: discovery 21/22, held-out 29/30, combined 50/52).
 - Negative controls. **0/82** cases are strict late-only (§3.3). A
   donor-specificity test on qwen35_2b shows strict replay 3/30 with
   wrong donors against 10/10 with self-patches (§3.5).
@@ -241,7 +240,7 @@ legible.
 | strict assayed late-only | 0 | of 82 |
 | held-out (V5) cases | 40 | of 82 |
 | reverse-direction matched cases | 21 | subset of discovery |
-| donor-specificity control (qwen35_2b) | 10 | cases × 3 donors |
+| donor-specificity control (qwen35_2b) | 10 cases × 3 donors | 30 trials |
 
 ### 3.2 Reserved-wave rule transfer
 
@@ -252,10 +251,10 @@ when we formalized the signatures. What V5 did *not* see was the
 rule, the signature labels, or any hand-selection — V5 cases are a
 randomized sample from the token-certified pair set.
 
-So this is a reserved-wave rule-transfer check, not preregistration
-and not a held-out prediction in the strict prospective sense. The
-question it answers is: does the rule we chose on the curated cases
-describe the randomized held-out cases without adjustment?
+So this is a rule-transfer check on a reserved wave, not a
+preregistered prediction. The question it answers is: does the
+rule we chose on the curated cases describe the randomized held-out
+cases without adjustment?
 
 One signature has a concrete numeric test: in silent-divergence
 cases, some generated-prefix position should fully rescue.
@@ -390,9 +389,8 @@ When the edit's effect has already nudged the logits before the
 visible top-1 changes, some position in the generated prefix is
 enough. When the edit sits at token 0, last-prompt-position (the
 only non-boundary prompt position available with so short a
-prompt) is enough. We are not claiming the branch "migrates" or
-"accumulates" — we are claiming that a sufficient handle is
-available at those positions.
+prompt) is enough. We aren't saying the branch "migrates" or "accumulates." We're
+saying a sufficient handle sits at those positions.
 
 **What the signatures are not.** We do not observe a clean
 basin-switch / cliff-slip split: margin distributions across
@@ -566,9 +564,10 @@ Every field carries a `source` tag (`observed`, `derived`,
 `not_run`). A single-file HTML view renders the card with the
 patch heatmap inline as a base64 data URI. Two example cards ship
 with the paper: `qwen35_2b__token_cert_parenthesize_word_0434`
-(boundary rescue) and `gemma4_e2b_base__token_cert_blank_line_
-wrap_0212` (silent divergence with generated-prefix rescue,
-branch_t = 45, 45-token shared prefix).
+(boundary rescue) and
+`gemma4_e2b_base__token_cert_blank_line_wrap_0212` (silent
+divergence with generated-prefix rescue, branch_t = 45, 45-token
+shared prefix).
 
 **Figure 2** (`figures/branch_card_hero.png`). Rendered HTML of the
 boundary-rescue hero card, showing the Edit, Runs, Branch, and
@@ -629,7 +628,7 @@ general branch-debugging tool.
   faceted by signature. Per-case bars for prompt-LCP,
   best-aligned-prompt-control, best-generated-prefix, and
   final-context. Script: `experiments/E11_branchtrace_card/
-  figures/build_signature_rescue_panel.py` (TBD).
+  figures/build_signature_rescue_panel.py`.
 - **Heatmap triptych (supplementary).** Existing
   `experiments/E11_branchtrace_card/figures/regime_heatmaps/
   regime_mean_heatmaps_triptych.png`.
