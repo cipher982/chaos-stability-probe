@@ -120,7 +120,19 @@ then diverges lexically, rejoin=2). Expanding to more models or adding
 a logprob-of-suffix metric are options if the paper needs it; for now
 this is a support figure.
 
-Phase 4 skeleton draft: `paper/draft.md` (2026-05-12).
-~2600 words, figure captions placeholder. Next: build Fig 1 from
-`case_level_summary.csv`, render Fig 3 hero card screenshot, send
-to hatch expert for pre-submission review.
+Phase 4 draft rev 2: `paper/draft.md` (2026-05-12).
+Applied 2026-05-12 expert review: reframed as operational
+patching-signatures (not mechanism); renamed
+prompt-accumulation → tokenization-shift-immediate; Branch Cards
+demoted to audit-format appendix; split 50/52 by discovery (21/22)
+vs held-out (29/30); downgraded "pre-registered" to "pre-specified
+decision rule" with honest timing note; added strict-assayed
+qualifiers to 0/82 with 95% upper bound; expanded rescue
+definitions; collapsed §3.6-3.7 into §4 auxiliary checks.
+
+Also verified: aligned-prompt-control + strict-replay flag already
+provide the negative-control signal the expert suggested; no new
+compute needed. Surfaced 6-case discrepancy between metric-rescue
+and strict-replay in §3.4.
+
+Next: build Fig 1, screenshot Fig 3 hero, fill 2025-2026 citations.
