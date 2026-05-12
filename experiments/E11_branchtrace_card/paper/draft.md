@@ -528,6 +528,14 @@ with the paper: `qwen35_2b__token_cert_parenthesize_word_0434`
 wrap_0212` (silent divergence with generated-prefix rescue,
 branch_t = 45, 45-token shared prefix).
 
+**Figure 2** (`figures/branch_card_hero.png`). Rendered HTML of the
+boundary-rescue hero card, showing the Edit, Runs, Branch, and
+Patch-evidence sections end to end with the per-layer rescue
+heatmap inline. Remaining card sections (Replay, Suspected
+controlling span, Selection provenance, Runtime, Caveats,
+Artifacts) are omitted from the figure for space and appear in
+the shipped HTML card.
+
 This is an audit format for reproducing per-case evidence, not a
 general branch-debugging tool.
 
@@ -583,8 +591,11 @@ general branch-debugging tool.
 - **Heatmap triptych (supplementary).** Existing
   `experiments/E11_branchtrace_card/figures/regime_heatmaps/
   regime_mean_heatmaps_triptych.png`.
-- **Branch Card hero screenshot.** From rendered
-  `cards/qwen35_2b__parenthesize_word_0434.html`.
+- **Branch Card hero screenshot (Fig 2).** Rebuild via
+  `experiments/E11_branchtrace_card/figures/build_branch_card_hero.sh`.
+  Renders `cards/qwen35_2b__parenthesize_word_0434.html` with
+  headless Chrome at 1200×3500, then crops at y=2460 to end after
+  the Patch-evidence heatmap and before the Replay section.
 - **Donor-specificity table (§3.5).** From
   `runs/wrong_donor_control/qwen2b/donor_control.csv`.
 - **Forced-prefix replay (§4).** From
