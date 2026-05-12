@@ -481,7 +481,49 @@ branches rather than reasoning-step importance.
 
 ---
 
-## 8. Conclusion
+## 8. Ethics, licenses, and data release
+
+**Models.** We use the Qwen 3.5 family (Alibaba, Apache 2.0) at 0.8B,
+2B, 4B, and 9B, and the Gemma 4 family (Google, Gemma Terms of Use)
+at E2B and E4B, both base and instruct. No model weights are
+redistributed; we record pinned Hugging Face model revisions in each
+Branch Card's `run_a.runtime.model_revision` field. Users replaying
+our results agree to the respective model licenses when they pull
+the weights.
+
+**Intended use.** This paper is interpretability research. The
+token-certified edit methodology could in principle be used to
+search for low-effort prompt perturbations that elicit specific
+outputs, including harmful ones. Our focus is understanding where
+branches commit; we do not release, benchmark, or optimize
+jailbreak prompts, and the 82-case panel is restricted to neutral
+instruction-following tasks (definitions, summaries, how-to
+explanations).
+
+**Data.** All prompt pairs were generated for this project. No
+user data, no scraped web content. Prompt-pair seed templates are
+in `configs/prompt_pairs_token_certified/` and the full pair JSON
+files are released with the code.
+
+**Released artifacts.**
+
+- Branch Card JSON schema (`branchcard/0.1`) and two reference
+  cards — boundary-rescue hero and silent trajectory-migration
+  hero — under MIT license.
+- Python package `branchtrace/` (schema, loaders, CLI, HTML
+  renderer) under MIT.
+- Patching, replay, and donor-control scripts under
+  `scripts/`, plus per-case artifact CSVs for the 82-case panel
+  and the held-out V5 wave.
+
+**Compute.** Patching runs used roughly 60 SageMaker GPU hours total
+(ml.g6e.2xlarge and ml.g5.2xlarge mixed). Donor and forced-prefix
+replay checks ran in under ten minutes on a 64GB MacBook (MPS
+float16). No model training or fine-tuning was required.
+
+---
+
+## 9. Conclusion
 
 Greedy LLMs branch on formatting edits, and the branch is causally
 committed at a specific, findable residual-stream position. Across
