@@ -120,19 +120,24 @@ then diverges lexically, rejoin=2). Expanding to more models or adding
 a logprob-of-suffix metric are options if the paper needs it; for now
 this is a support figure.
 
-Phase 4 draft rev 2: `paper/draft.md` (2026-05-12).
-Applied 2026-05-12 expert review: reframed as operational
-patching-signatures (not mechanism); renamed
-prompt-accumulation → tokenization-shift-immediate; Branch Cards
-demoted to audit-format appendix; split 50/52 by discovery (21/22)
-vs held-out (29/30); downgraded "pre-registered" to "pre-specified
-decision rule" with honest timing note; added strict-assayed
-qualifiers to 0/82 with 95% upper bound; expanded rescue
-definitions; collapsed §3.6-3.7 into §4 auxiliary checks.
+Phase 4 draft rev 3: `paper/draft.md` (2026-05-12).
+Plain-prose rewrite applying second-pass expert review. Added
+donor-specificity control (§3.5):
+`scripts/run_wrong_donor_control.py` →
+`runs/wrong_donor_control/qwen2b/donor_control.csv`. On 10 qwen35_2b
+cases whose best position was strict-replayable, self-patch matched
+A's branch token 10/10 times; wrong-donor patches matched 3/30.
+Median rescue_fraction 1.00 vs 0.00. Rules out "any activation at
+the signature position rescues."
 
-Also verified: aligned-prompt-control + strict-replay flag already
-provide the negative-control signal the expert suggested; no new
-compute needed. Surfaced 6-case discrepancy between metric-rescue
-and strict-replay in §3.4.
+Style: cut ceremonial vocabulary (operational, assayed, materially,
+sufficient handles) outside formal definitions; stripped internal
+experiment codes (E03/E09/E10) from main text; collapsed §4
+auxiliary checks to two short paragraphs; §3.2 honest about V5
+timing (not preregistration, discovery-to-replication check);
+disambiguated 27/82 (signature count) vs 50/52 (silent cases with
+gen-prefix rescue across signatures); labeled 0/82 bound as rule of
+three (3.7% upper 95%).
 
-Next: build Fig 1, screenshot Fig 3 hero, fill 2025-2026 citations.
+Next: build Fig 1, screenshot Fig 3 hero, fill 2025-2026 citations
+before submission.
