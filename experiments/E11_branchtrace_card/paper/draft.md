@@ -206,11 +206,17 @@ signature:
 | generated_prefix_rescue_after_silent_divergence | 27 | some generated-prefix position fully rescues |
 | tokenization_shift_immediate_rescue | 14 | edit at token 0; last-prompt-position rescues |
 
-**Figure 1** (placeholder: `figures/signature_rescue_panel.pdf`).
-Per-case best-layer rescue fraction at each of the four position
-classes, one row per case, faceted by signature. Each signature has
-its characteristic peak: boundary at prompt-LCP, gen-prefix in the
-generated prefix, and tok-shift-immediate at final-context.
+**Figure 1** (`figures/signature_rescue_panel.pdf`). Box + jittered
+strip of best-layer rescue_fraction per case at the four position
+classes, one panel per signature. Each signature's characteristic
+shape reads at a glance: boundary has prompt-LCP well above 1.0 (and
+other classes also rescuing); generated-prefix-after-silent has
+prompt-LCP and aligned-prompt controls clearly below 1.0 with
+generated-prefix and final-context glued to 1.0; tokenization-shift-
+immediate has prompt-LCP below 1.0 with aligned-prompt / final-
+context at 1.0 and generated-prefix empty (immediate branches have
+no shared generated prefix). Source:
+`runs/rankings/activation_patch_comparison/case_level_summary.csv`.
 
 ### 3.2 Discovery-to-replication check
 
