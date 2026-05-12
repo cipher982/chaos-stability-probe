@@ -120,4 +120,7 @@ then diverges lexically, rejoin=2). Expanding to more models or adding
 a logprob-of-suffix metric are options if the paper needs it; for now
 this is a support figure.
 
-Phase 4 (paper draft) is next.
+Phase 4 skeleton draft: `paper/draft.md` (2026-05-12).
+~2600 words, figure captions placeholder. Next: build Fig 1 from
+`case_level_summary.csv`, render Fig 3 hero card screenshot, send
+to hatch expert for pre-submission review.
