@@ -444,30 +444,40 @@ donor-specificity check (§3.5) is our response, not a final answer.
 
 ## 7. Related Work
 
-**Activation patching.** Our metric follows the causal-tracing
-tradition; see Vig et al.'s causal mediation analysis for LMs,
-Meng et al.'s ROME on factual association editing, and the
-Heimersheim & Nanda and Zhang & Nanda write-ups on patching
-practice and pitfalls. Geiger et al.'s causal abstraction work
-frames what patching does and does not establish. We borrow the
-patching-methodology cautions and apply position-class-aligned
-patching to classify rescue handles rather than identify
-circuits.
+**Activation patching and causal tracing.** Our patching metric and
+aligned-position setup follow the causal-tracing lineage. Vig et al.
+(2020) introduced causal mediation analysis for interpreting
+language-model components; Meng et al. (2022) extended the technique
+to factual association recall with ROME; Geiger et al. (2021) give
+the formal causal-abstraction framing that underpins interchange
+interventions. Heimersheim & Nanda (2024) document practical
+interpretation pitfalls, and Zhang & Nanda (2024) compare metrics
+and corruption strategies across common activation-patching setups.
+We adopt the "existence of a sufficient handle at some layer" framing
+these write-ups recommend and apply position-class-aligned patching
+to classify where a branch can be rescued, not to localize a circuit.
 
-**Prompt sensitivity.** Sclar et al. on prompt-format effects, Cao
-et al. on worst-prompt performance, and benchmarks like
-PromptEval, POSIX, and Errica et al.'s sensitivity / consistency
-work are the closest correlates. Our contribution intervenes at
-the token-certified level rather than correlating format with
-accuracy.
+**Prompt sensitivity.** Sclar et al. (2024) document large accuracy
+swings under meaning-preserving format edits in few-shot settings.
+Cao et al. (2024) propose RobustAlpacaEval and show worst-prompt
+performance is substantially below average. PromptEval (Polo et al.,
+2024) estimates performance distributions across many prompt
+templates efficiently; POSIX (Chatterjee et al., 2024) introduces a
+prompt-sensitivity index; Errica et al. (2025, NAACL) quantifies
+sensitivity and consistency under prompt rephrasing; Pecher et al.
+(2026) argue much of this variance reflects prompt
+underspecification. These works correlate prompt choice with
+accuracy. Ours intervenes at the residual-stream level on
+tokenizer-certified pairs to ask where the branch commits
+causally, which is a different question.
 
-**Forced-prefix rollouts.** Bogdan et al.'s Thought Anchors is the
-nearest black-box analog to §4's forced-prefix check; their
-setting is reasoning-step importance, not formatting-driven
-branches.
-
-(Citations to be filled in with year-accurate 2025–2026 entries
-before submission.)
+**Black-box conditioned rollouts.** Bogdan et al. (2025, "Thought
+Anchors") introduce a black-box counterfactual-resampling method
+for localizing which reasoning steps matter most in a chain of
+thought. Our forced-prefix check in §4 is in the same family — fix
+a shared prefix, let the model continue, measure whether it sticks
+to the original trajectory — but applied to formatting-driven
+branches rather than reasoning-step importance.
 
 ---
 
@@ -520,6 +530,47 @@ branch_t = 45, 45-token shared prefix).
 
 This is an audit format for reproducing per-case evidence, not a
 general branch-debugging tool.
+
+## References
+
+- Vig, J., Gehrmann, S., Belinkov, Y., Qian, S., Nevo, D., Singer,
+  Y., & Shieber, S. (2020). *Causal Mediation Analysis for
+  Interpreting Neural NLP: The Case of Gender Bias.* NeurIPS 2020.
+  arXiv:2004.12265.
+- Meng, K., Bau, D., Andonian, A., & Belinkov, Y. (2022). *Locating
+  and Editing Factual Associations in GPT.* NeurIPS 2022.
+  arXiv:2202.05262.
+- Geiger, A., Lu, H., Icard, T., & Potts, C. (2021). *Causal
+  Abstractions of Neural Networks.* NeurIPS 2021.
+  arXiv:2106.02997.
+- Heimersheim, S., & Nanda, N. (2024). *How to use and interpret
+  activation patching.* arXiv:2404.15255.
+- Zhang, F., & Nanda, N. (2024). *Towards Best Practices of
+  Activation Patching in Language Models: Metrics and Methods.*
+  arXiv:2309.16042.
+- Sclar, M., Choi, Y., Tsvetkov, Y., & Suhr, A. (2024). *Quantifying
+  Language Models' Sensitivity to Spurious Features in Prompt
+  Design.* ICLR 2024. arXiv:2310.11324.
+- Cao, B., Yan, Y., Luo, T., Wang, M., Chen, W., & Zhang, M.
+  (2024). *On the Worst Prompt Performance of Large Language
+  Models.* NeurIPS 2024. arXiv:2406.10248.
+- Polo, F. M., Xu, R., Weber, L., Silva, M., Bhardwaj, O., Choshen,
+  L., de Oliveira, A. F. M., Sun, Y., & Yurochkin, M. (2024).
+  *Efficient multi-prompt evaluation of LLMs (PromptEval).*
+  NeurIPS 2024. arXiv:2405.17202.
+- Chatterjee, A., Renduchintala, H. S. V. N. S. K., Bhatia, S., &
+  Chakraborty, T. (2024). *POSIX: A Prompt Sensitivity Index For
+  Large Language Models.* arXiv:2410.02185.
+- Errica, F., Siracusano, G., Sanvito, D., & Bifulco, R. (2025).
+  *What Did I Do Wrong? Quantifying LLMs' Sensitivity and
+  Consistency to Prompt Engineering.* NAACL 2025. arXiv:2406.12334.
+- Pecher, B., Srba, I., Bielikova, M., & Vanschoren, J. (2026).
+  *Revisiting Prompt Sensitivity in Large Language Models for Text
+  Classification: The Role of Prompt Underspecification.*
+  arXiv:2602.04297.
+- Bogdan, P. C., Macar, U., Nanda, N., & Conmy, A. (2025).
+  *Thought Anchors: Which LLM Reasoning Steps Matter?*
+  arXiv:2506.19143.
 
 ## Appendix B — Figure build notes
 
