@@ -59,7 +59,7 @@ reliably push the generation onto a different token, and it stays
 different from there.
 
 This paper asks a concrete question: **when a tiny prompt edit makes
-the model pick a different next token at position t*, where in the
+the model pick a different next token at position t\*, where in the
 forward pass can we patch the unedited model's activation into the
 edited model and recover the original token?**
 
