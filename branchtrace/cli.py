@@ -43,6 +43,19 @@ def _cmd_render(args: argparse.Namespace) -> int:
     return 0
 
 
+def _cmd_signature_lab(args: argparse.Namespace) -> int:
+    from .signature_lab import write_lab
+
+    write_lab(
+        Path(args.repo_root).resolve(),
+        Path(args.out_json),
+        Path(args.out_html),
+    )
+    print(f"wrote {args.out_json}")
+    print(f"wrote {args.out_html}")
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     p = argparse.ArgumentParser(prog="branchtrace")
     sub = p.add_subparsers(dest="cmd", required=True)
@@ -65,6 +78,21 @@ def main(argv: list[str] | None = None) -> int:
     r.add_argument("--repo-root", default=".")
     r.add_argument("--out", required=True)
     r.set_defaults(fn=_cmd_render)
+
+    lab = sub.add_parser(
+        "signature-lab",
+        help="Build the data-backed interactive signature lab JSON + HTML.",
+    )
+    lab.add_argument("--repo-root", default=".")
+    lab.add_argument(
+        "--out-json",
+        default="experiments/E11_branchtrace_card/paper/signature_lab_data.json",
+    )
+    lab.add_argument(
+        "--out-html",
+        default="experiments/E11_branchtrace_card/paper/signature_explainer.html",
+    )
+    lab.set_defaults(fn=_cmd_signature_lab)
 
     ns = p.parse_args(argv)
     return ns.fn(ns)

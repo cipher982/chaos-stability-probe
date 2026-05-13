@@ -59,6 +59,11 @@ uv run python -m branchtrace.cli render \
 - `cards/<id>.html` — self-contained HTML view.
 - `branchtrace/` — reusable package.
 - Paper figures will sit under `experiments/E11_branchtrace_card/figures/`.
+- `paper/signature_lab_data.json` — generated interactive-lab data bundle
+  (schema `signature-lab/0.1`) built from patch, trajectory, logit, and SAE
+  artifacts.
+- `paper/signature_explainer.html` — self-contained interactive lab. Rebuild
+  with `uv run python -m branchtrace.cli signature-lab --repo-root .`.
 
 ## Current readout
 
@@ -140,8 +145,15 @@ wrong-donor strict-replay matches tabulated in §3.5 with target /
 donor token pairs and the "common continuation word" pattern
 discussed.
 
-Still TODO before submission: Fig 2 (Branch Card hero screenshot);
-real citations (Vig, Meng, Heimersheim/Nanda, Zhang/Nanda, Geiger
-for patching; Sclar, Cao, PromptEval, POSIX, Errica, Pecher for
-prompt sensitivity; Bogdan for Thought Anchors); optional final
-prose readthrough.
+Subsequent cleanup completed Fig 2, real citations, ethics/license/data
+release text, and final prose readthrough. Current paper draft is
+`paper/draft.md`; review renders are generated artifacts under `paper/`.
+
+Interactive signature lab (2026-05-13):
+`branchtrace/signature_lab.py` now generates `paper/signature_lab_data.json`
+and `paper/signature_explainer.html` from raw artifacts. The default case is
+`qwen35_2b__token_cert_line_wrap_0573`, a non-token-zero boundary-rescue
+example (`branch_t=9`). The lab also includes
+`gemma4_e2b_base__token_cert_blank_line_wrap_0212` for generated-prefix rescue,
+`qwen35_2b__token_cert_line_wrap_0378` for the immediate tokenization-shift
+edge case, and observed SAE pilot feature bars where available.
