@@ -696,14 +696,14 @@
           <button data-filter="important" class="filter active">Key positions</button>
           <button data-filter="all" class="filter">All positions</button>
         </div>
-        <p><strong>Key positions</strong> means the prompt-LCP token, the final-context token, and the strongest observed position from each position class.</p>
+        <p><strong>Key positions</strong> means the prompt edit token, the last context token, and the strongest observed token from each other position type. The last context token is the final token the model has seen right before it predicts the branch token.</p>
         <details class="disclosure">
           <summary>More filters</summary>
           <div class="controls">
-            <button data-filter="prompt_lcp" class="filter">Prompt LCP</button>
+            <button data-filter="prompt_lcp" class="filter">Prompt edit token</button>
             <button data-filter="aligned_prompt_control" class="filter">Prompt controls</button>
             <button data-filter="generated_prefix" class="filter">Generated prefix</button>
-            <button data-filter="final_context" class="filter">Final context</button>
+            <button data-filter="final_context" class="filter">Last context token</button>
           </div>
         </details>
         <div class="heat-wrap">
@@ -800,10 +800,10 @@ function classLabel(cls) {
     edit_boundary: "edit-boundary",
     trajectory_migration: "trajectory-migration",
     prompt_accumulation: "prompt-accumulation",
-    prompt_lcp: "prompt LCP",
+    prompt_lcp: "prompt edit token",
     aligned_prompt_control: "prompt control",
     generated_prefix: "generated prefix",
-    final_context: "final context"
+    final_context: "last context token"
   }[cls] || cls;
 }
 
@@ -834,6 +834,25 @@ function caseMetric(c) {
 
 function bestPatchText(p) {
   return `${classLabel(p.best_position_class)}, layer ${p.best_layer}`;
+}
+
+function positionClassHint(cls, c) {
+  if (cls === "final_context") {
+    if (Number(c.generation.branch_t) === 0) {
+      return "Here the branch is at t=0, so the last context token is simply the last prompt token.";
+    }
+    return "This is the last shared generated token immediately before the branch prediction.";
+  }
+  if (cls === "prompt_lcp") {
+    return "This is the first tokenized prompt position where the two prompt versions differ.";
+  }
+  if (cls === "generated_prefix") {
+    return "This is one of the shared generated tokens before the branch.";
+  }
+  if (cls === "aligned_prompt_control") {
+    return "This is another prompt-side token used as a control position.";
+  }
+  return "";
 }
 
 function generatedPrefixFact(c) {
@@ -881,7 +900,7 @@ function renderCase() {
   const facts = [
     ["First changed token", `t=${c.generation.branch_t}`, `A predicts ${tokenText(c.generation.a_branch_token)}; B predicts ${tokenText(c.generation.b_branch_token)}.`],
     ["Patch score scale", "0 = none; 1 = full", "Above 1 means the patch pushes farther toward A than the clean run did."],
-    ["Best patch found", bestPatchText(p), scoreWithOutcome(p.best_rescue_fraction)],
+    ["Best patch found", bestPatchText(p), `${scoreWithOutcome(p.best_rescue_fraction)}. ${positionClassHint(p.best_position_class, c)}`],
     generatedPrefixFact(c)
   ];
   $("caseFacts").innerHTML = facts.map(([label, value, sub]) => `
@@ -1022,7 +1041,8 @@ function renderPatch() {
   const positions = visiblePositions(c);
   const layers = c.patch.grid.layers;
   const cellsByKey = new Map(c.patch.grid.cells.map((cell) => [`${cell.layer}|${cell.position_label}`, cell]));
-  const best = c.patch.grid.best_cell;
+  const summary = c.patch.summary;
+  const best = cellsByKey.get(`${summary.best_layer}|${summary.best_position_label}`) || c.patch.grid.best_cell;
   if (!state.selectedPosition || !positions.some((p) => p.label === state.selectedPosition)) {
     state.selectedPosition = positions.some((p) => p.label === best.position_label) ? best.position_label : positions[0]?.label;
   }
@@ -1078,9 +1098,10 @@ function renderPatch() {
   const pos = positionMap(c).get(selectedCell.position_label);
   $("patchDetails").innerHTML = [
     ["position", pos?.short_label || selectedCell.position_label],
-    ["class", classLabel(selectedCell.position_class)],
+    ["position type", classLabel(selectedCell.position_class)],
     ["layer", `L${selectedCell.layer}`],
     ["patch score", scoreWithOutcome(selectedCell.rescue_fraction, 3)],
+    ["meaning", positionClassHint(selectedCell.position_class, c) || "Selected patch position."],
     ["top-1 after patch", selectedCell.top1_token || "NA"]
   ].map(([label, value]) => `
     <div class="detail">
@@ -1144,7 +1165,7 @@ function renderPanel() {
   $("panelCounts").innerHTML = [
     ["Edit-boundary", counts.edit_boundary, "the prompt-side boundary already contains enough information to rescue"],
     ["Trajectory-migration", counts.trajectory_migration, "the useful handle appears later in the generated prefix"],
-    ["Prompt-accumulation", counts.prompt_accumulation, "the branch happens at t=0; last prompt state acts like final context"]
+    ["Prompt-accumulation", counts.prompt_accumulation, "the branch happens at t=0; the last prompt token is also the last context token"]
   ].map(([label, value, sub]) => `
     <div class="panel">
       <h4>${esc(label)}</h4>

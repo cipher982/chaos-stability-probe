@@ -198,9 +198,9 @@ def _position_index(label: str) -> int | None:
 
 def _position_short_label(label: str) -> str:
     if label == "prompt_lcp_token":
-        return "prompt LCP"
+        return "prompt edit"
     if label == "final_context_token":
-        return "final ctx"
+        return "last context"
     if label == "generated_prefix_token":
         return "gen prefix"
     m = _GENERATED_PREFIX_RE.match(label)
