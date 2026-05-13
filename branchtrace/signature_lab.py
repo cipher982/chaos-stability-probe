@@ -76,7 +76,7 @@ CASE_SPECS = [
         "is_default": False,
         "model_name": "qwen35_2b",
         "pair_id": "token_cert_line_wrap_0378",
-        "archetype": "token-0 visible branch; last prompt-side state is effectively final context",
+        "archetype": "token-0 visible branch; the token before the branch is the last prompt token",
         "why": (
             "This is the edge case class: the first generated token changes immediately, "
             "so there is no generated runway to inspect."
@@ -200,7 +200,7 @@ def _position_short_label(label: str) -> str:
     if label == "prompt_lcp_token":
         return "prompt edit"
     if label == "final_context_token":
-        return "last context"
+        return "before branch"
     if label == "generated_prefix_token":
         return "gen prefix"
     m = _GENERATED_PREFIX_RE.match(label)

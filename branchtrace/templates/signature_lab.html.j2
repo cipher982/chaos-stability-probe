@@ -696,14 +696,14 @@
           <button data-filter="important" class="filter active">Key positions</button>
           <button data-filter="all" class="filter">All positions</button>
         </div>
-        <p><strong>Key positions</strong> means the prompt edit token, the last context token, and the strongest observed token from each other position type. The last context token is the final token the model has seen right before it predicts the branch token.</p>
+        <p><strong>Key positions</strong> means the prompt edit token, the token immediately before the branch, and the strongest observed token from each other position type. When the branch happens after shared generated text, this is the last shared token.</p>
         <details class="disclosure">
           <summary>More filters</summary>
           <div class="controls">
             <button data-filter="prompt_lcp" class="filter">Prompt edit token</button>
             <button data-filter="aligned_prompt_control" class="filter">Prompt controls</button>
             <button data-filter="generated_prefix" class="filter">Generated prefix</button>
-            <button data-filter="final_context" class="filter">Last context token</button>
+            <button data-filter="final_context" class="filter">Token before branch</button>
           </div>
         </details>
         <div class="heat-wrap">
@@ -803,7 +803,7 @@ function classLabel(cls) {
     prompt_lcp: "prompt edit token",
     aligned_prompt_control: "prompt control",
     generated_prefix: "generated prefix",
-    final_context: "last context token"
+    final_context: "token before branch"
   }[cls] || cls;
 }
 
@@ -839,9 +839,9 @@ function bestPatchText(p) {
 function positionClassHint(cls, c) {
   if (cls === "final_context") {
     if (Number(c.generation.branch_t) === 0) {
-      return "Here the branch is at t=0, so the last context token is simply the last prompt token.";
+      return "Here the branch is at t=0, so this is the last prompt token.";
     }
-    return "This is the last shared generated token immediately before the branch prediction.";
+    return "This is the last shared token before the branch prediction.";
   }
   if (cls === "prompt_lcp") {
     return "This is the first tokenized prompt position where the two prompt versions differ.";
@@ -1165,7 +1165,7 @@ function renderPanel() {
   $("panelCounts").innerHTML = [
     ["Edit-boundary", counts.edit_boundary, "the prompt-side boundary already contains enough information to rescue"],
     ["Trajectory-migration", counts.trajectory_migration, "the useful handle appears later in the generated prefix"],
-    ["Prompt-accumulation", counts.prompt_accumulation, "the branch happens at t=0; the last prompt token is also the last context token"]
+    ["Prompt-accumulation", counts.prompt_accumulation, "the branch happens at t=0, so the token before the branch is the last prompt token"]
   ].map(([label, value, sub]) => `
     <div class="panel">
       <h4>${esc(label)}</h4>
