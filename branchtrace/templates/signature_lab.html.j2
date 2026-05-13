@@ -42,6 +42,7 @@
     display: grid;
     grid-template-columns: 244px minmax(0, 1fr);
     min-height: 100vh;
+    min-width: 0;
   }
 
   .rail {
@@ -52,6 +53,8 @@
     background: #ebe9df;
     border-right: 1px solid var(--line);
     padding: 20px 16px;
+    min-width: 0;
+    max-width: 100%;
   }
 
   .brand {
@@ -101,6 +104,8 @@
   main {
     width: min(1120px, 100%);
     padding: 28px 34px 80px;
+    min-width: 0;
+    max-width: 100%;
   }
 
   .hero {
@@ -149,6 +154,8 @@
     border: 1px solid var(--line);
     border-radius: 6px;
     padding: 15px;
+    min-width: 0;
+    max-width: 100%;
   }
 
   .panel h4 {
@@ -164,18 +171,21 @@
     color: var(--muted);
     font: 12px/1.4 var(--mono);
     letter-spacing: .04em;
+    overflow-wrap: anywhere;
   }
 
   .grid2 {
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     gap: 12px;
+    min-width: 0;
   }
 
   .grid3 {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 10px;
+    min-width: 0;
   }
 
   .controls {
@@ -220,6 +230,7 @@
     grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 8px;
     margin-top: 12px;
+    min-width: 0;
   }
 
   .fact {
@@ -412,8 +423,9 @@
   }
 
   .heat-cell {
-    width: 18px;
-    height: 18px;
+    width: var(--heat-cell-size, 18px);
+    height: var(--heat-cell-size, 18px);
+    justify-self: center;
     border-radius: 2px;
     border: 1px solid rgba(0, 0, 0, .08);
     cursor: pointer;
@@ -484,7 +496,7 @@
 
   @media (max-width: 900px) {
     .shell { grid-template-columns: 1fr; }
-    .rail { position: static; height: auto; }
+    .rail { position: static; height: auto; width: 100%; }
     main { padding: 20px 16px 60px; }
     .grid2, .grid3, .facts, .topk, .detail-grid, .feature-bars {
       grid-template-columns: 1fr;
@@ -850,7 +862,9 @@ function renderPatch() {
     state.selectedLayer = best.layer ?? layers[0];
   }
 
-  $("heatmap").style.gridTemplateColumns = `48px repeat(${positions.length}, 18px)`;
+  const colWidth = positions.length <= 8 ? 86 : (positions.length <= 40 ? 52 : 42);
+  $("heatmap").style.gridTemplateColumns = `56px repeat(${positions.length}, ${colWidth}px)`;
+  $("heatmap").style.setProperty("--heat-cell-size", `${Math.min(24, colWidth - 10)}px`);
   const html = [];
   html.push(`<div class="heat-label"></div>`);
   positions.forEach((p) => html.push(`<div class="heat-label" title="${esc(p.label)}">${esc(p.short_label)}</div>`));
