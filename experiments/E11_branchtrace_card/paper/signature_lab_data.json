@@ -1,7 +1,7 @@
 {
   "schema_version": "signature-lab/0.1",
-  "generated_at": "2026-05-13T19:04:58.430293+00:00",
-  "title": "Patching Signatures Interactive Lab",
+  "generated_at": "2026-05-13T19:29:24.899960+00:00",
+  "title": "Branch Signatures Interactive Lab",
   "default_case_id": "qwen35_2b__token_cert_line_wrap_0573",
   "panel_summary": {
     "source": "derived",
@@ -24,7 +24,9 @@
       "source": "observed",
       "id": "qwen35_2b__token_cert_line_wrap_0573",
       "title": "Boundary rescue with visible runway",
-      "short_label": "Boundary rescue",
+      "short_label": "Edit-boundary example",
+      "headline": "Visible branch at t=9. Patching the last shared prompt token recovers the clean branch.",
+      "is_default": true,
       "model": {
         "source": "observed",
         "name": "qwen35_2b",
@@ -22645,7 +22647,9 @@
       "source": "observed",
       "id": "gemma4_e2b_base__token_cert_blank_line_wrap_0212",
       "title": "Generated-prefix rescue after silent divergence",
-      "short_label": "Generated-prefix rescue",
+      "short_label": "Silent-divergence example",
+      "headline": "The output stays identical for 45 tokens, but the logits drift. The strongest fix is inside the generated prefix.",
+      "is_default": false,
       "model": {
         "source": "observed",
         "name": "gemma4_e2b_base",
@@ -66571,7 +66575,9 @@
       "source": "observed",
       "id": "qwen35_2b__token_cert_line_wrap_0378",
       "title": "Tokenization-shift immediate rescue",
-      "short_label": "Tokenization shift",
+      "short_label": "Immediate edge case",
+      "headline": "The first generated token changes at t=0. There is no shared generated runway to inspect.",
+      "is_default": false,
       "model": {
         "source": "observed",
         "name": "qwen35_2b",

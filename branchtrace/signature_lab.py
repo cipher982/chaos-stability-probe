@@ -34,7 +34,12 @@ CASE_SPECS = [
     {
         "id": "qwen35_2b__token_cert_line_wrap_0573",
         "title": "Boundary rescue with visible runway",
-        "short_label": "Boundary rescue",
+        "short_label": "Edit-boundary example",
+        "headline": (
+            "Visible branch at t=9. Patching the last shared prompt token "
+            "recovers the clean branch."
+        ),
+        "is_default": True,
         "model_name": "qwen35_2b",
         "pair_id": "token_cert_line_wrap_0573",
         "archetype": "prompt-LCP full rescue, but branch_t=9 so the shared prefix is visible",
@@ -46,7 +51,12 @@ CASE_SPECS = [
     {
         "id": "gemma4_e2b_base__token_cert_blank_line_wrap_0212",
         "title": "Generated-prefix rescue after silent divergence",
-        "short_label": "Generated-prefix rescue",
+        "short_label": "Silent-divergence example",
+        "headline": (
+            "The output stays identical for 45 tokens, but the logits drift. "
+            "The strongest fix is inside the generated prefix."
+        ),
+        "is_default": False,
         "model_name": "gemma4_e2b_base",
         "pair_id": "token_cert_blank_line_wrap_0212",
         "archetype": "silent logit shift migrates into a generated-prefix handle",
@@ -58,7 +68,12 @@ CASE_SPECS = [
     {
         "id": "qwen35_2b__token_cert_line_wrap_0378",
         "title": "Tokenization-shift immediate rescue",
-        "short_label": "Tokenization shift",
+        "short_label": "Immediate edge case",
+        "headline": (
+            "The first generated token changes at t=0. There is no shared "
+            "generated runway to inspect."
+        ),
+        "is_default": False,
         "model_name": "qwen35_2b",
         "pair_id": "token_cert_line_wrap_0378",
         "archetype": "token-0 visible branch; last prompt-side state is effectively final context",
@@ -456,6 +471,8 @@ def _build_case(
             "id": spec["id"],
             "title": spec["title"],
             "short_label": spec["short_label"],
+            "headline": spec["headline"],
+            "is_default": bool(spec.get("is_default")),
             "model": {
                 "source": "observed",
                 "name": model_name,
@@ -645,7 +662,7 @@ def build_bundle(repo_root: Path) -> dict[str, Any]:
         {
             "schema_version": LAB_SCHEMA_VERSION,
             "generated_at": datetime.now(timezone.utc).isoformat(),
-            "title": "Patching Signatures Interactive Lab",
+            "title": "Branch Signatures Interactive Lab",
             "default_case_id": CASE_SPECS[0]["id"],
             "panel_summary": _build_panel_summary(summary_df, repo_root),
             "cases": cases,

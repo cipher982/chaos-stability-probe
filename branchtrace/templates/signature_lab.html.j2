@@ -196,6 +196,92 @@
     margin-bottom: 12px;
   }
 
+  .case-cards {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+
+  .case-card {
+    text-align: left;
+    display: grid;
+    gap: 7px;
+    align-content: start;
+    border: 1px solid var(--line-strong);
+    border-radius: 6px;
+    background: #fff;
+    min-height: 150px;
+    padding: 12px;
+  }
+
+  .case-card.active {
+    background: var(--ink);
+    border-color: var(--ink);
+    color: #fff;
+  }
+
+  .case-card.active .case-card-body,
+  .case-card.active .case-card-meta {
+    color: #e7e4da;
+  }
+
+  .case-card-title {
+    font-weight: 650;
+    font-size: 14px;
+  }
+
+  .case-card-body {
+    color: var(--soft);
+    font-size: 12.5px;
+    line-height: 1.35;
+  }
+
+  .case-card-meta {
+    color: var(--muted);
+    font: 11.5px/1.35 var(--mono);
+  }
+
+  .case-detail {
+    border-top: 1px solid var(--line);
+    padding-top: 12px;
+  }
+
+  .case-id {
+    color: var(--muted);
+    font: 13px/1.5 var(--mono);
+    letter-spacing: 0;
+  }
+
+  .inline-note {
+    margin: 10px 0;
+    border: 1px solid var(--line);
+    border-left: 4px solid var(--blue);
+    border-radius: 5px;
+    background: #faf9f3;
+    padding: 9px 11px;
+    color: var(--soft);
+  }
+
+  details.disclosure {
+    border: 1px solid var(--line);
+    border-radius: 5px;
+    background: #fbfaf5;
+    padding: 10px 12px;
+    margin: 10px 0;
+  }
+
+  details.disclosure > summary {
+    cursor: pointer;
+    font-weight: 650;
+  }
+
+  details.disclosure > .controls,
+  details.disclosure > .panel,
+  details.disclosure > .source-list {
+    margin-top: 10px;
+  }
+
   button,
   select,
   input[type="range"] {
@@ -356,6 +442,22 @@
   .bar.branch { background: var(--violet); opacity: 1; outline: 2px solid var(--ink); }
   .bar.selected { outline: 2px solid var(--gold); }
 
+  .bar.branch::after {
+    content: attr(data-label);
+    position: absolute;
+    left: 50%;
+    top: -20px;
+    transform: translateX(-50%);
+    color: var(--violet);
+    font: 10.5px/1 var(--mono);
+    white-space: nowrap;
+  }
+
+  .bar.branch.branch-start::after {
+    left: 0;
+    transform: none;
+  }
+
   .topk {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -498,7 +600,7 @@
     .shell { grid-template-columns: 1fr; }
     .rail { position: static; height: auto; width: 100%; }
     main { padding: 20px 16px 60px; }
-    .grid2, .grid3, .facts, .topk, .detail-grid, .feature-bars {
+    .case-cards, .grid2, .grid3, .facts, .topk, .detail-grid, .feature-bars {
       grid-template-columns: 1fr;
     }
   }
@@ -511,12 +613,12 @@
     <div class="brand">Branch signatures</div>
     <h1>Interactive lab</h1>
     <nav class="nav">
-      <a href="#case" class="active">Case</a>
-      <a href="#tokens">Tokens</a>
-      <a href="#logits">Logits</a>
-      <a href="#patch">Patch grid</a>
-      <a href="#features">Feature probe</a>
-      <a href="#panel">Panel rule</a>
+      <a href="#case" class="active">Pick an example</a>
+      <a href="#tokens">What changed</a>
+      <a href="#logits">When it split</a>
+      <a href="#patch">Where patching works</a>
+      <a href="#panel">Across 82 cases</a>
+      <a href="#features">Optional features</a>
     </nav>
     <div class="meta">
       <div>{{ bundle.schema_version }}</div>
@@ -525,25 +627,27 @@
   </aside>
   <main>
     <div class="hero">
-      <div class="kicker">Generated from repo artifacts</div>
-      <h2>Patching Signatures Interactive Lab</h2>
-      <p>Three real branch cases, dense residual-patching cells, token/logit traces, and the panel-level rule that produced the 41/27/14 split.</p>
+      <div class="kicker">Generated from repo artifacts - 82 cases, 3 examples</div>
+      <h2>When a one-character prompt edit changes the output, where does the divergence live?</h2>
+      <p>Each example below is a real prompt pair that differs by one small formatting edit. We force both prompts through the same visible tokens, watch where their next-token distributions start to differ, and test which activation patch can undo the branch.</p>
     </div>
 
     <section id="case">
-      <h3>Case</h3>
-      <p>The default case is a boundary-rescue example with a nonzero visible branch, so the shared generated runway is visible.</p>
+      <h3>Pick an example</h3>
+      <p>The first card is the recommended starting point: it has a visible shared runway before the branch. The other two show why the same patching test produces different signatures.</p>
       <div class="panel">
-        <div class="controls" id="caseButtons"></div>
-        <div id="caseTitle" class="case-name"></div>
-        <div id="caseWhy"></div>
+        <div class="case-cards" id="caseButtons"></div>
+        <div class="case-detail">
+          <div id="caseTitle" class="case-name"></div>
+          <div id="caseWhy"></div>
+        </div>
         <div class="facts" id="caseFacts"></div>
       </div>
     </section>
 
     <section id="tokens">
-      <h3>Tokens</h3>
-      <p>The prompt view is centered on the prompt-token LCP. The generation view is centered on the visible branch token.</p>
+      <h3>What changed</h3>
+      <p>The prompt view is centered on the first prompt token where the two formatted prompts differ. The generated runway shows the shared visible output before the branch token.</p>
       <div class="grid2">
         <div class="panel">
           <h4>Prompt text diff</h4>
@@ -558,8 +662,8 @@
           <div id="promptTokensB" class="token-line"></div>
           <div class="legend">
             <span><span class="badge">common</span></span>
-            <span><span class="badge good">A branch</span></span>
-            <span><span class="badge bad">B branch</span></span>
+            <span><span class="badge good">A side</span></span>
+            <span><span class="badge bad">B side</span></span>
           </div>
         </div>
       </div>
@@ -570,9 +674,10 @@
     </section>
 
     <section id="logits">
-      <h3>Logits</h3>
-      <p>The bar chart shows JS divergence along the forced shared prefix. Branch timesteps are marked even when JS is small.</p>
+      <h3>When the model split</h3>
+      <p>Each bar measures how different the two next-token distributions are while both runs are pinned to the same shared visible prefix. Gray bars mean both sides still had the same top token; blue bars mean their top choices differed; the marked violet bar is the first visible branch.</p>
       <div class="panel">
+        <div class="inline-note" id="logitNote"></div>
         <div class="timeline-bars" id="logitBars"></div>
         <div class="controls" style="margin-top:12px">
           <label for="logitStep">t</label>
@@ -584,51 +689,61 @@
     </section>
 
     <section id="patch">
-      <h3>Patch Grid</h3>
-      <p>Each cell is one residual activation patch at a layer and position. A rescue fraction of 1.0 reaches the clean branch-token margin; values above 1.0 overshoot.</p>
+      <h3>Where a patch can fix it</h3>
+      <p>Each cell copies one residual-stream activation from the clean run into the edited run at a specific layer and token position. A rescue score of 1.0 recovers the clean branch-token margin; darker green cells are stronger rescues.</p>
       <div class="panel">
         <div class="controls">
-          <button data-filter="important" class="filter active">Important</button>
-          <button data-filter="prompt_lcp" class="filter">Prompt LCP</button>
-          <button data-filter="aligned_prompt_control" class="filter">Prompt controls</button>
-          <button data-filter="generated_prefix" class="filter">Generated prefix</button>
-          <button data-filter="final_context" class="filter">Final context</button>
-          <button data-filter="all" class="filter">All</button>
+          <button data-filter="important" class="filter active">Key positions</button>
+          <button data-filter="all" class="filter">All positions</button>
         </div>
+        <p><strong>Key positions</strong> means the prompt-LCP token, the final-context token, and the strongest observed position from each position class.</p>
+        <details class="disclosure">
+          <summary>More filters</summary>
+          <div class="controls">
+            <button data-filter="prompt_lcp" class="filter">Prompt LCP</button>
+            <button data-filter="aligned_prompt_control" class="filter">Prompt controls</button>
+            <button data-filter="generated_prefix" class="filter">Generated prefix</button>
+            <button data-filter="final_context" class="filter">Final context</button>
+          </div>
+        </details>
         <div class="heat-wrap">
           <div id="heatmap" class="heatmap"></div>
         </div>
-        <div class="controls" style="margin-top:12px">
-          <select id="positionSelect"></select>
-          <label for="layerSelect">layer</label>
-          <input id="layerSelect" type="range" min="0" max="0" value="0" />
-          <span class="badge" id="layerLabel"></span>
-        </div>
+        <details class="disclosure">
+          <summary>Explore cells manually</summary>
+          <div class="controls">
+            <select id="positionSelect"></select>
+            <label for="layerSelect">layer</label>
+            <input id="layerSelect" type="range" min="0" max="0" value="0" />
+            <span class="badge" id="layerLabel"></span>
+          </div>
+        </details>
         <div class="detail-grid" id="patchDetails"></div>
       </div>
     </section>
 
+    <section id="panel">
+      <h3>Across all 82 cases</h3>
+      <p>These examples are representative cases. The counts below come from the forward activation-patching comparison table.</p>
+      <div class="grid3" id="panelCounts"></div>
+      <details class="disclosure">
+        <summary>Sources and provenance</summary>
+        <div class="source-list" id="sourceList"></div>
+      </details>
+    </section>
+
     <section id="features">
-      <h3>Feature Probe</h3>
-      <p>SAE feature IDs are only available for the pilot Qwen cases. This panel shows real feature activations where they exist, not inferred labels.</p>
-      <div class="panel">
+      <h3>Optional: SAE features</h3>
+      <p>The feature view is a pilot diagnostic for two Qwen cases. It shows real SAE feature IDs, not human-readable feature labels.</p>
+      <details class="disclosure">
+        <summary>Show SAE feature activations</summary>
         <div class="controls">
           <select id="saeCase"></select>
           <select id="saeGroup"></select>
           <span class="badge" id="saeOverlap"></span>
         </div>
         <div class="feature-bars" id="featureBars"></div>
-      </div>
-    </section>
-
-    <section id="panel">
-      <h3>Panel Rule</h3>
-      <p>The lab cases are examples. The counts below are derived from the forward activation-patching comparison table.</p>
-      <div class="grid3" id="panelCounts"></div>
-      <div class="panel" style="margin-top:12px">
-        <h4>Sources</h4>
-        <div class="source-list" id="sourceList"></div>
-      </div>
+      </details>
     </section>
   </main>
 </div>
@@ -698,9 +813,24 @@ function rescueBadge(value) {
   return `<span class="badge ${klass}">${num(n, 2)}x</span>`;
 }
 
+function caseMetric(c) {
+  const p = c.patch.summary;
+  if (c.regime === "trajectory_migration") {
+    return `generated-prefix rescue ${num(p.best_generated_prefix_rescue_fraction, 2)}x`;
+  }
+  return `prompt-LCP rescue ${num(p.prompt_lcp_rescue_fraction, 2)}x`;
+}
+
 function renderCaseButtons() {
   $("caseButtons").innerHTML = DATA.cases.map((c) => (
-    `<button class="${c.id === state.caseId ? "active" : ""}" data-case="${esc(c.id)}">${esc(c.short_label)}</button>`
+    `<button class="case-card ${c.id === state.caseId ? "active" : ""}" data-case="${esc(c.id)}">
+      <div class="case-card-title">${esc(c.short_label)}</div>
+      <div class="case-card-body">${esc(c.headline || c.why)}</div>
+      <div class="case-card-meta">
+        ${c.is_default ? '<span class="badge good">recommended start</span>' : ''}
+        <span>${esc(caseMetric(c))}</span>
+      </div>
+    </button>`
   )).join("");
   $("caseButtons").querySelectorAll("button").forEach((button) => {
     button.addEventListener("click", () => {
@@ -709,6 +839,7 @@ function renderCaseButtons() {
       state.selectedLayer = null;
       state.selectedLogitT = null;
       renderAll();
+      document.getElementById("case").scrollIntoView({block: "start"});
     });
   });
 }
@@ -716,8 +847,14 @@ function renderCaseButtons() {
 function renderCase() {
   const c = currentCase();
   const p = c.patch.summary;
-  $("caseTitle").textContent = `${c.title} - ${c.model.name} / ${c.pair_id}`;
-  $("caseWhy").innerHTML = `<p>${esc(c.why)}</p><p><span class="badge">${esc(classLabel(c.regime))}</span> <span class="badge">${esc(c.generation.event_kind)}</span></p>`;
+  $("caseTitle").textContent = c.title;
+  $("caseWhy").innerHTML = `
+    <div class="case-id">${esc(c.model.name)} / ${esc(c.pair_id)}</div>
+    <p>${esc(c.why)}</p>
+    <p>
+      <span class="badge">${esc(classLabel(c.regime))}</span>
+      ${c.generation.branch_t === 0 ? '<span class="badge warn">branches at t=0</span>' : ''}
+    </p>`;
   $("caseFacts").innerHTML = [
     ["branch_t", c.generation.branch_t, `${c.generation.a_branch_token} vs ${c.generation.b_branch_token}`],
     ["prompt LCP", rescueBadge(p.prompt_lcp_rescue_fraction), `layer ${p.prompt_lcp_best_layer ?? "NA"}`],
@@ -778,6 +915,9 @@ function renderLogits() {
   const maxJs = Math.max(0.0001, ...rows.map((r) => Number(r.js || 0)));
   const branch = Number(c.generation.branch_t);
   if (state.selectedLogitT === null) state.selectedLogitT = branch;
+  $("logitNote").innerHTML = branch === 0
+    ? "This edge case branches immediately at t=0, so there is no pre-branch generated runway in the chart."
+    : `The visible branch is at t=${branch}. Bars before that can still be nonzero because the two distributions may lean differently even while the visible token stays shared.`;
   $("logitStep").min = rows[0]?.t ?? 0;
   $("logitStep").max = rows[rows.length - 1]?.t ?? 0;
   $("logitStep").value = state.selectedLogitT;
@@ -788,10 +928,14 @@ function renderLogits() {
       "bar",
       r.top1_same ? "same" : "",
       r.t === branch ? "branch" : "",
+      r.t === branch && r.t === rows[0]?.t ? "branch-start" : "",
       r.t === Number(state.selectedLogitT) ? "selected" : ""
     ].join(" ");
-    const title = `t=${r.t} JS=${num(r.js, 4)} A=${tokenText(r.a_token)} B=${tokenText(r.b_token)}`;
-    return `<div class="${cls}" style="height:${h}px" title="${esc(title)}" data-t="${r.t}"></div>`;
+    const title = r.top1_same
+      ? `t=${r.t} JS=${num(r.js, 4)} shared top token=${tokenText(r.a_token)}`
+      : `t=${r.t} JS=${num(r.js, 4)} A=${tokenText(r.a_token)} B=${tokenText(r.b_token)}`;
+    const label = r.t === branch ? `branch t=${branch}` : "";
+    return `<div class="${cls}" style="height:${h}px" title="${esc(title)}" data-label="${esc(label)}" data-t="${r.t}"></div>`;
   }).join("");
   $("logitBars").querySelectorAll(".bar").forEach((bar) => {
     bar.addEventListener("click", () => {
@@ -974,9 +1118,9 @@ function renderPanel() {
   const p = DATA.panel_summary;
   const counts = p.regime_counts;
   $("panelCounts").innerHTML = [
-    ["edit-boundary", counts.edit_boundary, "prompt-LCP full rescue"],
-    ["trajectory-migration", counts.trajectory_migration, "generated-prefix handle after silent divergence"],
-    ["prompt-accumulation", counts.prompt_accumulation, "token-0 branch with last-prompt rescue"]
+    ["Edit-boundary", counts.edit_boundary, "the prompt-side boundary already contains enough information to rescue"],
+    ["Trajectory-migration", counts.trajectory_migration, "the useful handle appears later in the generated prefix"],
+    ["Prompt-accumulation", counts.prompt_accumulation, "the branch happens at t=0; last prompt state acts like final context"]
   ].map(([label, value, sub]) => `
     <div class="panel">
       <h4>${esc(label)}</h4>
