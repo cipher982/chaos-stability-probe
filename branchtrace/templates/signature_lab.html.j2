@@ -690,7 +690,7 @@
 
     <section id="patch">
       <h3>Where a patch can fix it</h3>
-      <p>Each cell copies one residual-stream activation from the clean run into the edited run at a specific layer and token position. A rescue score of 1.0 recovers the clean branch-token margin; darker green cells are stronger rescues.</p>
+      <p>Each cell copies one residual-stream activation from the clean run into the edited run at a specific layer and token position. The patch score is not an accuracy multiplier: 0 means no movement toward the clean branch, 1 means full rescue for the branch token, and above 1 means the patch overshot the clean margin.</p>
       <div class="panel">
         <div class="controls">
           <button data-filter="important" class="filter active">Key positions</button>
@@ -807,18 +807,41 @@ function classLabel(cls) {
   }[cls] || cls;
 }
 
-function rescueBadge(value) {
+function rescueOutcome(value) {
   const n = Number(value ?? 0);
-  const klass = n >= 1 ? "good" : (n >= 0.5 ? "warn" : "bad");
-  return `<span class="badge ${klass}">${num(n, 2)}x</span>`;
+  if (n >= 1.05) return "full rescue + overshoot";
+  if (n >= 0.99) return "full rescue";
+  if (n >= 0.5) return "partial rescue";
+  if (n > 0.05) return "weak rescue";
+  return "no rescue";
+}
+
+function scoreText(value, digits = 2) {
+  return `score ${num(value, digits)}`;
+}
+
+function scoreWithOutcome(value, digits = 2) {
+  return `${scoreText(value, digits)}: ${rescueOutcome(value)}`;
 }
 
 function caseMetric(c) {
   const p = c.patch.summary;
   if (c.regime === "trajectory_migration") {
-    return `generated-prefix rescue ${num(p.best_generated_prefix_rescue_fraction, 2)}x`;
+    return `generated-prefix patch: ${rescueOutcome(p.best_generated_prefix_rescue_fraction)}`;
   }
-  return `prompt-LCP rescue ${num(p.prompt_lcp_rescue_fraction, 2)}x`;
+  return `prompt-side patch: ${rescueOutcome(p.prompt_lcp_rescue_fraction)}`;
+}
+
+function bestPatchText(p) {
+  return `${classLabel(p.best_position_class)}, layer ${p.best_layer}`;
+}
+
+function generatedPrefixFact(c) {
+  const score = c.patch.summary.best_generated_prefix_rescue_fraction;
+  if (Number(c.generation.branch_t) === 0) {
+    return ["Generated-prefix patch", "Not applicable", "No shared generated tokens exist before a t=0 branch."];
+  }
+  return ["Generated-prefix patch", rescueOutcome(score), `${scoreWithOutcome(score)} at the best generated-prefix position.`];
 }
 
 function renderCaseButtons() {
@@ -855,15 +878,16 @@ function renderCase() {
       <span class="badge">${esc(classLabel(c.regime))}</span>
       ${c.generation.branch_t === 0 ? '<span class="badge warn">branches at t=0</span>' : ''}
     </p>`;
-  $("caseFacts").innerHTML = [
-    ["branch_t", c.generation.branch_t, `${c.generation.a_branch_token} vs ${c.generation.b_branch_token}`],
-    ["prompt LCP", rescueBadge(p.prompt_lcp_rescue_fraction), `layer ${p.prompt_lcp_best_layer ?? "NA"}`],
-    ["generated prefix", rescueBadge(p.best_generated_prefix_rescue_fraction), "best observed"],
-    ["best patch", rescueBadge(p.best_rescue_fraction), `${classLabel(p.best_position_class)} / layer ${p.best_layer}`]
-  ].map(([label, value, sub]) => `
+  const facts = [
+    ["First changed token", `t=${c.generation.branch_t}`, `A predicts ${tokenText(c.generation.a_branch_token)}; B predicts ${tokenText(c.generation.b_branch_token)}.`],
+    ["Patch score scale", "0 = none; 1 = full", "Above 1 means the patch pushes farther toward A than the clean run did."],
+    ["Best patch found", bestPatchText(p), scoreWithOutcome(p.best_rescue_fraction)],
+    generatedPrefixFact(c)
+  ];
+  $("caseFacts").innerHTML = facts.map(([label, value, sub]) => `
     <div class="fact">
       <div class="label">${esc(label)}</div>
-      <div class="value">${value}</div>
+      <div class="value">${esc(value)}</div>
       <div class="sub">${esc(sub)}</div>
     </div>`).join("");
 }
@@ -1021,7 +1045,7 @@ function renderPatch() {
         return;
       }
       const selected = cell.layer === Number(state.selectedLayer) && cell.position_label === state.selectedPosition;
-      html.push(`<div class="heat-cell ${selected ? "selected" : ""}" style="background:${colorForRescue(cell.rescue_fraction)}" title="${esc(pos.label)} L${layer} rescue=${num(cell.rescue_fraction, 3)} top1=${esc(cell.top1_token)}" data-layer="${layer}" data-pos="${esc(pos.label)}"></div>`);
+      html.push(`<div class="heat-cell ${selected ? "selected" : ""}" style="background:${colorForRescue(cell.rescue_fraction)}" title="${esc(pos.label)} L${layer} ${scoreWithOutcome(cell.rescue_fraction, 3)} top1=${esc(cell.top1_token)}" data-layer="${layer}" data-pos="${esc(pos.label)}"></div>`);
     });
   });
   $("heatmap").innerHTML = html.join("");
@@ -1056,7 +1080,7 @@ function renderPatch() {
     ["position", pos?.short_label || selectedCell.position_label],
     ["class", classLabel(selectedCell.position_class)],
     ["layer", `L${selectedCell.layer}`],
-    ["rescue", `${num(selectedCell.rescue_fraction, 3)}x`],
+    ["patch score", scoreWithOutcome(selectedCell.rescue_fraction, 3)],
     ["top-1 after patch", selectedCell.top1_token || "NA"]
   ].map(([label, value]) => `
     <div class="detail">
