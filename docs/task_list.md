@@ -27,19 +27,9 @@ Operational board only. Keep historical narrative out of this file; use
 
 ## Live Operations
 
-Last checked: 2026-05-14 after launching the E12 hidden-warning vector wave.
+Last checked: 2026-05-14 after completing the E12 hidden-warning vector panel.
 
-- Active SageMaker jobs:
-  - `chaos-hidden-warning-qwen08-20260514-001` (`ml.g6e.2xlarge`, preprod)
-  - `chaos-hidden-warning-qwen2b-20260514-001` (`ml.g6e.2xlarge`, preprod)
-  - `chaos-hidden-warning-vectors-qwen9b-20260514-001` (`ml.g6e.2xlarge`, preprod)
-  - `chaos-hidden-warning-vectors-qwen4b-20260514-001` (`ml.g6e.2xlarge`, preprod)
-  - `chaos-hidden-warning-vectors-gemma-e4b-base-20260514-001` (`ml.g6e.2xlarge`, preprod)
-  - `chaos-hidden-warning-vectors-qwen2b-20260514-001` (`ml.g5.2xlarge`, ML prod)
-  - `chaos-hidden-warning-vectors-qwen08-20260514-001` (`ml.g4dn.2xlarge`, ML prod)
-  - `chaos-hidden-warning-vectors-gemma-e2b-it-20260514-001` (`ml.g5.2xlarge`, marketing prod)
-  - `chaos-hidden-warning-vectors-gemma-e2b-base-20260514-001` (`ml.g4dn.2xlarge`, marketing prod)
-  - `chaos-hidden-warning-vectors-gemma-e4b-it-20260514-001` (`ml.g5.2xlarge`, QA)
+- No active E12 SageMaker jobs remain.
 - Recent stopped token-micro jobs were superseded by later completed repair
   jobs; do not rerun without a new reason.
 
@@ -117,10 +107,11 @@ Artifacts:
 - `experiments/E12_hidden_warning_probe/`
 - `configs/sagemaker_queue_hidden_warning_probe_v1.json`
 - `configs/sagemaker_queue_hidden_warning_probe_v2_vectors.json`
+- `configs/sagemaker_queue_hidden_warning_probe_v3_full_vectors.json`
 - `runs/rankings/hidden_warning_probe_e10_sagemaker/`
-- active scalar jobs `chaos-hidden-warning-qwen08-20260514-001` and
-  `chaos-hidden-warning-qwen2b-20260514-001`
-- active vector jobs listed in Live Operations above
+- `runs/rankings/hidden_warning_vectors_v3_full_controls/`
+- `runs/rankings/hidden_warning_vectors_v3_full_nested/`
+- `runs/rankings/hidden_warning_scalar_v3_full/`
 
 Readout:
 
@@ -137,22 +128,25 @@ Readout:
   within 1/2 tokens, `0.71` within 5, and `0.70` within 10. Same-artifact
   JS/logit and scalar residual-distance features are much weaker on strict
   pre-branch windows.
-- The vector wave uses larger v2 pair lists across the 8-model Qwen/Gemma
-  panel and captures float16 residual-delta vectors at exact horizons
-  `0/1/2/5/10/20/32/64/96/128`. This is the first run that can support a real
-  residual-vector probe rather than scalar drift AUROCs.
+- The full 8-model CUDA vector panel confirms that the full residual-state
+  delta helps. Best-layer category-holdout residual-vector AUROC medians are
+  `0.788`, `0.773`, `0.764`, and `0.740` at H=1/2/5/10. Pair-hash medians are
+  `0.790`, `0.767`, `0.765`, and `0.738`.
+- The nested-layer control remains positive after selecting layers inside each
+  training fold: category-holdout medians are `0.763`, `0.761`, `0.757`, and
+  `0.728`; pair-hash medians are `0.768`, `0.750`, `0.731`, and `0.719`.
+- Same-run logits/scalar summaries stay near chance on strict pre-branch
+  windows: aggregate best summary AUROC is `0.534`, `0.526`, `0.509`, and
+  `0.527` at H=1/2/5/10.
+- Decision: blog can say full residual-state monitoring found a narrow but
+  robust pre-branch warning signal that final logits and scalar hidden-distance
+  summaries missed. Do not call it online single-run prediction yet; the vector
+  probe is supervised over paired `hidden_b - hidden_a` deltas.
 
 Next:
 
-- Pull both jobs when complete, process with `scripts/build_silent_divergence_readout.py`,
-  then score with `experiments/E12_hidden_warning_probe/analyze_hidden_warning.py`.
-- Pull vector jobs when complete and score with
-  `experiments/E12_hidden_warning_probe/analyze_hidden_vectors.py` using
-  pair-grouped splits.
-- Use the resulting within-window AUROCs to decide whether the blog can claim
-  a narrow residual-vector warning signal. Do not rely on exact-offset numbers
-  until the no-branch controls are large enough; the current local exact-offset
-  comparison is class-imbalanced.
+- Fold the E12 result into the blog/post wording and avoid the earlier
+  logits-only negative claim.
 
 ### E05 Token-Certified Micro
 
@@ -206,20 +200,6 @@ Next concrete steps, in order:
 2. Pick the workshop LaTeX template, then convert `paper/draft.md`.
 3. Tag/release BranchTrace examples if public cards are still useful.
 4. Submit the paper.
-
-E12 follow-up command skeleton after the hidden-warning jobs finish:
-
-```bash
-uv run python scripts/download_sagemaker_artifact.py chaos-hidden-warning-qwen08-20260514-001 --extract
-uv run python scripts/download_sagemaker_artifact.py chaos-hidden-warning-qwen2b-20260514-001 --extract
-uv run python scripts/build_silent_divergence_readout.py --capture-root runs/sagemaker_artifacts/chaos-hidden-warning-qwen08-20260514-001/runs --out-dir runs/rankings/hidden_warning_probe_qwen08
-uv run python scripts/build_silent_divergence_readout.py --capture-root runs/sagemaker_artifacts/chaos-hidden-warning-qwen2b-20260514-001/runs --out-dir runs/rankings/hidden_warning_probe_qwen2b
-uv run python experiments/E12_hidden_warning_probe/analyze_hidden_warning.py --summary runs/rankings/hidden_warning_probe_qwen08/merged_silent_divergence_summary.csv --layers runs/rankings/hidden_warning_probe_qwen08/merged_silent_divergence_layers.csv --summary runs/rankings/hidden_warning_probe_qwen2b/merged_silent_divergence_summary.csv --layers runs/rankings/hidden_warning_probe_qwen2b/merged_silent_divergence_layers.csv --out-dir runs/rankings/hidden_warning_probe_qwen08_qwen2b_auc
-
-# Vector jobs need their launch profile when downloading cross-account artifacts.
-uv run python scripts/download_sagemaker_artifact.py chaos-hidden-warning-vectors-qwen2b-20260514-001 --profile zh-ml-productionengineer --extract
-uv run python experiments/E12_hidden_warning_probe/analyze_hidden_vectors.py --artifact-dir runs/sagemaker_artifacts/chaos-hidden-warning-vectors-qwen2b-20260514-001/runs/qwen35_2b --out-dir runs/rankings/hidden_warning_vectors_qwen2b
-```
 
 Rebuild the interactive lab from artifacts with:
 

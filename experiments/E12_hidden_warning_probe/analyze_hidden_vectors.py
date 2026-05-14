@@ -39,6 +39,32 @@ def auroc(labels: np.ndarray, scores: np.ndarray) -> float | None:
     return (pos_rank_sum - n_pos * (n_pos + 1) / 2.0) / (n_pos * n_neg)
 
 
+def weighted_auroc(labels: np.ndarray, scores: np.ndarray, weights: np.ndarray) -> float | None:
+    valid = np.isfinite(scores) & np.isfinite(weights) & (weights > 0)
+    labels = labels[valid].astype(bool)
+    scores = scores[valid]
+    weights = weights[valid].astype(np.float64)
+    if labels.size == 0:
+        return None
+    pos = labels
+    neg = ~labels
+    pos_weight = float(weights[pos].sum())
+    neg_weight = float(weights[neg].sum())
+    if pos_weight <= 0 or neg_weight <= 0:
+        return None
+    pos_scores = scores[pos]
+    neg_scores = scores[neg]
+    pos_weights = weights[pos]
+    neg_weights = weights[neg]
+    total = 0.0
+    for score, weight in zip(pos_scores, pos_weights, strict=True):
+        total += weight * float(
+            neg_weights[score > neg_scores].sum()
+            + 0.5 * neg_weights[score == neg_scores].sum()
+        )
+    return total / (pos_weight * neg_weight)
+
+
 def stable_fold(pair_id: object, folds: int) -> int:
     digest = hashlib.sha1(str(pair_id).encode("utf-8")).hexdigest()
     return int(digest[:8], 16) % folds
@@ -52,16 +78,14 @@ def normalize_rows(x: np.ndarray) -> np.ndarray:
 def oof_mean_diff_scores(
     x: np.ndarray,
     y: np.ndarray,
-    pair_ids: pd.Series,
-    folds: int,
+    fold_ids: np.ndarray,
     normalize: bool,
 ) -> tuple[np.ndarray, int]:
     if normalize:
         x = normalize_rows(x)
-    fold_ids = np.array([stable_fold(pair_id, folds) for pair_id in pair_ids])
     scores = np.full(y.shape[0], np.nan, dtype=np.float64)
     used_folds = 0
-    for fold in range(folds):
+    for fold in pd.unique(fold_ids):
         train = fold_ids != fold
         test = fold_ids == fold
         if not train.any() or not test.any():
@@ -136,10 +160,16 @@ def score_group(
     target_kind: str,
     horizon: int,
     label: pd.Series,
-    folds: int,
+    fold_ids: np.ndarray,
+    split_mode: str,
 ) -> list[dict[str, object]]:
     x = group_vectors(group, vectors).astype(np.float32, copy=False)
     y = label.loc[group.index].to_numpy(dtype=bool)
+    local_fold_ids = fold_ids[group.index.to_numpy()]
+    row_weights = (
+        1.0
+        / group.groupby("pair_id")["pair_id"].transform("size").to_numpy(dtype=np.float64)
+    )
     rows = []
     if y.sum() == 0 or (~y).sum() == 0:
         return rows
@@ -147,8 +177,7 @@ def score_group(
         scores, used_folds = oof_mean_diff_scores(
             x,
             y,
-            group["pair_id"],
-            folds=folds,
+            local_fold_ids,
             normalize=normalize,
         )
         rows.append(
@@ -158,8 +187,10 @@ def score_group(
                 "target": target,
                 "target_kind": target_kind,
                 "horizon": horizon,
+                "split_mode": split_mode,
                 "probe": "unit_mean_diff" if normalize else "raw_mean_diff",
                 "auroc": auroc(y, scores),
+                "pair_weighted_auroc": weighted_auroc(y, scores, row_weights),
                 "n_rows": int(len(group)),
                 "n_positive": int(y.sum()),
                 "positive_rate": float(y.mean()),
@@ -176,6 +207,12 @@ def main() -> None:
     parser.add_argument("--out-dir", type=Path, required=True)
     parser.add_argument("--horizon", type=int, action="append", default=[0, 1, 2, 5, 10])
     parser.add_argument("--folds", type=int, default=5)
+    parser.add_argument(
+        "--split-mode",
+        choices=["pair_hash", "category_holdout"],
+        action="append",
+        default=["pair_hash"],
+    )
     args = parser.parse_args()
 
     args.out_dir.mkdir(parents=True, exist_ok=True)
@@ -184,59 +221,66 @@ def main() -> None:
     meta["tokens_until_branch"] = pd.to_numeric(meta["tokens_until_branch"], errors="coerce")
     eligible = meta["branch_t"].isna() | (meta["tokens_until_branch"] >= 0)
     meta = meta[eligible].copy()
+    meta = meta.reset_index(drop=True)
+    split_modes = list(dict.fromkeys(args.split_mode))
+    split_ids: dict[str, np.ndarray] = {}
+    split_ids["pair_hash"] = np.array([stable_fold(pair_id, args.folds) for pair_id in meta["pair_id"]])
+    split_ids["category_holdout"] = meta["category"].fillna("unknown").astype(str).to_numpy()
 
     rows: list[dict[str, object]] = []
-    for horizon in sorted(set(args.horizon)):
-        if horizon == 0:
-            specs = [
-                (
-                    meta,
-                    "at_branch",
-                    "at_branch",
-                    meta["branch_t"].notna() & (meta["tokens_until_branch"] == 0),
-                )
-            ]
-        else:
-            exact_subset = (
-                (
-                    meta["branch_t"].notna()
-                    & (meta["tokens_until_branch"] == horizon)
-                )
-                | (
-                    meta["branch_t"].isna()
-                    & (meta["t"] == horizon)
-                )
-            )
-            specs = [
-                (
-                    meta,
-                    f"pre_branch_within_{horizon}",
-                    "strict_pre_branch_warning_window",
-                    meta["branch_t"].notna()
-                    & (meta["tokens_until_branch"] > 0)
-                    & (meta["tokens_until_branch"] <= horizon),
-                ),
-                (
-                    meta[exact_subset].copy(),
-                    f"pre_branch_exact_{horizon}",
-                    "strict_pre_branch_exact_offset",
-                    meta.loc[exact_subset, "branch_t"].notna()
-                    & (meta.loc[exact_subset, "tokens_until_branch"] == horizon),
-                ),
-            ]
-        for spec_meta, target, target_kind, label in specs:
-            for _, group in spec_meta.groupby(["model_name", "layer"], sort=False):
-                rows.extend(
-                    score_group(
-                        group,
-                        vectors,
-                        target,
-                        target_kind,
-                        horizon,
-                        label,
-                        folds=args.folds,
+    for split_mode in split_modes:
+        for horizon in sorted(set(args.horizon)):
+            if horizon == 0:
+                specs = [
+                    (
+                        meta,
+                        "at_branch",
+                        "at_branch",
+                        meta["branch_t"].notna() & (meta["tokens_until_branch"] == 0),
+                    )
+                ]
+            else:
+                exact_subset = (
+                    (
+                        meta["branch_t"].notna()
+                        & (meta["tokens_until_branch"] == horizon)
+                    )
+                    | (
+                        meta["branch_t"].isna()
+                        & (meta["t"] == horizon)
                     )
                 )
+                specs = [
+                    (
+                        meta,
+                        f"pre_branch_within_{horizon}",
+                        "strict_pre_branch_warning_window",
+                        meta["branch_t"].notna()
+                        & (meta["tokens_until_branch"] > 0)
+                        & (meta["tokens_until_branch"] <= horizon),
+                    ),
+                    (
+                        meta[exact_subset].copy(),
+                        f"pre_branch_exact_{horizon}",
+                        "strict_pre_branch_exact_offset",
+                        meta.loc[exact_subset, "branch_t"].notna()
+                        & (meta.loc[exact_subset, "tokens_until_branch"] == horizon),
+                    ),
+                ]
+            for spec_meta, target, target_kind, label in specs:
+                for _, group in spec_meta.groupby(["model_name", "layer"], sort=False):
+                    rows.extend(
+                        score_group(
+                            group,
+                            vectors,
+                            target,
+                            target_kind,
+                            horizon,
+                            label,
+                            split_ids[split_mode],
+                            split_mode,
+                        )
+                    )
 
     out = pd.DataFrame(rows)
     if out.empty:
@@ -247,8 +291,10 @@ def main() -> None:
                 "target",
                 "target_kind",
                 "horizon",
+                "split_mode",
                 "probe",
                 "auroc",
+                "pair_weighted_auroc",
                 "n_rows",
                 "n_positive",
                 "positive_rate",
@@ -257,14 +303,14 @@ def main() -> None:
             ]
         )
     out = out.sort_values(
-        ["target_kind", "horizon", "model_name", "probe", "auroc"],
-        ascending=[True, True, True, True, False],
+        ["split_mode", "target_kind", "horizon", "model_name", "probe", "auroc"],
+        ascending=[True, True, True, True, True, False],
     )
     out.to_csv(args.out_dir / "hidden_vector_warning_auc.csv", index=False)
     best = (
         out.dropna(subset=["auroc"])
-        .sort_values(["target", "model_name", "probe", "auroc"], ascending=[True, True, True, False])
-        .groupby(["target", "model_name", "probe"], dropna=False)
+        .sort_values(["split_mode", "target", "model_name", "probe", "auroc"], ascending=[True, True, True, True, False])
+        .groupby(["split_mode", "target", "model_name", "probe"], dropna=False)
         .head(1)
     )
     best.to_csv(args.out_dir / "hidden_vector_warning_best_layers.csv", index=False)

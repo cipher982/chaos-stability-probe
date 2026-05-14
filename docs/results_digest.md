@@ -1,6 +1,6 @@
 # Results Digest
 
-Last updated: 2026-05-01 after E07 randomized activation-patching replication.
+Last updated: 2026-05-14 after E12 hidden-warning vector panel.
 
 This is the compact, talk-oriented current-state readout. The talk is a
 chaos/dynamical-systems teaching talk first; the stability probe is supporting
@@ -220,19 +220,24 @@ on these selected CUDA cases, mean visible branch-t is `9.0` for Qwen2B
 That is useful for choosing intervention cases, but still too selected to call
 a scaling law.
 
-The E12 hidden-warning spike now has a provisional positive result. Scalar
-hidden-distance features are still weak: a local Qwen3.5 0.8B/MPS 60-pair
-recapture had best summary hidden AUROC around `0.56` for within 2/5/10-token
-warning windows. But a larger local Qwen3.5 0.8B 111-pair residual-vector
-recapture shows that raw residual deltas carry more warning than logits or
-scalar drift summaries: pair-grouped mean-difference probes over
-`hidden_b - hidden_a` reach AUROC `0.74` within 1 token, `0.74` within 2,
-`0.71` within 5, and `0.70` within 10. Same-artifact JS/logit divergence is
-weak on those strict pre-branch windows (`~0.41-0.45`), and scalar residual
-features mostly stay near `0.52-0.57`. Treat this as a real hint that the full
-state helps, but not final: it is local/MPS and one model so far; the active
-CUDA vector wave must confirm across the 8-model Qwen/Gemma panel before the
-blog claims a general hidden-state warning horizon.
+The E12 hidden-warning spike answers the logits-vs-full-state question in
+favor of the full residual state. Scalar hidden-distance features are weak:
+local Qwen0.8B/MPS and full CUDA scalar baselines stay near chance on strict
+pre-branch windows. In the full 8-model CUDA panel (Qwen0.8B/2B/4B/9B plus
+Gemma E2B/E4B instruct/base, 915 prompt pairs), pair-weighted residual-vector
+probes over `hidden_b - hidden_a` are much stronger. Best-layer category-
+holdout AUROC medians across models are `0.788` within 1 token, `0.773` within
+2, `0.764` within 5, and `0.740` within 10; pair-hash split medians are
+similar. A nested-layer control, where the layer is selected inside each
+training fold before scoring the held-out fold, still has category-holdout
+medians `0.763`, `0.761`, `0.757`, and `0.728`. Same-run final logits/scalar
+summaries remain weak: aggregate best summary AUROC is only `0.534`, `0.526`,
+`0.509`, and `0.527` at those same horizons. The safe claim is: supervised
+paired residual-state deltas carry pre-branch proximity signal several tokens
+before the visible fork; final logits and scalar hidden-distance summaries
+mostly do not. This is not yet an online single-run predictor, and the branch
+timestep itself should still be framed as discrimination at the fork rather
+than foresight.
 
 ## Trajectory-Branching Research Frame
 
