@@ -27,10 +27,12 @@ Operational board only. Keep historical narrative out of this file; use
 
 ## Live Operations
 
-Last checked: 2026-05-01 after processing E07 v5.
+Last checked: 2026-05-01 after processing E07 v5. Compute pipeline is idle
+and the active track is paper submission, so live SageMaker state has not
+been re-queried. If resuming compute work, re-run `scripts/sagemaker_status.py`
+before assuming state.
 
-- No active SageMaker jobs found in the latest `chaos` scan.
-- No newly failed jobs require rerun.
+- No active SageMaker jobs in the last scan.
 - Recent stopped token-micro jobs were superseded by later completed repair
   jobs; do not rerun without a new reason.
 
@@ -135,12 +137,21 @@ Readout:
 ## Next Actions
 
 Current E11 state: paper synthesis is the active track. `paper/draft.md` is in
-submission-ready markdown form; review renders and the generated interactive
-signature lab live under `experiments/E11_branchtrace_card/paper/`.
+submission-ready markdown form and the interactive signature lab has been
+rewritten as a public explainer (see E11 row in `experiment_index.md`).
 
-Next concrete steps:
+Open decisions (not work) before the next step can start:
 
-1. Review `paper/draft_review.pdf` and `paper/signature_explainer.html`.
+- Workshop venue / LaTeX template. Blocks step 2 and sets the deadline.
+- Public BranchTrace release scope. Step 3 is conditional.
+- Whether to automate case selection in `branchtrace/signature_lab.py`
+  (currently three hand-picked pair IDs in `CASE_SPECS`). Not a submission
+  blocker; makes future regens self-correcting.
+
+Next concrete steps, in order:
+
+1. Read `paper/draft_review.pdf` end-to-end and note anything to fix in
+   `paper/draft.md`.
 2. Pick the workshop LaTeX template, then convert `paper/draft.md`.
 3. Tag/release BranchTrace examples if public cards are still useful.
 4. Submit the paper.
@@ -155,6 +166,11 @@ The lab data bundle is `paper/signature_lab_data.json` (`signature-lab/0.1`).
 It is generated from the activation-patching comparison table, trajectory
 events, logit probes, patch CSV/JSON files, and SAE pilot CSVs. Do not hand-edit
 the embedded HTML data.
+
+Session-note archive for longer-running epics lives under
+`~/git/obsidian_vault/AI-Sessions/` (e.g. the 2026-05-13 branch-signatures
+public-explainer epic). The session notes hold context that would bloat these
+docs.
 
 ## Useful Commands
 
