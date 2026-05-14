@@ -237,6 +237,36 @@
     line-height: 1.35;
   }
 
+  .case-card-fields {
+    display: grid;
+    gap: 4px;
+    font: 11.5px/1.35 var(--mono);
+    color: var(--soft);
+  }
+
+  .case-field {
+    display: grid;
+    grid-template-columns: 72px minmax(0, 1fr);
+    gap: 6px;
+  }
+
+  .case-field-label {
+    color: var(--muted);
+    text-transform: uppercase;
+    font-size: 10.5px;
+    letter-spacing: .04em;
+    align-self: center;
+  }
+
+  .case-field-value {
+    overflow-wrap: anywhere;
+  }
+
+  .case-card.active .case-field-label,
+  .case-card.active .case-card-fields {
+    color: #e7e4da;
+  }
+
   .case-card-meta {
     color: var(--muted);
     font: 11.5px/1.35 var(--mono);
@@ -377,6 +407,50 @@
     background: var(--gold-bg);
     color: var(--gold);
     border-bottom: 2px solid #c69e45;
+    border-radius: 2px;
+    padding: 0 1px;
+  }
+
+  .diff-change.empty {
+    font-style: italic;
+  }
+
+  .diff-label {
+    display: inline-block;
+    font-weight: 650;
+    color: var(--ink);
+    margin-right: 6px;
+  }
+
+  .ws-glyph {
+    color: #c69e45;
+    opacity: .85;
+    font-weight: 650;
+  }
+
+  .edit-summary {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0 0 10px;
+    font-size: 12.5px;
+    color: var(--soft);
+  }
+
+  .edit-summary .edit-kicker {
+    font: 11px/1.4 var(--mono);
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .edit-summary .edit-body {
+    font-family: var(--mono);
+    color: var(--gold);
+    background: var(--gold-bg);
+    padding: 1px 8px;
+    border-radius: 4px;
+    border: 1px solid #d7bf8b;
   }
 
   .token-line {
@@ -596,6 +670,45 @@
     overflow-wrap: anywhere;
   }
 
+  .how-to-read {
+    margin: 0 0 22px;
+  }
+
+  .patch-legend {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    column-gap: 10px;
+    row-gap: 6px;
+    align-items: center;
+    margin: 8px 0 14px;
+    color: var(--soft);
+    font-size: 12.5px;
+    max-width: 720px;
+  }
+
+  .contract-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 8px 16px;
+    color: var(--soft);
+    font-size: 13px;
+    line-height: 1.45;
+  }
+
+  .contract-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .contract-list .badge {
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
   @media (max-width: 900px) {
     .shell { grid-template-columns: 1fr; }
     .rail { position: static; height: auto; width: 100%; }
@@ -614,11 +727,10 @@
     <h1>Interactive lab</h1>
     <nav class="nav">
       <a href="#case" class="active">Pick an example</a>
-      <a href="#tokens">What changed</a>
-      <a href="#logits">When it split</a>
-      <a href="#patch">Where patching works</a>
+      <a href="#tokens">A/B prompts</a>
+      <a href="#logits">First output split</a>
+      <a href="#patch">Which hidden state flips B toward A</a>
       <a href="#panel">Across 82 cases</a>
-      <a href="#features">Optional features</a>
     </nav>
     <div class="meta">
       <div>{{ bundle.schema_version }}</div>
@@ -628,9 +740,22 @@
   <main>
     <div class="hero">
       <div class="kicker">Generated from repo artifacts - 82 cases, 3 examples</div>
-      <h2>When a one-character prompt edit changes the output, where does the divergence live?</h2>
-      <p>Each example below is a real prompt pair that differs by one small formatting edit. We force both prompts through the same visible tokens, watch where their next-token distributions start to differ, and test which activation patch can undo the branch.</p>
+      <h2>When a tiny formatting edit changes the output, where does the divergence live?</h2>
+      <p>Each example below is a real prompt pair that differs by one tiny formatting edit. We force both prompts through the same visible tokens, watch where their next-token distributions start to differ, and test which hidden state can be copied from A into B to undo the branch.</p>
     </div>
+
+    <section id="contract" class="how-to-read">
+      <div class="panel contract">
+        <h4>How to read this</h4>
+        <ul class="contract-list">
+          <li><span class="badge good">A</span> the original prompt</li>
+          <li><span class="badge bad">B</span> the same prompt with a tiny formatting edit</li>
+          <li><span class="badge">split</span> the first generated token where A and B disagree</li>
+          <li><span class="badge">patch</span> copy one hidden-state vector from A into B at a layer and token</li>
+          <li><span class="badge good">score 1</span> B switches to A's choice. <span class="badge">0</span> no effect. <span class="badge bad">negative</span> pushes B further away.</li>
+        </ul>
+      </div>
+    </section>
 
     <section id="case">
       <h3>Pick an example</h3>
@@ -646,31 +771,31 @@
     </section>
 
     <section id="tokens">
-      <h3>What changed</h3>
-      <p>The prompt view is centered on the first prompt token where the two formatted prompts differ. The generated runway shows the shared visible output before the branch token.</p>
-      <div class="grid2">
-        <div class="panel">
-          <h4>Prompt text diff</h4>
-          <div class="prompt-diff" id="promptDiffA"></div>
-          <div style="height:8px"></div>
-          <div class="prompt-diff" id="promptDiffB"></div>
-        </div>
-        <div class="panel">
-          <h4>Prompt-token window</h4>
-          <div id="promptTokensA" class="token-line"></div>
-          <div style="height:8px"></div>
-          <div id="promptTokensB" class="token-line"></div>
-          <div class="legend">
-            <span><span class="badge">common</span></span>
-            <span><span class="badge good">A side</span></span>
-            <span><span class="badge bad">B side</span></span>
-          </div>
-        </div>
+      <h3>A/B prompts</h3>
+      <p>A is the original prompt. B is the same prompt with a tiny formatting edit (the highlighted span). The generated runway below shows the shared tokens both runs emit before they split.</p>
+      <div class="panel">
+        <h4>Prompt text diff</h4>
+        <div class="edit-summary" id="promptEditSummary"></div>
+        <div class="prompt-diff" id="promptDiffA"></div>
+        <div style="height:8px"></div>
+        <div class="prompt-diff" id="promptDiffB"></div>
       </div>
       <div class="panel" style="margin-top:12px">
         <h4>Generated runway</h4>
         <div id="generatedRunway" class="token-line"></div>
       </div>
+      <details class="disclosure">
+        <summary>Tokenizer details: the prompt window by token</summary>
+        <p>How each prompt looks after tokenization, centered on the first differing token. Blue = first tokenized prompt difference. Gold = tokens after that difference. Gray = identical prompt context.</p>
+        <div id="promptTokensA" class="token-line"></div>
+        <div style="height:8px"></div>
+        <div id="promptTokensB" class="token-line"></div>
+        <div class="legend">
+          <span><span class="badge">common</span></span>
+          <span><span class="badge good">A side</span></span>
+          <span><span class="badge bad">B side</span></span>
+        </div>
+      </details>
     </section>
 
     <section id="logits">
@@ -689,14 +814,20 @@
     </section>
 
     <section id="patch">
-      <h3>Where a patch can fix it</h3>
-      <p>Each cell copies one residual-stream activation from the clean run into the edited run at a specific layer and token position. The patch score is not an accuracy multiplier: 0 means no movement toward the clean branch, 1 means full rescue for the branch token, and above 1 means the patch overshot the clean margin.</p>
+      <h3>Which hidden state flips B toward A</h3>
+      <p>Each cell copies one hidden-state vector from A into B at this layer and token. The score asks whether B moves toward A's first differing token.</p>
+      <div class="patch-legend">
+        <span class="badge bad">negative</span><span>patch pushes B further away / strengthens B's original choice</span>
+        <span class="badge">0</span><span>no useful movement</span>
+        <span class="badge good">1</span><span>full rescue: B now prefers A's branch token</span>
+        <span class="badge warn">&gt;1</span><span>stronger-than-needed rescue</span>
+      </div>
       <div class="panel">
         <div class="controls">
           <button data-filter="important" class="filter active">Key positions</button>
           <button data-filter="all" class="filter">All positions</button>
         </div>
-        <p><strong>Key positions</strong> means the prompt edit token, the token immediately before the branch, and the strongest observed token from each other position type. When the branch happens after shared generated text, this is the last shared token.</p>
+        <p><strong>Key positions</strong> means the prompt edit token, the token immediately before the split, and the strongest observed token from each other position type. When the split happens after shared generated text, this is the last shared token.</p>
         <details class="disclosure">
           <summary>More filters</summary>
           <div class="controls">
@@ -723,20 +854,16 @@
     </section>
 
     <section id="panel">
-      <h3>Across all 82 cases</h3>
-      <p>These examples are representative cases. The counts below come from the forward activation-patching comparison table.</p>
+      <h3>Across 82 cases</h3>
+      <p>In this 82-case sample of tiny formatting edits, we sort each pair by where the signal lives:</p>
       <div class="grid3" id="panelCounts"></div>
       <details class="disclosure">
         <summary>Sources and provenance</summary>
         <div class="source-list" id="sourceList"></div>
       </details>
-    </section>
-
-    <section id="features">
-      <h3>Optional: SAE features</h3>
-      <p>The feature view is a pilot diagnostic for two Qwen cases. It shows real SAE feature IDs, not human-readable feature labels.</p>
       <details class="disclosure">
-        <summary>Show SAE feature activations</summary>
+        <summary>Advanced: SAE feature activations (two Qwen cases)</summary>
+        <p>A pilot diagnostic. Shows real SAE feature IDs, not human-readable labels.</p>
         <div class="controls">
           <select id="saeCase"></select>
           <select id="saeGroup"></select>
@@ -797,9 +924,9 @@ function currentCase() {
 
 function classLabel(cls) {
   return {
-    edit_boundary: "edit-boundary",
-    trajectory_migration: "trajectory-migration",
-    prompt_accumulation: "prompt-accumulation",
+    edit_boundary: "prompt edit already carries the signal",
+    trajectory_migration: "signal moves into shared generated text",
+    prompt_accumulation: "immediate split / no shared generated text",
     prompt_lcp: "prompt edit token",
     aligned_prompt_control: "prompt control",
     generated_prefix: "generated prefix",
@@ -813,7 +940,8 @@ function rescueOutcome(value) {
   if (n >= 0.99) return "full rescue";
   if (n >= 0.5) return "partial rescue";
   if (n > 0.05) return "weak rescue";
-  return "no rescue";
+  if (n < -0.05) return "pushes B further away";
+  return "no movement";
 }
 
 function scoreText(value, digits = 2) {
@@ -863,17 +991,46 @@ function generatedPrefixFact(c) {
   return ["Generated-prefix patch", rescueOutcome(score), `${scoreWithOutcome(score)} at the best generated-prefix position.`];
 }
 
+function describeEdit(a, b) {
+  const describe = (s) => {
+    if (s === "" || s === null || s === undefined) return "nothing";
+    if (/^\n+$/.test(s)) return s.length === 1 ? "newline" : `${s.length} newlines`;
+    if (/^ +$/.test(s)) return s.length === 1 ? "space" : `${s.length} spaces`;
+    if (/^\t+$/.test(s)) return "tab";
+    if (/^\s+$/.test(s)) return "whitespace";
+    return `"${s.replace(/\n/g, "\\n").replace(/\t/g, "\\t")}"`;
+  };
+  return `${describe(a)} → ${describe(b)}`;
+}
+
+function caseCardFields(c) {
+  const p = c.patch.summary;
+  const editText = describeEdit(c.prompt.diff.a_changed, c.prompt.diff.b_changed);
+  const branch = Number(c.generation.branch_t);
+  const firstSplit = branch === 0
+    ? "token 0 (no shared runway)"
+    : `after ${branch} shared token${branch === 1 ? "" : "s"}`;
+  const best = `${classLabel(p.best_position_class)}, layer ${p.best_layer} (${rescueOutcome(p.best_rescue_fraction)})`;
+  return [
+    ["edit", editText],
+    ["first split", firstSplit],
+    ["best fix", best]
+  ];
+}
+
 function renderCaseButtons() {
-  $("caseButtons").innerHTML = DATA.cases.map((c) => (
-    `<button class="case-card ${c.id === state.caseId ? "active" : ""}" data-case="${esc(c.id)}">
+  $("caseButtons").innerHTML = DATA.cases.map((c) => {
+    const fields = caseCardFields(c).map(([k, v]) => (
+      `<div class="case-field"><span class="case-field-label">${esc(k)}</span><span class="case-field-value">${esc(v)}</span></div>`
+    )).join("");
+    return `<button class="case-card ${c.id === state.caseId ? "active" : ""}" data-case="${esc(c.id)}">
       <div class="case-card-title">${esc(c.short_label)}</div>
-      <div class="case-card-body">${esc(c.headline || c.why)}</div>
+      <div class="case-card-fields">${fields}</div>
       <div class="case-card-meta">
-        ${c.is_default ? '<span class="badge good">recommended start</span>' : ''}
-        <span>${esc(caseMetric(c))}</span>
+        ${c.is_default ? '<span class="badge good">recommended start</span>' : '<span></span>'}
       </div>
-    </button>`
-  )).join("");
+    </button>`;
+  }).join("");
   $("caseButtons").querySelectorAll("button").forEach((button) => {
     button.addEventListener("click", () => {
       state.caseId = button.dataset.case;
@@ -911,11 +1068,21 @@ function renderCase() {
     </div>`).join("");
 }
 
-function renderDiffLine(diff, side) {
+function visibleWhitespace(s) {
+  if (!s) return "";
+  return esc(s)
+    .replace(/ /g, '<span class="ws-glyph">·</span>')
+    .replace(/\t/g, '<span class="ws-glyph">→</span>')
+    .replace(/\n/g, '<span class="ws-glyph">¶</span>\n');
+}
+
+function renderDiffLine(diff, side, label) {
   const pre = side === "a" ? diff.a_before : diff.b_before;
   const changed = side === "a" ? diff.a_changed : diff.b_changed;
   const after = side === "a" ? diff.a_after : diff.b_after;
-  return `${esc(side.toUpperCase())}: ${esc(pre)}<span class="diff-change">${esc(changed || "[empty]")}</span>${esc(after)}`;
+  const changedHtml = changed === "" ? '<span class="diff-change empty">[empty]</span>'
+    : `<span class="diff-change">${visibleWhitespace(changed)}</span>`;
+  return `<span class="diff-label">${esc(label)}</span> ${esc(pre)}${changedHtml}${esc(after)}`;
 }
 
 function tokenChip(tok, extraClass = "") {
@@ -928,8 +1095,10 @@ function tokenChip(tok, extraClass = "") {
 function renderTokens() {
   const c = currentCase();
   const diff = c.prompt.diff;
-  $("promptDiffA").innerHTML = renderDiffLine(diff, "a");
-  $("promptDiffB").innerHTML = renderDiffLine(diff, "b");
+  const editText = describeEdit(diff.a_changed, diff.b_changed);
+  $("promptEditSummary").innerHTML = `<span class="edit-kicker">Edit</span> <span class="edit-body">${esc(editText)}</span>`;
+  $("promptDiffA").innerHTML = renderDiffLine(diff, "a", "A (original)");
+  $("promptDiffB").innerHTML = renderDiffLine(diff, "b", "B (edited)");
   $("promptTokensA").innerHTML = `<span class="badge good">A</span>` + c.prompt.token_window.a.map(tokenChip).join("");
   $("promptTokensB").innerHTML = `<span class="badge bad">B</span>` + c.prompt.token_window.b.map(tokenChip).join("");
 
@@ -1030,7 +1199,13 @@ function visiblePositions(c) {
 }
 
 function colorForRescue(value) {
-  const v = Math.max(0, Math.min(1.5, Number(value || 0))) / 1.5;
+  const raw = Number(value || 0);
+  if (raw < -0.05) {
+    const t = Math.min(1, -raw / 1.0);
+    const light = 90 - 38 * t;
+    return `hsl(0, 46%, ${light}%)`;
+  }
+  const v = Math.max(0, Math.min(1.5, raw)) / 1.5;
   const hue = 24 + (145 - 24) * v;
   const light = 90 - 38 * v;
   return `hsl(${hue}, 46%, ${light}%)`;
@@ -1163,9 +1338,9 @@ function renderPanel() {
   const p = DATA.panel_summary;
   const counts = p.regime_counts;
   $("panelCounts").innerHTML = [
-    ["Edit-boundary", counts.edit_boundary, "the prompt-side boundary already contains enough information to rescue"],
-    ["Trajectory-migration", counts.trajectory_migration, "the useful handle appears later in the generated prefix"],
-    ["Prompt-accumulation", counts.prompt_accumulation, "the branch happens at t=0, so the token before the branch is the last prompt token"]
+    ["Prompt edit already carries the signal", counts.edit_boundary, "copying a hidden state at the edited prompt token is enough to flip B."],
+    ["Signal moves into shared generated text", counts.trajectory_migration, "A and B emit identical tokens for a while, but the rescue handle is inside that shared generated text."],
+    ["Immediate split / no shared generated text", counts.prompt_accumulation, "A and B disagree on the very first generated token, so there is no shared runway to probe."]
   ].map(([label, value, sub]) => `
     <div class="panel">
       <h4>${esc(label)}</h4>
@@ -1181,7 +1356,7 @@ function renderPanel() {
     .map((a) => `<div><code>${esc(a.path)}</code></div>`)
     .join("");
   $("sourceList").innerHTML = `
-    <div><span class="badge bad">strict late-only</span> ${p.strict_late_only_count}/${p.case_count}; rule-of-three upper 95% bound ${pct(p.rule_of_three_upper_95)}</div>
+    <div>Strict late-only: ${p.strict_late_only_count}/${p.case_count}. Rule-of-three upper 95% bound ${pct(p.rule_of_three_upper_95)}.</div>
     ${sourceItems}`;
 }
 

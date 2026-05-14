@@ -32,54 +32,58 @@ FORWARD_WAVES = {
 
 CASE_SPECS = [
     {
-        "id": "qwen35_2b__token_cert_line_wrap_0573",
-        "title": "Boundary rescue with visible runway",
-        "short_label": "Edit-boundary example",
+        "id": "qwen35_2b__token_cert_blank_line_wrap_0566",
+        "title": "Split after 11 shared tokens",
+        "short_label": "Split after 11 shared tokens",
         "headline": (
-            "Visible branch at t=9. Patching the last shared prompt token "
-            "recovers the clean branch."
+            "Both runs write \"Monitoring ensures that work meets\" - then A says "
+            "\"established\" and B says \"agreed\". Copying one hidden state at the "
+            "edited prompt token flips B back to A's word."
         ),
         "is_default": True,
         "model_name": "qwen35_2b",
-        "pair_id": "token_cert_line_wrap_0573",
-        "archetype": "prompt-LCP full rescue, but branch_t=9 so the shared prefix is visible",
+        "pair_id": "token_cert_blank_line_wrap_0566",
+        "archetype": "prompt-LCP full rescue, branch_t=11, clean word-vs-word branch",
         "why": (
-            "The branch happens after nine generated tokens. Prompt-LCP patching fully rescues, "
-            "so this is the non-token-zero boundary case to read first."
+            "Both runs produce the same eleven generated tokens (\"1. **Quality Assurance**: "
+            "Monitoring ensures that work meets\"), then disagree on the next word. "
+            "A picks \"established\"; B picks \"agreed\". The signal survives at the "
+            "edited prompt token: copying that hidden state from A into B flips B's choice."
         ),
     },
     {
         "id": "gemma4_e2b_base__token_cert_blank_line_wrap_0212",
-        "title": "Generated-prefix rescue after silent divergence",
-        "short_label": "Silent-divergence example",
+        "title": "Same text for 45 tokens, hidden probabilities drift",
+        "short_label": "Same text for 45 tokens, hidden probabilities drift",
         "headline": (
-            "The output stays identical for 45 tokens, but the logits drift. "
-            "The strongest fix is inside the generated prefix."
+            "A and B emit the same 45 tokens before splitting. Nothing on the prompt side "
+            "rescues B; a hidden state deep in the shared generated text does."
         ),
         "is_default": False,
         "model_name": "gemma4_e2b_base",
         "pair_id": "token_cert_blank_line_wrap_0212",
         "archetype": "silent logit shift migrates into a generated-prefix handle",
         "why": (
-            "The visible output stays shared for forty-five generated tokens. "
-            "The best causal handle is generated-prefix position 44."
+            "A and B emit the same forty-five tokens, but B's internal probabilities are "
+            "already drifting. The only hidden state that rescues B lives inside that shared "
+            "generated text, not on the prompt side."
         ),
     },
     {
         "id": "qwen35_2b__token_cert_line_wrap_0378",
-        "title": "Tokenization-shift immediate rescue",
-        "short_label": "Immediate edge case",
+        "title": "Immediate split at first token",
+        "short_label": "Immediate split at first token",
         "headline": (
-            "The first generated token changes at t=0. There is no shared "
-            "generated runway to inspect."
+            "The very first generated token already differs. There is no shared generated "
+            "runway, so any fix has to come from the prompt side."
         ),
         "is_default": False,
         "model_name": "qwen35_2b",
         "pair_id": "token_cert_line_wrap_0378",
         "archetype": "token-0 visible branch; the token before the branch is the last prompt token",
         "why": (
-            "This is the edge case class: the first generated token changes immediately, "
-            "so there is no generated runway to inspect."
+            "A and B disagree on the very first generated token. There is no shared generated "
+            "runway to probe, so the only hidden states that could rescue B are on the prompt side."
         ),
     },
 ]
