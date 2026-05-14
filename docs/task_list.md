@@ -27,12 +27,11 @@ Operational board only. Keep historical narrative out of this file; use
 
 ## Live Operations
 
-Last checked: 2026-05-01 after processing E07 v5. Compute pipeline is idle
-and the active track is paper submission, so live SageMaker state has not
-been re-queried. If resuming compute work, re-run `scripts/sagemaker_status.py`
-before assuming state.
+Last checked: 2026-05-14 while launching E12 hidden-warning recaptures.
 
-- No active SageMaker jobs in the last scan.
+- Active SageMaker jobs:
+  - `chaos-hidden-warning-qwen08-20260514-001` (`ml.g6e.2xlarge`, preprod)
+  - `chaos-hidden-warning-qwen2b-20260514-001` (`ml.g6e.2xlarge`, preprod)
 - Recent stopped token-micro jobs were superseded by later completed repair
   jobs; do not rerun without a new reason.
 
@@ -103,6 +102,38 @@ Readout:
   absolute branch-t delta is `4.25` for Qwen2B and `8.80` for Qwen4B.
 - Treat E10 as case-selection/intervention evidence, not a general scaling law.
 
+### E12 Hidden Warning Probe
+
+Artifacts:
+
+- `experiments/E12_hidden_warning_probe/`
+- `configs/sagemaker_queue_hidden_warning_probe_v1.json`
+- `runs/rankings/hidden_warning_probe_e10_sagemaker/`
+- pending jobs `chaos-hidden-warning-qwen08-20260514-001` and
+  `chaos-hidden-warning-qwen2b-20260514-001`
+
+Readout:
+
+- E09 skipped hidden capture, so the broad logit-token panel cannot answer
+  hidden-state warning from saved artifacts.
+- Existing E10 selected cases are only a smoke test, but hidden-distance
+  features beat JS on strict pre-branch windows in that tiny sample.
+- A broader local Qwen0.8B/MPS 60-pair sanity run is much weaker:
+  best summary hidden AUROC is about `0.56` for within 2/5/10-token warning
+  windows; best layer-picked exact-offset hidden features are about `0.59-0.61`.
+  Treat this as evidence against claiming clear long-horizon hidden warning
+  before the CUDA recapture lands.
+- The running recapture uses 60 pairs per Qwen model: 48 long-prefix visible
+  branches and 12 no-visible negatives, stratified by edit type and branch
+  length.
+
+Next:
+
+- Pull both jobs when complete, process with `scripts/build_silent_divergence_readout.py`,
+  then score with `experiments/E12_hidden_warning_probe/analyze_hidden_warning.py`.
+- Use the resulting `pre_branch_exact_2`, `pre_branch_exact_5`, and
+  `pre_branch_exact_10` / within-window AUROCs to rewrite the blog paragraph.
+
 ### E05 Token-Certified Micro
 
 Artifact:
@@ -155,6 +186,16 @@ Next concrete steps, in order:
 2. Pick the workshop LaTeX template, then convert `paper/draft.md`.
 3. Tag/release BranchTrace examples if public cards are still useful.
 4. Submit the paper.
+
+E12 follow-up command skeleton after the hidden-warning jobs finish:
+
+```bash
+uv run python scripts/download_sagemaker_artifact.py chaos-hidden-warning-qwen08-20260514-001 --extract
+uv run python scripts/download_sagemaker_artifact.py chaos-hidden-warning-qwen2b-20260514-001 --extract
+uv run python scripts/build_silent_divergence_readout.py --capture-root runs/sagemaker_artifacts/chaos-hidden-warning-qwen08-20260514-001/runs --out-dir runs/rankings/hidden_warning_probe_qwen08
+uv run python scripts/build_silent_divergence_readout.py --capture-root runs/sagemaker_artifacts/chaos-hidden-warning-qwen2b-20260514-001/runs --out-dir runs/rankings/hidden_warning_probe_qwen2b
+uv run python experiments/E12_hidden_warning_probe/analyze_hidden_warning.py --summary runs/rankings/hidden_warning_probe_qwen08/merged_silent_divergence_summary.csv --layers runs/rankings/hidden_warning_probe_qwen08/merged_silent_divergence_layers.csv --summary runs/rankings/hidden_warning_probe_qwen2b/merged_silent_divergence_summary.csv --layers runs/rankings/hidden_warning_probe_qwen2b/merged_silent_divergence_layers.csv --out-dir runs/rankings/hidden_warning_probe_qwen08_qwen2b_auc
+```
 
 Rebuild the interactive lab from artifacts with:
 

@@ -68,6 +68,7 @@ def main() -> None:
     )
     parser.add_argument("--model", action="append", default=[], help="Model name or ID. Repeatable.")
     parser.add_argument("--prompt-pairs", default="configs/prompt_pairs.json")
+    parser.add_argument("--pairs-from", default="")
     parser.add_argument("--pair-id", action="append", dest="pair_ids", default=[])
     parser.add_argument("--targets-csv", default="")
     parser.add_argument("--targets-json", default="")
@@ -140,6 +141,8 @@ def main() -> None:
         )
     if args.entrypoint == "silent_divergence":
         run_args.extend(["--logit-max-steps", str(args.logit_max_steps)])
+        if args.pairs_from:
+            run_args.extend(["--pairs-from", args.pairs_from])
         for pair_id in args.pair_ids:
             run_args.extend(["--pair-id", pair_id])
     if args.entrypoint == "activation_patch":

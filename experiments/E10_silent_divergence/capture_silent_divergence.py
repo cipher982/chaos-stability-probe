@@ -222,7 +222,11 @@ def trajectory_rows_for_pair(
             last_b = hb[0, -1, :].detach().cpu()
             cos = cosine_distance(last_a, last_b)
             l2 = normalized_l2(last_a, last_b)
-            layer_metrics.append((layer_idx, cos, l2))
+            norm_a = float(torch.linalg.vector_norm(last_a).item())
+            norm_b = float(torch.linalg.vector_norm(last_b).item())
+            abs_norm_delta = abs(norm_a - norm_b)
+            rel_norm_delta = abs_norm_delta / max((norm_a + norm_b) / 2.0, 1e-12)
+            layer_metrics.append((layer_idx, cos, l2, abs_norm_delta, rel_norm_delta))
             layer_rows.append(
                 {
                     "pair_id": pair["id"],
@@ -233,12 +237,18 @@ def trajectory_rows_for_pair(
                     "layer": layer_idx,
                     "last_token_cosine_distance": cos,
                     "last_token_normalized_l2": l2,
+                    "last_token_norm_a": norm_a,
+                    "last_token_norm_b": norm_b,
+                    "last_token_abs_norm_delta": abs_norm_delta,
+                    "last_token_rel_norm_delta": rel_norm_delta,
                 }
             )
 
         final_layer = layer_metrics[-1]
         max_layer_cos = max(item[1] for item in layer_metrics)
         max_layer_l2 = max(item[2] for item in layer_metrics)
+        max_layer_abs_norm_delta = max(item[3] for item in layer_metrics)
+        max_layer_rel_norm_delta = max(item[4] for item in layer_metrics)
         summary_rows.append(
             {
                 "pair_id": pair["id"],
@@ -257,8 +267,12 @@ def trajectory_rows_for_pair(
                 "b_top1_margin_logit": logit_metrics["b_top1_margin_logit"],
                 "final_layer_cosine_distance": final_layer[1],
                 "final_layer_normalized_l2": final_layer[2],
+                "final_layer_abs_norm_delta": final_layer[3],
+                "final_layer_rel_norm_delta": final_layer[4],
                 "max_layer_cosine_distance": max_layer_cos,
                 "max_layer_normalized_l2": max_layer_l2,
+                "max_layer_abs_norm_delta": max_layer_abs_norm_delta,
+                "max_layer_rel_norm_delta": max_layer_rel_norm_delta,
             }
         )
 

@@ -220,6 +220,15 @@ on these selected CUDA cases, mean visible branch-t is `9.0` for Qwen2B
 That is useful for choosing intervention cases, but still too selected to call
 a scaling law.
 
+The E12 hidden-warning spike is currently a caution, not an upgrade. On the
+tiny hand-picked E10 SageMaker set, hidden-distance features look much stronger
+than JS for strict pre-branch windows. But a broader local Qwen3.5 0.8B/MPS
+60-pair recapture weakens that: best summary hidden AUROCs are only about
+`0.56` for within 2/5/10-token warning windows, and best layer-picked exact
+offsets reach only about `0.59-0.61`. Pending CUDA Qwen0.8B/2B recaptures will
+decide whether this is a local-backend miss or a real negative. For now, do not
+claim that residual-stream distances clearly predict branches far in advance.
+
 ## Trajectory-Branching Research Frame
 
 The post-talk paper direction should not become a generic robustness or

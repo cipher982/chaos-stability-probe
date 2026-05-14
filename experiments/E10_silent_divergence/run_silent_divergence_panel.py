@@ -29,6 +29,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--models", type=Path, default=Path("configs/models.json"))
     parser.add_argument("--prompt-pairs", type=Path, default=Path("configs/prompt_pairs_mechinterp_seed.json"))
+    parser.add_argument("--pairs-from", type=Path, default=Path("runs/mechinterp_patch/selected_patch_targets_aligned.csv"))
     parser.add_argument("--model", action="append", default=[], help="Model name or model_id. Repeatable.")
     parser.add_argument("--pair-id", action="append", dest="pair_ids", default=[])
     parser.add_argument("--out-root", type=Path, default=Path("runs/silent_divergence_panel"))
@@ -60,6 +61,8 @@ def main() -> None:
             entry["name"],
             "--prompt-pairs",
             str(args.prompt_pairs),
+            "--pairs-from",
+            str(args.pairs_from),
             "--out-dir",
             str(model_out),
             "--max-new-tokens",

@@ -76,6 +76,8 @@ def build_launch_cmd(job: dict[str, Any]) -> list[str]:
         cmd.extend(["--targets-csv", job["targets_csv"]])
     if "targets_json" in job:
         cmd.extend(["--targets-json", job["targets_json"]])
+    if "pairs_from" in job:
+        cmd.extend(["--pairs-from", job["pairs_from"]])
     if job.get("sample"):
         cmd.append("--sample")
         cmd.extend(["--temperature", str(job.get("temperature", 0.7))])

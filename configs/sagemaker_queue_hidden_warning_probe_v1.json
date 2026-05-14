@@ -1,0 +1,34 @@
+[
+  {
+    "entrypoint": "silent_divergence",
+    "prompt_pairs": "configs/prompt_pairs_token_certified/qwen35_08b.json",
+    "pairs_from": "experiments/E12_hidden_warning_probe/qwen35_08b_pairs.csv",
+    "max_new_tokens": 256,
+    "logit_max_steps": 64,
+    "timeout_s": 21600,
+    "max_runtime_s": 43200,
+    "profile": "zh-marketing-preprod-aiengineer",
+    "bucket": "636347950933-use1-zmp-preprod-ml-ops-sagemaker-models",
+    "role_arn": "arn:aws:iam::636347950933:role/zmp-preprod-use1_sagemaker_0",
+    "job_name": "chaos-hidden-warning-qwen08-20260514-001",
+    "model": "qwen35_08b",
+    "instance_type": "ml.g6e.2xlarge",
+    "thinking_mode": "disabled"
+  },
+  {
+    "entrypoint": "silent_divergence",
+    "prompt_pairs": "configs/prompt_pairs_token_certified/qwen35_2b.json",
+    "pairs_from": "experiments/E12_hidden_warning_probe/qwen35_2b_pairs.csv",
+    "max_new_tokens": 256,
+    "logit_max_steps": 64,
+    "timeout_s": 21600,
+    "max_runtime_s": 43200,
+    "profile": "zh-marketing-preprod-aiengineer",
+    "bucket": "636347950933-use1-zmp-preprod-ml-ops-sagemaker-models",
+    "role_arn": "arn:aws:iam::636347950933:role/zmp-preprod-use1_sagemaker_0",
+    "job_name": "chaos-hidden-warning-qwen2b-20260514-001",
+    "model": "qwen35_2b",
+    "instance_type": "ml.g6e.2xlarge",
+    "thinking_mode": "disabled"
+  }
+]
