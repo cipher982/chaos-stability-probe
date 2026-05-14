@@ -131,11 +131,12 @@ Readout:
 - A broader local Qwen0.8B/MPS 60-pair sanity run is much weaker:
   best summary hidden AUROC is about `0.56` for within 2/5/10-token warning
   windows; best layer-picked exact-offset hidden features are about `0.59-0.61`.
-  Treat this as evidence against claiming clear long-horizon hidden warning
-  before the CUDA recapture lands.
-- The running recapture uses 60 pairs per Qwen model: 48 long-prefix visible
-  branches and 12 no-visible negatives, stratified by edit type and branch
-  length.
+  Treat this as evidence against scalar hidden-distance monitoring.
+- A larger local Qwen0.8B/MPS 111-pair vector recapture is positive:
+  pair-grouped mean-difference probes over residual deltas reach AUROC `0.74`
+  within 1/2 tokens, `0.71` within 5, and `0.70` within 10. Same-artifact
+  JS/logit and scalar residual-distance features are much weaker on strict
+  pre-branch windows.
 - The vector wave uses larger v2 pair lists across the 8-model Qwen/Gemma
   panel and captures float16 residual-delta vectors at exact horizons
   `0/1/2/5/10/20/32/64/96/128`. This is the first run that can support a real
@@ -148,8 +149,10 @@ Next:
 - Pull vector jobs when complete and score with
   `experiments/E12_hidden_warning_probe/analyze_hidden_vectors.py` using
   pair-grouped splits.
-- Use the resulting `pre_branch_exact_2`, `pre_branch_exact_5`, and
-  `pre_branch_exact_10` / within-window AUROCs to rewrite the blog paragraph.
+- Use the resulting within-window AUROCs to decide whether the blog can claim
+  a narrow residual-vector warning signal. Do not rely on exact-offset numbers
+  until the no-branch controls are large enough; the current local exact-offset
+  comparison is class-imbalanced.
 
 ### E05 Token-Certified Micro
 

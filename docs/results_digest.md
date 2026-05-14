@@ -220,17 +220,19 @@ on these selected CUDA cases, mean visible branch-t is `9.0` for Qwen2B
 That is useful for choosing intervention cases, but still too selected to call
 a scaling law.
 
-The E12 hidden-warning spike is currently a caution, not an upgrade. On the
-tiny hand-picked E10 SageMaker set, hidden-distance features look much stronger
-than JS for strict pre-branch windows. But a broader local Qwen3.5 0.8B/MPS
-60-pair recapture weakens that: best summary hidden AUROCs are only about
-`0.56` for within 2/5/10-token warning windows, and best layer-picked exact
-offsets reach only about `0.59-0.61`. A larger CUDA vector wave is now active:
-it captures residual-delta vectors at exact horizons
-`0/1/2/5/10/20/32/64/96/128` across the 8-model Qwen/Gemma panel. Pending CUDA
-scalar and vector recaptures will decide whether the weak local readout is a
-backend miss, a scalar-feature miss, or a real negative. For now, do not claim
-that residual-stream features clearly predict branches far in advance.
+The E12 hidden-warning spike now has a provisional positive result. Scalar
+hidden-distance features are still weak: a local Qwen3.5 0.8B/MPS 60-pair
+recapture had best summary hidden AUROC around `0.56` for within 2/5/10-token
+warning windows. But a larger local Qwen3.5 0.8B 111-pair residual-vector
+recapture shows that raw residual deltas carry more warning than logits or
+scalar drift summaries: pair-grouped mean-difference probes over
+`hidden_b - hidden_a` reach AUROC `0.74` within 1 token, `0.74` within 2,
+`0.71` within 5, and `0.70` within 10. Same-artifact JS/logit divergence is
+weak on those strict pre-branch windows (`~0.41-0.45`), and scalar residual
+features mostly stay near `0.52-0.57`. Treat this as a real hint that the full
+state helps, but not final: it is local/MPS and one model so far; the active
+CUDA vector wave must confirm across the 8-model Qwen/Gemma panel before the
+blog claims a general hidden-state warning horizon.
 
 ## Trajectory-Branching Research Frame
 

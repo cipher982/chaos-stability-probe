@@ -49,8 +49,13 @@ Current readout:
   `runs/rankings/hidden_warning_probe_local_qwen08_60pair_auc/` has best
   summary hidden AUROC around `0.56` for within 2/5/10-token windows, with
   best layer-picked exact-offset hidden features around `0.59-0.61`.
-  This does not support a publishable "hidden states give early warning" claim
-  on its own.
+  This does not support a scalar hidden-distance warning claim.
+- Local Qwen0.8B/MPS 111-pair vector recapture is positive:
+  `runs/rankings/hidden_warning_vectors_local_qwen08_full/` shows
+  pair-grouped residual-delta probes at AUROC `0.74` within 1/2 tokens,
+  `0.71` within 5, and `0.70` within 10. Same-artifact JS/logit and scalar
+  residual-distance features are much weaker on strict pre-branch windows.
+  This is the first evidence that monitoring the full state helps.
 - A v2 cross-account SageMaker wave is in flight as of 2026-05-14. It captures
   float16 last-token residual deltas at exact horizons
   `0/1/2/5/10/20/32/64/96/128`, using sparse branch-relative forwards to keep
@@ -68,3 +73,6 @@ Caveats:
   The branch timestep itself is discrimination at the fork, not foresight.
 - Use pair-grouped splits for vector probes; generated timesteps from the same
   prompt pair are not independent samples.
+- Do not rely on current exact-offset AUROCs as a blog claim: the local
+  exact-offset comparison has many branch positives and only a small no-branch
+  control set. The within-window target is the more meaningful warning readout.
