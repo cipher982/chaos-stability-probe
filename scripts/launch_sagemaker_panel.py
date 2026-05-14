@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import io
 import json
 import tarfile
 import tempfile
@@ -41,12 +42,18 @@ def should_include(path: Path) -> bool:
     return True
 
 
-def make_source_tar(repo_root: Path, output_path: Path) -> None:
+def make_source_tar(repo_root: Path, output_path: Path, extra_files: dict[str, str] | None = None) -> None:
     with tarfile.open(output_path, "w:gz") as tar:
         for path in repo_root.rglob("*"):
             if not path.is_file() or not should_include(path.relative_to(repo_root)):
                 continue
             tar.add(path, arcname=path.relative_to(repo_root))
+        for name, content in (extra_files or {}).items():
+            data = content.encode("utf-8")
+            info = tarfile.TarInfo(name)
+            info.size = len(data)
+            info.mtime = int(time.time())
+            tar.addfile(info, io.BytesIO(data))
 
 
 def main() -> None:
@@ -76,6 +83,8 @@ def main() -> None:
     parser.add_argument("--max-new-tokens", type=int, default=96)
     parser.add_argument("--repeats", type=int, default=1)
     parser.add_argument("--timeout-s", type=int, default=3600)
+    parser.add_argument("--vector-horizon", type=int, action="append", default=[])
+    parser.add_argument("--sparse-vector-steps", action="store_true")
     parser.add_argument("--sample", action="store_true")
     parser.add_argument("--temperature", type=float, default=0.7)
     parser.add_argument("--top-p", type=float, default=0.95)
@@ -141,6 +150,10 @@ def main() -> None:
         )
     if args.entrypoint == "silent_divergence":
         run_args.extend(["--logit-max-steps", str(args.logit_max_steps)])
+        for horizon in args.vector_horizon:
+            run_args.extend(["--vector-horizon", str(horizon)])
+        if args.sparse_vector_steps:
+            run_args.append("--sparse-vector-steps")
         if args.pairs_from:
             run_args.extend(["--pairs-from", args.pairs_from])
         for pair_id in args.pair_ids:
@@ -158,13 +171,16 @@ def main() -> None:
         for batch_size in args.batch_size:
             run_args.extend(["--batch-size", str(batch_size)])
 
+    run_args_json = json.dumps(run_args)
+    extra_tar_files = {"sagemaker_run_args.json": run_args_json}
+
     sess = boto3.Session(profile_name=args.profile, region_name=args.region)
     s3 = sess.client("s3")
     sm = sess.client("sagemaker")
 
     with tempfile.TemporaryDirectory() as tmpdir:
         tar_path = Path(tmpdir) / "source.tar.gz"
-        make_source_tar(repo_root, tar_path)
+        make_source_tar(repo_root, tar_path, extra_files=extra_tar_files)
         print(f"Packaged {tar_path} ({tar_path.stat().st_size / 1024 / 1024:.2f} MiB)")
         print(f"Uploading {source_s3}")
         if not args.dry_run:
@@ -191,7 +207,7 @@ def main() -> None:
             "sagemaker_container_log_level": "20",
         },
         "Environment": {
-            "CHAOS_RUN_ARGS": json.dumps(run_args),
+            "CHAOS_RUN_ARGS_FILE": "sagemaker_run_args.json",
             "CHAOS_ENTRYPOINT": args.entrypoint,
         },
         "EnableNetworkIsolation": False,

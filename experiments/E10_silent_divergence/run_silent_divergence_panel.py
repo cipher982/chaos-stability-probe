@@ -36,6 +36,8 @@ def main() -> None:
     parser.add_argument("--timeout-s", type=int, default=3600)
     parser.add_argument("--max-new-tokens", type=int, default=128)
     parser.add_argument("--logit-max-steps", type=int, default=64)
+    parser.add_argument("--vector-horizon", type=int, action="append", default=[])
+    parser.add_argument("--sparse-vector-steps", action="store_true")
     parser.add_argument("--limit-pairs", type=int, default=0)
     parser.add_argument("--thinking-mode", choices=["default", "enabled", "disabled"], default="disabled")
     parser.add_argument("--device", default="auto")
@@ -76,6 +78,10 @@ def main() -> None:
             "--thinking-mode",
             args.thinking_mode,
         ]
+        for horizon in args.vector_horizon:
+            cmd.extend(["--vector-horizon", str(horizon)])
+        if args.sparse_vector_steps:
+            cmd.append("--sparse-vector-steps")
         if args.limit_pairs:
             cmd.extend(["--limit-pairs", str(args.limit_pairs)])
         for pair_id in args.pair_ids:

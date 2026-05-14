@@ -27,11 +27,19 @@ Operational board only. Keep historical narrative out of this file; use
 
 ## Live Operations
 
-Last checked: 2026-05-14 while launching E12 hidden-warning recaptures.
+Last checked: 2026-05-14 after launching the E12 hidden-warning vector wave.
 
 - Active SageMaker jobs:
   - `chaos-hidden-warning-qwen08-20260514-001` (`ml.g6e.2xlarge`, preprod)
   - `chaos-hidden-warning-qwen2b-20260514-001` (`ml.g6e.2xlarge`, preprod)
+  - `chaos-hidden-warning-vectors-qwen9b-20260514-001` (`ml.g6e.2xlarge`, preprod)
+  - `chaos-hidden-warning-vectors-qwen4b-20260514-001` (`ml.g6e.2xlarge`, preprod)
+  - `chaos-hidden-warning-vectors-gemma-e4b-base-20260514-001` (`ml.g6e.2xlarge`, preprod)
+  - `chaos-hidden-warning-vectors-qwen2b-20260514-001` (`ml.g5.2xlarge`, ML prod)
+  - `chaos-hidden-warning-vectors-qwen08-20260514-001` (`ml.g4dn.2xlarge`, ML prod)
+  - `chaos-hidden-warning-vectors-gemma-e2b-it-20260514-001` (`ml.g5.2xlarge`, marketing prod)
+  - `chaos-hidden-warning-vectors-gemma-e2b-base-20260514-001` (`ml.g4dn.2xlarge`, marketing prod)
+  - `chaos-hidden-warning-vectors-gemma-e4b-it-20260514-001` (`ml.g5.2xlarge`, QA)
 - Recent stopped token-micro jobs were superseded by later completed repair
   jobs; do not rerun without a new reason.
 
@@ -108,9 +116,11 @@ Artifacts:
 
 - `experiments/E12_hidden_warning_probe/`
 - `configs/sagemaker_queue_hidden_warning_probe_v1.json`
+- `configs/sagemaker_queue_hidden_warning_probe_v2_vectors.json`
 - `runs/rankings/hidden_warning_probe_e10_sagemaker/`
-- pending jobs `chaos-hidden-warning-qwen08-20260514-001` and
+- active scalar jobs `chaos-hidden-warning-qwen08-20260514-001` and
   `chaos-hidden-warning-qwen2b-20260514-001`
+- active vector jobs listed in Live Operations above
 
 Readout:
 
@@ -126,11 +136,18 @@ Readout:
 - The running recapture uses 60 pairs per Qwen model: 48 long-prefix visible
   branches and 12 no-visible negatives, stratified by edit type and branch
   length.
+- The vector wave uses larger v2 pair lists across the 8-model Qwen/Gemma
+  panel and captures float16 residual-delta vectors at exact horizons
+  `0/1/2/5/10/20/32/64/96/128`. This is the first run that can support a real
+  residual-vector probe rather than scalar drift AUROCs.
 
 Next:
 
 - Pull both jobs when complete, process with `scripts/build_silent_divergence_readout.py`,
   then score with `experiments/E12_hidden_warning_probe/analyze_hidden_warning.py`.
+- Pull vector jobs when complete and score with
+  `experiments/E12_hidden_warning_probe/analyze_hidden_vectors.py` using
+  pair-grouped splits.
 - Use the resulting `pre_branch_exact_2`, `pre_branch_exact_5`, and
   `pre_branch_exact_10` / within-window AUROCs to rewrite the blog paragraph.
 
@@ -195,6 +212,10 @@ uv run python scripts/download_sagemaker_artifact.py chaos-hidden-warning-qwen2b
 uv run python scripts/build_silent_divergence_readout.py --capture-root runs/sagemaker_artifacts/chaos-hidden-warning-qwen08-20260514-001/runs --out-dir runs/rankings/hidden_warning_probe_qwen08
 uv run python scripts/build_silent_divergence_readout.py --capture-root runs/sagemaker_artifacts/chaos-hidden-warning-qwen2b-20260514-001/runs --out-dir runs/rankings/hidden_warning_probe_qwen2b
 uv run python experiments/E12_hidden_warning_probe/analyze_hidden_warning.py --summary runs/rankings/hidden_warning_probe_qwen08/merged_silent_divergence_summary.csv --layers runs/rankings/hidden_warning_probe_qwen08/merged_silent_divergence_layers.csv --summary runs/rankings/hidden_warning_probe_qwen2b/merged_silent_divergence_summary.csv --layers runs/rankings/hidden_warning_probe_qwen2b/merged_silent_divergence_layers.csv --out-dir runs/rankings/hidden_warning_probe_qwen08_qwen2b_auc
+
+# Vector jobs need their launch profile when downloading cross-account artifacts.
+uv run python scripts/download_sagemaker_artifact.py chaos-hidden-warning-vectors-qwen2b-20260514-001 --profile zh-ml-productionengineer --extract
+uv run python experiments/E12_hidden_warning_probe/analyze_hidden_vectors.py --artifact-dir runs/sagemaker_artifacts/chaos-hidden-warning-vectors-qwen2b-20260514-001/runs/qwen35_2b --out-dir runs/rankings/hidden_warning_vectors_qwen2b
 ```
 
 Rebuild the interactive lab from artifacts with:

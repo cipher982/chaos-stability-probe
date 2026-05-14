@@ -225,9 +225,12 @@ tiny hand-picked E10 SageMaker set, hidden-distance features look much stronger
 than JS for strict pre-branch windows. But a broader local Qwen3.5 0.8B/MPS
 60-pair recapture weakens that: best summary hidden AUROCs are only about
 `0.56` for within 2/5/10-token warning windows, and best layer-picked exact
-offsets reach only about `0.59-0.61`. Pending CUDA Qwen0.8B/2B recaptures will
-decide whether this is a local-backend miss or a real negative. For now, do not
-claim that residual-stream distances clearly predict branches far in advance.
+offsets reach only about `0.59-0.61`. A larger CUDA vector wave is now active:
+it captures residual-delta vectors at exact horizons
+`0/1/2/5/10/20/32/64/96/128` across the 8-model Qwen/Gemma panel. Pending CUDA
+scalar and vector recaptures will decide whether the weak local readout is a
+backend miss, a scalar-feature miss, or a real negative. For now, do not claim
+that residual-stream features clearly predict branches far in advance.
 
 ## Trajectory-Branching Research Frame
 

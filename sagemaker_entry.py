@@ -10,6 +10,22 @@ import sys
 from pathlib import Path
 
 
+def load_extra_args() -> list[object]:
+    args_file = os.environ.get("CHAOS_RUN_ARGS_FILE")
+    if args_file:
+        path = Path(args_file)
+        if not path.is_absolute():
+            cwd_path = Path.cwd() / path
+            path = cwd_path if cwd_path.exists() else Path(__file__).resolve().parent / path
+        raw_args = path.read_text(encoding="utf-8")
+    else:
+        raw_args = os.environ.get("CHAOS_RUN_ARGS", "[]")
+    extra_args = json.loads(raw_args)
+    if not isinstance(extra_args, list):
+        raise TypeError("CHAOS_RUN_ARGS must be a JSON list")
+    return extra_args
+
+
 def install_gpt_oss_runtime_deps(extra_args: list[object]) -> None:
     if "gpt_oss_20b" not in {str(arg) for arg in extra_args}:
         return
@@ -22,10 +38,7 @@ def main() -> None:
     model_dir = Path(os.environ.get("SM_MODEL_DIR", "/opt/ml/model"))
     model_dir.mkdir(parents=True, exist_ok=True)
 
-    raw_args = os.environ.get("CHAOS_RUN_ARGS", "[]")
-    extra_args = json.loads(raw_args)
-    if not isinstance(extra_args, list):
-        raise TypeError("CHAOS_RUN_ARGS must be a JSON list")
+    extra_args = load_extra_args()
     install_gpt_oss_runtime_deps(extra_args)
 
     out_root = model_dir / "runs"

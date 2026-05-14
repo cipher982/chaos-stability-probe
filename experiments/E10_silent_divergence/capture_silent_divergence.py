@@ -13,6 +13,7 @@ import time
 from pathlib import Path
 from typing import Any
 
+import numpy as np
 import pandas as pd
 import torch
 import transformers
@@ -123,6 +124,8 @@ def build_run_metadata(
         "system_prompt": args.system_prompt,
         "max_new_tokens": args.max_new_tokens,
         "logit_max_steps": args.logit_max_steps,
+        "vector_horizons": args.vector_horizon,
+        "sparse_vector_steps": args.sparse_vector_steps,
         "prompt_pairs": str(args.prompt_pairs),
         "pair_ids": pair_ids,
         "torch_version": torch.__version__,
@@ -163,7 +166,9 @@ def trajectory_rows_for_pair(
     max_new_tokens: int,
     logit_max_steps: int,
     thinking_mode: str,
-) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
+    vector_horizons: set[int],
+    sparse_vector_steps: bool,
+) -> tuple[list[dict[str, Any]], list[dict[str, Any]], list[dict[str, Any]], list[np.ndarray]]:
     gen_a = generate_once(
         loaded,
         pair["prompt_a"],
@@ -203,8 +208,18 @@ def trajectory_rows_for_pair(
 
     summary_rows: list[dict[str, Any]] = []
     layer_rows: list[dict[str, Any]] = []
+    vector_rows: list[dict[str, Any]] = []
+    vector_deltas: list[np.ndarray] = []
 
-    for t in range(max_t + 1):
+    if sparse_vector_steps and vector_horizons:
+        if branch_t is None:
+            step_ts = sorted(horizon for horizon in vector_horizons if 0 <= horizon <= max_t)
+        else:
+            step_ts = sorted(branch_t - horizon for horizon in vector_horizons if 0 <= branch_t - horizon <= max_t)
+    else:
+        step_ts = list(range(max_t + 1))
+
+    for t in step_ts:
         suffix = common_tokens[:t]
         full_a = append_continuation(inputs_a, suffix)
         full_b = append_continuation(inputs_b, suffix)
@@ -215,6 +230,10 @@ def trajectory_rows_for_pair(
         logits_a = out_a.logits[0, -1, :].detach().cpu()
         logits_b = out_b.logits[0, -1, :].detach().cpu()
         logit_metrics = logit_distribution_metrics(logits_a, logits_b)
+        tokens_until_branch = None if branch_t is None else branch_t - t
+        capture_vector = (
+            t in vector_horizons if branch_t is None else tokens_until_branch in vector_horizons
+        )
 
         layer_metrics = []
         for layer_idx, (ha, hb) in enumerate(zip(out_a.hidden_states, out_b.hidden_states)):
@@ -233,7 +252,7 @@ def trajectory_rows_for_pair(
                     "category": pair.get("category"),
                     "t": t,
                     "branch_t": branch_t,
-                    "tokens_until_branch": None if branch_t is None else branch_t - t,
+                    "tokens_until_branch": tokens_until_branch,
                     "layer": layer_idx,
                     "last_token_cosine_distance": cos,
                     "last_token_normalized_l2": l2,
@@ -243,6 +262,26 @@ def trajectory_rows_for_pair(
                     "last_token_rel_norm_delta": rel_norm_delta,
                 }
             )
+            if capture_vector:
+                delta = (last_b - last_a).float().numpy().astype(np.float16, copy=False)
+                vector_deltas.append(delta)
+                vector_rows.append(
+                    {
+                        "pair_id": pair["id"],
+                        "category": pair.get("category"),
+                        "t": t,
+                        "branch_t": branch_t,
+                        "tokens_until_branch": tokens_until_branch,
+                        "layer": layer_idx,
+                        "vector_kind": "last_token_residual_delta_b_minus_a",
+                        "dtype": "float16",
+                        "dim": int(delta.shape[0]),
+                        "last_token_cosine_distance": cos,
+                        "last_token_normalized_l2": l2,
+                        "last_token_abs_norm_delta": abs_norm_delta,
+                        "last_token_rel_norm_delta": rel_norm_delta,
+                    }
+                )
 
         final_layer = layer_metrics[-1]
         max_layer_cos = max(item[1] for item in layer_metrics)
@@ -255,7 +294,7 @@ def trajectory_rows_for_pair(
                 "category": pair.get("category"),
                 "t": t,
                 "branch_t": branch_t,
-                "tokens_until_branch": None if branch_t is None else branch_t - t,
+                "tokens_until_branch": tokens_until_branch,
                 "generated_prefix_len": t,
                 "js_divergence": logit_metrics["js_divergence"],
                 "top1_same": logit_metrics["top1_same"],
@@ -276,7 +315,7 @@ def trajectory_rows_for_pair(
             }
         )
 
-    return summary_rows, layer_rows
+    return summary_rows, layer_rows, vector_rows, vector_deltas
 
 
 def main() -> None:
@@ -290,6 +329,21 @@ def main() -> None:
     parser.add_argument("--out-dir", type=Path, default=Path("runs/silent_divergence_pilot"))
     parser.add_argument("--max-new-tokens", type=int, default=128)
     parser.add_argument("--logit-max-steps", type=int, default=64)
+    parser.add_argument(
+        "--vector-horizon",
+        type=int,
+        action="append",
+        default=[],
+        help=(
+            "Save float16 residual-delta vectors at exact horizons before the branch. "
+            "Use 0 for the branch step. For no-visible-branch controls, this saves t=horizon."
+        ),
+    )
+    parser.add_argument(
+        "--sparse-vector-steps",
+        action="store_true",
+        help="When vector horizons are provided, only run forwards at those branch-relative steps.",
+    )
     parser.add_argument("--device", default="auto")
     parser.add_argument("--dtype", default="auto", choices=["auto", "float32", "float16", "bfloat16"])
     parser.add_argument("--thinking-mode", choices=["default", "enabled", "disabled"], default="disabled")
@@ -312,15 +366,20 @@ def main() -> None:
 
     summary_rows: list[dict[str, Any]] = []
     layer_rows: list[dict[str, Any]] = []
+    vector_rows: list[dict[str, Any]] = []
+    vector_deltas: list[np.ndarray] = []
+    vector_horizons = set(args.vector_horizon)
     for pair_id in pair_ids:
         print(f"Capturing {args.model} {pair_id}", flush=True)
-        srows, lrows = trajectory_rows_for_pair(
+        srows, lrows, vrows, vdeltas = trajectory_rows_for_pair(
             loaded,
             pairs[pair_id],
             args.system_prompt,
             args.max_new_tokens,
             args.logit_max_steps,
             args.thinking_mode,
+            vector_horizons,
+            args.sparse_vector_steps,
         )
         for row in srows:
             row["model_name"] = args.model
@@ -328,11 +387,19 @@ def main() -> None:
         for row in lrows:
             row["model_name"] = args.model
             row.update(runtime_cols)
+        for row, vector in zip(vrows, vdeltas, strict=True):
+            row["model_name"] = args.model
+            row.update(runtime_cols)
+            row["vector_index"] = len(vector_deltas)
+            vector_rows.append(row)
+            vector_deltas.append(vector)
         summary_rows.extend(srows)
         layer_rows.extend(lrows)
 
     summary_path = args.out_dir / f"{args.model}_silent_divergence_summary.csv"
     layer_path = args.out_dir / f"{args.model}_silent_divergence_layers.csv"
+    vector_meta_path = args.out_dir / f"{args.model}_hidden_vector_features.csv"
+    vector_npz_path = args.out_dir / f"{args.model}_hidden_vector_features.npz"
     metadata_path = args.out_dir / "run_metadata.json"
     metadata_path.write_text(json.dumps(run_metadata, indent=2, sort_keys=True), encoding="utf-8")
     with summary_path.open("w", newline="", encoding="utf-8") as f:
@@ -343,8 +410,20 @@ def main() -> None:
         writer = csv.DictWriter(f, fieldnames=list(layer_rows[0].keys()))
         writer.writeheader()
         writer.writerows(layer_rows)
+    if vector_rows:
+        with vector_meta_path.open("w", newline="", encoding="utf-8") as f:
+            writer = csv.DictWriter(f, fieldnames=list(vector_rows[0].keys()))
+            writer.writeheader()
+            writer.writerows(vector_rows)
+        np.savez_compressed(
+            vector_npz_path,
+            delta=np.stack(vector_deltas, axis=0),
+        )
     print(f"Wrote {summary_path}")
     print(f"Wrote {layer_path}")
+    if vector_rows:
+        print(f"Wrote {vector_meta_path}")
+        print(f"Wrote {vector_npz_path}")
     print(f"Wrote {metadata_path}")
 
 

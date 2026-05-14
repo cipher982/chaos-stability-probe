@@ -78,6 +78,10 @@ def build_launch_cmd(job: dict[str, Any]) -> list[str]:
         cmd.extend(["--targets-json", job["targets_json"]])
     if "pairs_from" in job:
         cmd.extend(["--pairs-from", job["pairs_from"]])
+    for horizon in job.get("vector_horizons", []):
+        cmd.extend(["--vector-horizon", str(horizon)])
+    if job.get("sparse_vector_steps"):
+        cmd.append("--sparse-vector-steps")
     if job.get("sample"):
         cmd.append("--sample")
         cmd.extend(["--temperature", str(job.get("temperature", 0.7))])
@@ -111,6 +115,18 @@ def main() -> None:
     parser.add_argument("--region", default=DEFAULT_REGION)
     parser.add_argument("--max-active", type=int, default=5)
     parser.add_argument(
+        "--max-active-per-profile",
+        type=int,
+        default=0,
+        help="When dispatching across accounts, default active-job limit for each target profile.",
+    )
+    parser.add_argument(
+        "--max-launch-total",
+        type=int,
+        default=0,
+        help="Optional cap on jobs launched in this dispatcher invocation.",
+    )
+    parser.add_argument(
         "--include-cross-account",
         action="store_true",
         help="Also consider queue entries whose profile differs from --profile.",
@@ -123,23 +139,56 @@ def main() -> None:
     parser.add_argument("--dry-run", action="store_true")
     args = parser.parse_args()
 
-    sess = boto3.Session(profile_name=args.profile, region_name=args.region)
-    sm = sess.client("sagemaker")
-    existing = all_chaos_jobs(sm)
-    active = sum(1 for status in existing.values() if status in ACTIVE_STATUSES)
-    slots = max(0, args.max_active - active)
-
     queue = load_json(args.queue)
     profile_queue = [
         job
         for job in queue
         if args.include_cross_account or job.get("profile", args.profile) == args.profile
     ]
-    pending = [job for job in profile_queue if job["job_name"] not in existing]
-    print(f"Active chaos jobs: {active}/{args.max_active}; open slots: {slots}; queued not launched: {len(pending)}")
+
+    default_profile_limit = args.max_active_per_profile or args.max_active
+    profile_regions = sorted(
+        {
+            (job.get("profile", args.profile), job.get("region", args.region))
+            for job in profile_queue
+        }
+    )
+    existing_by_profile: dict[tuple[str, str], dict[str, str]] = {}
+    active_by_profile: dict[tuple[str, str], int] = {}
+    for profile, region in profile_regions:
+        sess = boto3.Session(profile_name=profile, region_name=region)
+        sm = sess.client("sagemaker")
+        existing = all_chaos_jobs(sm)
+        existing_by_profile[(profile, region)] = existing
+        active_by_profile[(profile, region)] = sum(
+            1 for status in existing.values() if status in ACTIVE_STATUSES
+        )
+
+    pending = [
+        job
+        for job in profile_queue
+        if job["job_name"]
+        not in existing_by_profile[(job.get("profile", args.profile), job.get("region", args.region))]
+    ]
+    for profile, region in profile_regions:
+        matching = [job for job in pending if (job.get("profile", args.profile), job.get("region", args.region)) == (profile, region)]
+        profile_limit = max((job.get("profile_max_active", default_profile_limit) for job in matching), default=default_profile_limit)
+        active = active_by_profile[(profile, region)]
+        print(
+            f"{profile}/{region}: active chaos jobs {active}/{profile_limit}; "
+            f"queued not launched: {len(matching)}"
+        )
 
     launched = 0
-    for job in pending[:slots]:
+    launched_by_profile: dict[tuple[str, str], int] = {key: 0 for key in profile_regions}
+    for job in pending:
+        profile_region = (job.get("profile", args.profile), job.get("region", args.region))
+        profile_limit = job.get("profile_max_active", default_profile_limit)
+        active_after_local_launches = active_by_profile[profile_region] + launched_by_profile[profile_region]
+        if active_after_local_launches >= profile_limit:
+            continue
+        if args.max_launch_total and launched >= args.max_launch_total:
+            break
         cmd = build_launch_cmd(job)
         print("+", " ".join(cmd))
         if not args.dry_run:
@@ -151,6 +200,7 @@ def main() -> None:
                     raise
                 continue
         launched += 1
+        launched_by_profile[profile_region] += 1
 
     if launched == 0:
         print("No jobs launched.")
