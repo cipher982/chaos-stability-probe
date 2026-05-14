@@ -70,6 +70,8 @@ def build_launch_cmd(job: dict[str, Any]) -> list[str]:
         cmd.extend(["--role-arn", job["role_arn"]])
     if "repeats" in job:
         cmd.extend(["--repeats", str(job["repeats"])])
+    if "limit_pairs" in job:
+        cmd.extend(["--limit-pairs", str(job["limit_pairs"])])
     for pair_id in job.get("pair_ids", []):
         cmd.extend(["--pair-id", pair_id])
     if "targets_csv" in job:

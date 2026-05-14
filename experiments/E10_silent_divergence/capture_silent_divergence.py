@@ -325,7 +325,7 @@ def main() -> None:
     parser.add_argument("--prompt-pairs", type=Path, default=Path("configs/prompt_pairs_mechinterp_seed.json"))
     parser.add_argument("--pair-id", action="append", dest="pair_ids")
     parser.add_argument("--pairs-from", type=Path, default=Path("runs/mechinterp_patch/selected_patch_targets_aligned.csv"))
-    parser.add_argument("--limit-pairs", type=int, default=4)
+    parser.add_argument("--limit-pairs", type=int, default=0)
     parser.add_argument("--out-dir", type=Path, default=Path("runs/silent_divergence_pilot"))
     parser.add_argument("--max-new-tokens", type=int, default=128)
     parser.add_argument("--logit-max-steps", type=int, default=64)
