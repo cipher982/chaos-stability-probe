@@ -133,6 +133,8 @@ def score_group(
     group: pd.DataFrame,
     vectors: dict[int, np.ndarray],
     target: str,
+    target_kind: str,
+    horizon: int,
     label: pd.Series,
     folds: int,
 ) -> list[dict[str, object]]:
@@ -154,6 +156,8 @@ def score_group(
                 "model_name": group["model_name"].iloc[0],
                 "layer": int(group["layer"].iloc[0]),
                 "target": target,
+                "target_kind": target_kind,
+                "horizon": horizon,
                 "probe": "unit_mean_diff" if normalize else "raw_mean_diff",
                 "auroc": auroc(y, scores),
                 "n_rows": int(len(group)),
@@ -183,10 +187,56 @@ def main() -> None:
 
     rows: list[dict[str, object]] = []
     for horizon in sorted(set(args.horizon)):
-        target = "at_branch" if horizon == 0 else f"pre_branch_within_{horizon}"
-        label = meta["branch_t"].notna() & (meta["tokens_until_branch"] <= horizon)
-        for _, group in meta.groupby(["model_name", "layer"], sort=False):
-            rows.extend(score_group(group, vectors, target, label, folds=args.folds))
+        if horizon == 0:
+            specs = [
+                (
+                    meta,
+                    "at_branch",
+                    "at_branch",
+                    meta["branch_t"].notna() & (meta["tokens_until_branch"] == 0),
+                )
+            ]
+        else:
+            exact_subset = (
+                (
+                    meta["branch_t"].notna()
+                    & (meta["tokens_until_branch"] == horizon)
+                )
+                | (
+                    meta["branch_t"].isna()
+                    & (meta["t"] == horizon)
+                )
+            )
+            specs = [
+                (
+                    meta,
+                    f"pre_branch_within_{horizon}",
+                    "strict_pre_branch_warning_window",
+                    meta["branch_t"].notna()
+                    & (meta["tokens_until_branch"] > 0)
+                    & (meta["tokens_until_branch"] <= horizon),
+                ),
+                (
+                    meta[exact_subset].copy(),
+                    f"pre_branch_exact_{horizon}",
+                    "strict_pre_branch_exact_offset",
+                    meta.loc[exact_subset, "branch_t"].notna()
+                    & (meta.loc[exact_subset, "tokens_until_branch"] == horizon),
+                ),
+            ]
+        for spec_meta, target, target_kind, label in specs:
+            for _, group in spec_meta.groupby(["model_name", "layer"], sort=False):
+                rows.extend(
+                    score_group(
+                        group,
+                        vectors,
+                        target,
+                        target_kind,
+                        horizon,
+                        label,
+                        folds=args.folds,
+                    )
+                )
 
     out = pd.DataFrame(rows)
     if out.empty:
@@ -195,6 +245,8 @@ def main() -> None:
                 "model_name",
                 "layer",
                 "target",
+                "target_kind",
+                "horizon",
                 "probe",
                 "auroc",
                 "n_rows",
@@ -204,7 +256,10 @@ def main() -> None:
                 "used_folds",
             ]
         )
-    out = out.sort_values(["target", "model_name", "probe", "auroc"], ascending=[True, True, True, False])
+    out = out.sort_values(
+        ["target_kind", "horizon", "model_name", "probe", "auroc"],
+        ascending=[True, True, True, True, False],
+    )
     out.to_csv(args.out_dir / "hidden_vector_warning_auc.csv", index=False)
     best = (
         out.dropna(subset=["auroc"])
