@@ -141,8 +141,7 @@ Under 500 words.
 
 Use Claude Sonnet vision subagents for both Inspector and Fixer. If the
 Claude Code `Agent` tool is available, use it. Otherwise use the surfaced
-Claude Sonnet path (`mcp__hatch__hatch_claude` with `model="sonnet"` or
-`hatch claude sonnet`) from the repo root.
+CLI path (`hatch claude sonnet -C <repo-root> --json "prompt"`).
 
 Do not route this skill through alternate paid vision/model backends unless
 the user explicitly requests that backend for the current run.
